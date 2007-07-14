@@ -1,0 +1,12 @@
+$Id: exc-notes.txt 116 2006-10-27 11:21:01Z wincent $
+
+The files:
+
+    exc.h
+    excServer.c
+    excUser.c 
+
+Generated using the following MiG (Mach Interface Generator) command:
+
+    mig /usr/include/mach/exc.defs
+

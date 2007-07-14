@@ -1,0 +1,35 @@
+$Id: TODO.txt 153 2007-04-24 12:32:52Z wincent $
+
+- method for converting command line arguments into absolute paths if they don't start with a / (based on CWD env variable? or NSProcessInfo?)
+
+- Add information on code coverage testing to docs:
+
+    http://www.supermegaultragroovy.com/Software%20Development/xcode_code_coverage_howto
+
+- Describe how to run tests under a debugger? WOTestRunner
+
+- for consistency, make a WOClassStub class (inherits from WOObjectStub) to mirror set up in WOClassMock and WOObjectMock
+
+- further to thoughts on Higher-Order Messaging here:
+
+http://wincent.com/a/about/wincent/weblog/archives/2006/08/thoughts_on_hig.php
+
+Think about alternative syntax for mock objects; instead of:
+
+    [[mock expect] returning:@"foo"] substringfromIndex:3];
+
+Consider:
+
+    [mock expectSelector:@selector(substringFromIndex:)
+                  return:@"foo" 
+               arguments:3];
+
+Regressions:
+
+- write WOMultithreadedCrash class for WOTest (regression test for multithreaded low level exception handling failure); for now just 
+WO_TEST_FAIL
+
+- also write WOLocaleFormatterCrash class (copy and refactor WOLocaleFormatter class and tests so that the WOCommon crash problem 
+can be manifested  in the WOTest tests); again, for now will just be WO_TEST_FAIL
+
+- for Leopard: use RubyCocoa bridge for writing specs in Ruby

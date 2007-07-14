@@ -1,0 +1,481 @@
+$Id: NOTES.txt 147 2007-03-26 18:50:52Z wincent $
+
+================================================================================
+What is WOTest?
+================================================================================
+
+
+
+================================================================================
+WOTest quickstart (code snippets and questions)
+================================================================================
+
+Quick code snippets:
+
+// loading the framework
+WO_TEST_LOAD_FRAMEWORK;
+
+// testing to see if the framework is loaded
+if (!WO_TEST_FRAMEWORK_IS_LOADED)
+{
+    // ...
+}
+
+// performing some tests
+WO_TEST_EQUAL(object1, object2);
+WO_TEST_NOT_EQUAL(variable1, variable2);
+
+// shorthand form for tests
+WO_TEST_EQ(object1, object2);
+WO_TEST_NE(variable1, variable2);
+WO_TEST(assertion); // short form of WO_TEST_TRUE
+
+// writing a test method
+- (void)testNetworkHandler
+{
+    WO_TEST_TRUE([[ABNetworkManager sharedManager] isConnected]);
+}
+
+Quick questions and answers:
+
+Q: How do I install the WOTest.framework?
+A: You don't have to install the WOTest.framework.
+
+Q: How do I link against the WOTest.framework?
+A: You don't have to link against the framework.
+
+Q: Where do I put my tests? In a bundle? A framework? Inside my classes?
+A: You can put the tests anywhere you like.
+
+================================================================================
+Requirements
+================================================================================
+
+In order to build WOTest the Wincent Buildtools are required. They can be obtained from:
+
+http://wincent.com/a/products/buildtools/
+
+================================================================================
+Why YAUTF (Yet Another Unit Testing Framework)?
+================================================================================
+
+There are already a number of unit testing frameworks available for use with Objective-C (see "Other unit testing frameworks" for a possibly incomplete list). They each have distinct benefits to offer; some are very mature and in widespread use, others are especially "light weight", and others have a raft of functionality.
+
+But there are a lot of approaches (design philosophies) to unit testing and choosing between them is a very personal question. I chose to write WOTest because: firstly, none of the existing solutions matched my personal tastes; and secondly, because I see writing my own code as a valuable learning experience.
+
+Below is the set characteristics I wanted for WOTest which I couldn't find in an existing packages. In general I found that the available tools met some of these criteria but not all of them, and they generally forced me work in a way which I didn't really like. Given that the proposed design for WOTest was so light-weight, it seemed like a better idea to spend a few days writing the code rather than learn/tame any of the existing packages.
+
+1. Extremely light-weight. My unit testing needs are fairly modest. I don't do "Test-Driven Development" ("TDD"; where you write the tests before you write the program); rather I write the tests as I go along as a means of quality control (and of course, along the way there are "moments" of TDD). I don't need an exhaustive feature set.
+
+2. "Airtight" compartmentalization between product code ("the product") and the code that runs the tests ("the tests"). I don't want the test code to be interspersed throughout product's code. I want to be able to look at all the tests for a product in one location. There are three schools of thought on this:
+(a) That the tests should be right next to the code being tested, in the same file. This is the way I used to work, a strong argument for this method is that it is much easier to keep the tests updated as you modify the code, and much easier in general to switch back and forth between the tests and the code being tested. The main weakness of this method is that there is no easy way to see all the tests at once, and it is also very difficult to remove the tests or deactivate them without resorting to the use of ugly preprocessor macros;
+(b) That the tests should be in separate files that are closely related to the code being tested, for example, in subclasses that test their superclasses, or in categories that test their associated classes. Because the tests are in separate files they are easier to deactivate or excluded from code shipped to users, but you still can't see all the tests at once and the "parallel hierarchy problem" (see below) becomes more of an issue;
+(c) That the tests should be cleanly separated from the product code, together in one place (all in one file, if you desire). This is the method used by WOTest. The main benefits of this method is that you can easily see all the tests at once, the tests can be easily removed or deactivated, and the "parallel hierarchy problem" is avoided. The down side, in common with method (b), is that you must keep two editors open (one for the tests, one for the tested code) if you want to look at both at the same time. In reality this is not as bad as it sounds because firstly, method (b) is actually much more complicated because it requires you to look through multiple files in order to navigate through your test suite, and secondly, method (a) loses some of its simplicity when you're dealing with large and complicated classes (even when the tests are in the same file as the tested code, if there is a lot of code then the scrolling and navigation ceases to be trivial).
+
+3. Xcode integration. It should be easy to automatically run the test suite from within Xcode, and not just by performing a "Run" (Command-R) but as a part of the actual build process (Command-B). You should be able to click on failed test results and be taken to the corresponding line in the source code.
+
+4. Separation of test target and non-test target. It should be possible to have a target in Xcode that doesn't run any tests, and a separate target that does run the tests. 
+
+5. No parallel hierarchies (either class hierarchies or category hierarchies). It shouldn't be necessary to maintain two hierarchies of code (one for the product and one for the tests) which could get out of synchronization (see the following two points).
+
+6. No subclasses. It shouldn't be necessary to write subclasses (containing "the tests") in order to test classes (containing "the product"). I don't like this because it requires the incidental work of setting up interfaces and implementations. If the subclasses are in separate files then the work is greater because you have to worry about header files as well, and you've fall straight into the trap of maintaining parallel class hierarchies.
+
+7. No categories. It shouldn't be necessary to write categories (containing "the tests") in order to test classes (containing "the product"). Once again, I don't like the incidental work involved.
+
+8. Ability to test applications, frameworks (in isolation), or applications that link against frameworks.
+
+9. Ability to run unit tests from within the debugger.
+
+9. The code that ships should be tested, not the code that doesn't ship. I don't want to only test the "Development" build of the product and then ship an (untested!) "Deployment" build. Nor do I want to test a selection of classes from the product in isolation (for example, taking the source files for those selected classes and compiling them into my test suite). I want to test the exact code which will ship to customers. 
+
+10. Customers and beta-testers should be able to run the tests (if you want them to, that is). It's useful that third parties can run the tests for the purposes of support or squishing bugs. It is possible that the tests may pass "in house", but fail on other hardware or other configurations, and information gathered on those configurations is of obvious value.
+
+11. The testing mechanism should be transparent (invisible) to those who have no interest in using it. The option to run the tests should be exactly that: optional; and the tests and the option to run them itself should not even be visible to those customers who don't wish to run the tests. In effect this means that the test materials should be easily embeddable within the shipped product's bundle.
+
+12. Shipping the tests with the code should not affect the performance or memory use of the product. Because the framework is so light-weight (only a few kilobytes on disk), it can be shipped with the product without significantly contributing to the download size. The compartmentalization of the tests, combined with the fact that they are entirely optional, means that users not running the tests suffer no performance penalty (not only do the tests not run, the tests and the test framework are not even loaded into memory).
+
+13. Setting up test suites and adding tests should be extremely easy.
+
+14. Test framework should be embeddable or installable.
+
+15. Should be able to use the test framework without linking to it (ie. there should be no performance or memory penalty for those who do not wish to perform testing).
+
+Needless to say, WOTest is not the "Swiss Army Knife" of unit testing tools. It was not designed to be flexible and adapt to a huge range of different possible workflows. There are already enough tools out there for that. It is designed to exactly fit one workflow, mine, and I'm releasing it because there may be other people out there who like to work in the same way as I do.
+
+Despite this, it turns out that the design of WOTest allows you to do quite a lot more with it than implement the specific workflow for which I wrote it. For example, WOTest can do the following:
+
+- work as a separate project from the product to be tested; work as a separate target within the project of the product to be tested; work embedded in the actual target of the product to be tested;
+
+- perform the tests during a build phase within Xcode; perform the tests when run from within Xcode; perform the tests when run from the command-line;
+
+- find tests in separate bundles or frameworks; find tests in separate files within a project (subclasses, separate classes, categories, or methods added to an existing class); find tests embedded in the class files of a project (subclasses, separate classes, categories, or methods added to an existing class);
+
+This documentation focuses on my own workflow, but makes brief references to how WOTest can be used in the different ways referred to above (see the section "Other workflow permutations" below).
+
+================================================================================
+Background
+================================================================================
+
+When I first heard about Unit Testing it sounded like a great idea. I wasn't such a big fan of the so called "Extreme Programming" movement as a whole; the advocates' eyes would glaze over as they pounded and thumped their desks with their fists while extolling the merits of their guiding principles (a collection of acronyms and Wiki-ready phrases jammed together into long words), and clutched their Extreme Programming tomes to their chests as though they were sacred religious texts. Lots of solid, good ideas, but taken a little too seriously and fanatically for my liking (and I am a Mac user, by definition somewhat "fanatical"). And all too frequently they claimed that those who disagreed with them did so only because they didn't understand (or weren't capable of understanding) their point of view (in other words, that they hadn't yet attained "enlightenment"). You can't blame them for feeling enthusiastic about something, but their dogmatic, polemical style smacks of close-mindedness and an unwillingness to recognise that other people may have alternative and valid points of view.
+
+But yes, the idea of unit testing did appeal to me. I looked at the existing unit test solutions and didn't really like any of them. They all seemed highly complicated (at least to my beginner's eyes) and required me to installed third-party frameworks and command-line tools and goodness knows what else. It all seemed like overkill when all I really wanted to do was a series of very basic assertions, like the following pseudo-code:
+
+    if (result of function != expected result)
+        report error;
+
+There's a lot more to it than that, but this is what essentially lies at the heart of unit testing. So instead of grappling with any of those tools, I came up with a set of macros that enabled me to do unit testing. Here is a basic example:
+
+    #ifdef DEBUG
+    
+    /*! Test for a positive result (> 0) */
+    #define WO_TEST_POSITIVE(expr)                                          \
+    do {                                                                    \
+        if ((expr) <= 0)                                                    \
+            ELOG(@"Unit test failed (expected POSITIVE; obtained <= 0)");   \
+    } while (0)
+    
+    #else /* DEBUG not defined*/
+    
+    #define WO_TEST_POSITIVE(expr)
+    
+    #endif
+
+The ELOG macro was defined elsewhere, and logged the class, method, line number and so forth where the error was produced. Note that when the DEBUG flag is not defined (as is the case with "Deployment" builds), the tests produce no code. This means that the tests don't wind up in production code shipped to customers (which was in keeping with my goal at the time), but the down side is that the code that is tested is the "Development" build and not the "Deployment" build. It's conceivable (although it never happened to me) that tests could pass in the Development build yet the same function could fail in the "real world" deployment build.
+
+In the end I had quite an elaborate set of unit testing macros, all in all totalling a few hundred lines, that met my needs for a long time. These tests weren't bad; they were very easy to add to a project and they could be easily run in the debugger. On the down side, you had to run the product (specifically the "Development" build) in order to perform the tests, which means you couldn't click on the test results in Xcode and be taken to the corresponding line and file.
+
+Then while reading Apple's cocoa-dev mailing list I heard about UnitKit. I took a look at it. In my view, UnitKit is the most light-weight and easy-to-learn unit testing solution out there. UnitKit's integration with Xcode was great because the tests could be tacked on to the "Build" phase and the test results could easily be clicked on and you'd be automatically taken to the appropriately line and file.
+
+For reasons I've already stated above, I decided to build my own testing framework. I'm a perfectionist, and although UnitKit is a great little piece of software, it didn't work exactly how my personal tastes would dictate. Also, UnitKit development stopped once Apple started shipping OCUnit with its Xcode Tools. I wrote WOTest from scratch and didn't use any code from UnitKit. The truth is that I barely even looked at that code. But I still want to recognise the efforts of James Duncan Davidson (the principal author of UnitKit) because his work basically inspired me to write WOTest, and provided me with the key idea for how to achieve integration with Xcode.
+
+The internals of WOTest are a little more simple, it has quite a few more test types, but it sticks to the basic core idea of UnitKit that makes it so well intergrated with Xcode: using preprocessor macros so that the inbuilt __FILE__ and __LINE__ macros can be used to generate output that Xcode will interpret and allow users to click on results and be taken to the right file and line. Like UnitKit, WOTest tries to keep the minimum amount of test logic in the macros and keep most of the logic in a set up underlying Objective-C methods, because writing, testing and debugging methods is more straightforward than writing complex macros.
+
+
+
+
+================================================================================
+WOTest can test itself
+================================================================================
+
+Before I could use it to test itself, I had to complete a significant proportion of the code. "Test-Driven Development" was not an option, because until I had written the testing mechanism I didn't even know how I could write the tests. Now that WOTest is basically complete, it can be used to test itself. The key piece that needed to be written before I could start using WOTest to test itself was the WOTestRunner command-line executable.
+
+The tests appear in the file, "WOTestSelfTests.m". The file is a fairly comprehensive example of the kinds of tests that are possible with WOTest. Because the objective is to test the tests, all of the test methods include two approaches to the testing: one batch of tests that are expected to pass (in other words, if a test passes when it is expected to pass, then this is a pass); and a second batch of tests that are expected to fail (in other words, if a test fails a test when it is expected to fail, then this also is a pass). In this respect, this shows a highly atypical application of the tests; generally you would write code with the intention that all tests should pass, but in order to test that the tests work you must show that the both pass when you expect them to pass and fail when you expect them to fail. 
+
+However, the presence of all those failure warnings in the build log can make the test results hard to read. For this reason, WOTest implements a special variable (expectFailures) that should be used only during WOTest self-testing. When the flag is set, in addition to the standard "Failed" and "Passed" status messages, there are an additional two messages: "Failed (expected failure)" and "Passed (unexpected pass)". Normally in your own unit tests you wouldn't need to set the expectFailures variable; rather you would write tests such that an expected failure results in pass. This is much safer, because there's no risk of you setting the expectFailures variable to YES and later forgetting to set it back to NO.
+
+================================================================================
+Linking to WOTest.framework
+================================================================================
+
+You don't have to link to WOTest.framework, and there are a couple of reasons why you wouldn't want to. WOTest has been carefully designed so that you don't have to link if you don't want to.
+
+When you link to WOTest.framework you increase the size of your executable file on disk by a small amount (this is true of any framework). Furthermore, your executable will use more memory than it would have had you not linked to WOTest.framework. This is true even if you link but never make any calls to methods in the framework. This is bad because it means that if you decide to ship your product with the unit tests included, then all users will see a slight increase in disk and memory usage, even those who don't have any interest in running the tests. One way to work around this problem is to have two versions of the product, one for internal testing (that links against WOTest.framework) and one for external deployment, but that breaks one of the design goals for WOTest of being able to test the exact product (bit for bit) that gets shipped to customers.
+
+Luckily, thanks to the dynamic nature of the Objective-C runtime, it's possible to elegantly get around this problem. It's possible to have your product dynamically load the WOTest.framework (in other words, no linking) if and only if the user explicitly instructs it to do so; at all other times the framework doesn't get loaded. Because there's no linking, it means the executable size doesn't swell, and those users who don't want to run the tests don't see any increase in memory usage. You're then left with a simple choice: distribute the WOTest.framework along with your product if you want users to be able to test it; or just distribute the product on its own if you don't want to offer testing capability. In either case the product is exactly the same and performs exactly the same.
+
+To illustrate how this works, consider the following example. Imagine a tool that does not link against Apple's AppKit framework, but nevertheless wants to create an NSView object:
+
+#import <AppKit/AppKit.h>
+
+- (void)callAppKitMethod
+{
+    NSView *aView = [[NSView alloc] initWithFrame:NSZeroRect];
+    [aView release];
+}
+
+By including the AppKit header file you ensure that the compiler doesn't give you any warnings, but if you try to build such code the linker will give you an error that "NSView" is an undefined symbol. Of course, even if you could produce an executable and run it, it wouldn't work because the executable isn't linked to the AppKit.framework. One way to force the framework to load is to set environment variables and then run the product from the command-line. For example, in the bash shell:
+
+export DYLD_FRAMEWORK_PATH=/System/Library/Frameworks
+export DYLD_INSERT_LIBRARIES=/System/Library/Frameworks/AppKit.framework/AppKit 
+/path/to/executable
+
+On running, the executable has access to all of the AppKit.framework's classes, even though it didn't link to them. But this still doesn't solve the problem that the linker will complain about undefined symbols. One way around this is to pass "-undefined define_a_way" to the linker when building your executable (see the ld (1) man page for more options).
+
+A far more elegant way to solve this problem is to take advantage of the dynamic nature of the Objective-C runtime. The product doesn't need to link against the framework, there is no need to set linker options, export environment variables, or run the product from the command-line. The following code illustrates:
+
+#import <AppKit/AppKit.h>
+
+- (void)callAppKitMethod
+{
+    NSBundle *theBundle = 
+    [NSBundle bundleWithPath:@"/System/Library/Frameworks/AppKit.framework"];
+    Class   viewClass   = [theBundle classNamed:@"NSView"];
+    NSView  *aView      = [[viewClass alloc] initWithFrame:NSZeroRect];
+    [aView release];
+}
+
+No compiler warnings, no linker errors, everything just works. WOTest uses this technique to allow you to load code "on the fly" without having to link to it. All it has to do is look for bundles, load them, and then run the test methods on them. 
+
+================================================================================
+How to test frameworks
+================================================================================
+
+Let's take an example framework, "Example.framework". As a developer, you want to be able to build the framework and test it. You then want to ship the framework to customers. You don't want to have to engage in multiple builds (one for testing, one for shipping). The WOTest.framework is used to perform tests and report the results. The WOTestRunner commandline executable is the tool that loads the testing framework and the framework-to-be-tested into memory and then runs the tests.
+
+You have multiple options for where you put the tests:
+
+1. Embed them in Example.framework itself. This requires you to link against the WOTest.framework, otherwise you'll get warnings for undefined symbols. It will also swell the memory footprint of your framework even if the user never runs the tests.
+
+In this case you'll just run WOTestRunner and pass "Example.framework" as a command-line parameter.
+
+2. Stick them in separate framework or loadable bundle; call it "Tests.framework" or "Tests.bundle". Link against "WOTest.framework" and the framework you want to test so that the linker doesn't give you warnings about undefined symbols.
+
+In this case you'll run WOTestRunner and pass both "Example.framework" and "Tests.framework" or "Tests.bundle" as command-line parameters.
+
+WOTestRunner loads the code from the frameworks into memory and runs all eligible test, reporting the results.
+
+Framework search order:
+
+~/Library/Frameworks/
+~/Developer/Frameworks/
+/Library/Frameworks/
+/Developer/Frameworks/
+/Network/Library/Frameworks/
+/Network/Developer/Frameworks/
+/System/Library/Frameworks/
+
+0. These instructions assume a shared build products location. For example:
+
+~/build/WOTest.framework
+~/build/FrameworkBeingTested.framework
+~/build/FrameworkBeingTested.framework/Versions/A/Resources/FrameworkTests.bundle
+~/build/OtherFrameworkLinkedToByFrameworkBeingTested.framework
+
+Need to make sure these instructions work when embedded inside an application.
+And need to find a way to easily test everything at once for end-users... eg. user runs tests on application and application fires off tests on applications too
+
+1. In your framework project create a new group called "FrameworkTests" (or some other distinguishing label).
+
+2. From the "Project" menu select "New Target...".
+
+3. Choose "Loadable Bundle" from the "Cocoa" group.
+
+4. Name the target "FrameworkTests" (or some other distinguishing label).
+
+5. In the Target properties window that appears click the plus button to add the framework as a direct dependency of the test bundle. You can add WOTest.framework as a dependency as well if you want to make sure it gets built when required as part of the build process (rather than using a pre-built copy).
+
+5b. Add "-noprebind" to the "OTHER_LDFLAGS_ppc" build setting for the target if necessary to silence warnings.
+
+6. Xcode will create a plist file with a name like "FrameworkTests-Info.plist" which you can drag into the "FrameworkTests" group.
+
+7. Set the "CFBundleIdentifier" in the info plist file to something appropriate, like "com.wincent.SynergyAdvanceFrameworkTests".
+
+8. Select the "FrameworkTests" group and from the "File" menu choose "New File..."
+
+9. Choose "Objective-C class" from the "Cocoa" group and choose an appropriate filename such as "FrameworkTests.m".
+
+10. In the header ("FrameworkTests.h") mark your test class with the "<WOTest>" protocol marker and add this import statement.
+
+#import "WOTest/WOTest.h"
+
+11. In the implementation file write your tests. The methods should start with "- (void)test".
+
+12. Link the FrameworkTests bundle against Foundation.framework (or Cocoa.framework) or whatever other frameworks your test framework links to and the framework that you wish to test. It is not necessary to link to the WOTest.framework itself, but you can if you want to use the WOMock class.
+
+12b. Add WOTest to the project as a dependency, to ensure it gets built if required.
+
+12c. You may need to add "$(TARGET_BUILD_DIR)" to your "Header Search Paths" for the test target.
+
+13. Add a "Run Script" phase to the target that handles the packaging:
+
+# copy the test bundle into its final location
+${CP} -fRv "${TARGET_BUILD_DIR}/${FULL_PRODUCT_NAME}" "${TARGET_BUILD_DIR}/SynergyAdvance.framework/Versions/A/Resources/"
+
+# make the frameworks folder relative to WOTestRunner (@executable_path/../Frameworks/)
+/bin/mkdir -pv "${TARGET_BUILD_DIR}/SynergyAdvance.framework/Versions/A/Frameworks"
+
+# provide a symlink so that the bundle can find the framework
+cd "${TARGET_BUILD_DIR}/SynergyAdvance.framework/Versions/A/Frameworks"
+/bin/ln -fsv ../../../../WOTest.framework WOTest.framework
+=====
+export DYLD_FRAMEWORK_PATH="${TARGET_BUILD_DIR}"
+
+"${TARGET_BUILD_DIR}/WOTest.framework/Versions/A/Resources/WOTestRunner" \
+--test-bundle="${TARGET_BUILD_DIR}/SynergyAdvance.framework/Versions/A/Resources/${FULL_PRODUCT_NAME}"
+=====
+
+
+include information on how to set this up as a custom executable too (works: see WODebug for an example)
+useful for running WOTestRunner under GDB
+
+
+================================================================================
+How to test applications
+================================================================================
+
+Testing frameworks is relatively easy because they are self-contained pieces of functionality. You can create a test bundle that links against the framework and then use the test runner to load the test bundle and run the tests, thus testing the framework.
+
+Testing an application is slightly different. You can't use the test runner to run an application. You can put your tests in a bundle and use the BUNDLE_LOADER build setting to inform that linker that it should look for any missing symbols in the executable (but not with dead code stripping turned on, unless you use the WO_TEST_NO_DEAD_STRIP_CLASS macro). You can then employ some dynamic loading trickery to load the bundle from the application and run the tests.
+
+Injecting a test bundle into a running application. Example taken from REnamer.app:
+
+export WOTestInjectBundle="/Users/wincent/trabajo/build/Release/REnamer.app/Contents/Resources/ApplicationTests.bundle"
+export DYLD_INSERT_LIBRARIES="/Users/wincent/trabajo/build/Release/REnamer.app/Contents/Frameworks/WOTest.framework/WOTest"
+export DYLD_PRINT_LIBRARIES=1
+/Users/wincent/trabajo/build/Release/REnamer.app/Contents/MacOS/REnamer 
+
+================================================================================
+Shipping testable production applications
+================================================================================
+
+================================================================================
+Shipping non-testable production applications
+================================================================================
+
+================================================================================
+Shipping testable frameworks
+================================================================================
+
+
+================================================================================
+Shipping non-testable frameworks
+================================================================================
+
+
+================================================================================
+Other workflow permutations
+================================================================================
+
+The suggested workflow that's documented above is based on adding a new target to the product that is to be tested and writing all of the tests inside of that target. WOTest was designed to enable this workflow. Nevertheless, the dynamic nature of the Objective-C runtime means that you can actually use WOTest in quite a few different ways and everything keeps on working as you would expect. Some alternative workflows are briefly discussed below.
+
+- Putting the tests inside an existing target
+
+- Putting the tests inside a separate project
+
+- Putting the tests inside subclasses (same files)
+
+- Putting the tests inside subclasses (separate files)
+
+- Putting the tests inside categories (same files)
+
+- Putting the tests inside categories (separate files)
+
+
+================================================================================
+FAQ (Frequently Asked Questions)
+================================================================================
+
+* How do I avoid the warning, "comparison between signed and unsigned, to avoid this warning use an explicit cast"?
+
+Either cast an unsigned value to a signed value:
+
+    number -> (int)number
+
+Or a signed value to an unsigned one:
+
+    number -> (unsigned)number
+
+A common cause of this warning is comparing an unsigned return value to a literal constant number:
+
+    WO_TEST_EQ([object length], 10);
+
+This is because the length method returns an unsigned value, but the compiler sees the number 10 as a signed value. One solution is:
+
+    WO_TEST_EQ([object length], 10U);
+
+================================================================================
+Donations
+================================================================================
+
+WOTest is free software released under the GPL license. If it is useful to you, please consider making a donation:
+
+https://www.paypal.com/xclick/business=win@wincent.com&item_name=WOTest+donation&no_note=1&currency_code=EUR&lc=en
+
+
+================================================================================
+Other unit testing frameworks that work with Objective-C
+================================================================================
+
+ObjCUnit:   http://oops.se/objcunit/                    (last updated 2002)
+
+OCUnit:     http://www.sente.ch/software/ocunit/        (included with Xcode Tools)
+
+TestKit:    http://testkit.sourceforge.net/             (last updated 2004)
+            http://sourceforge.net/projects/testkit
+
+UnitKit:    http://unitkit.org/                         (discontinued)
+
+
+================================================================================
+How it works
+================================================================================
+
+Project A
+--> Target: normal target
+
+--> Target: unit test target
+----> Dependency: normal target
+
+To perform the unit testing, build the unit test target:
+1. This first builds the project's normal target.
+2.A. Then it proceeds to build the unit test target.
+2.B. The unit test target contains a shell script phase that runs the WOTestRunner tool, passing the project's normal target bundle as a parameter.
+2.C. WOTestRunner loads the bundle and searches for all classes that correspond to the WOTest protocol.
+2.D. All conforming classes are searched for methods that begin with the word "test".
+2.E. Matching methods are invoked. Class methods are invoked first. Then, for each instance method, a new object is created using alloc/init, the test method is invoked, and the object is released. If a non-standard init method is required then the appropriate method should be invoked from within a class test method.
+
+An example class:
+
+class: WOFoo
+method: +testEncryption
+
+1. WOTestRunner loads WOFoo's bundle
+2. WOTestRunner finds WOFoo class
+3. WOTestRunner tests to see whether WOFoo conforms to the WOTest protocol
+4. WOTestRunner finds methods starting with "test"
+5. WOTestRunner runs the +testEncryption method
+6. The +testEncryption method contains a macro with the __FILE__ and __LINE__ passed as parameters
+7. The +testEncryption method calls a test method in the WOTest.framework
+8. If the test succeeds, a message is logged to stdout
+9. If the test fails, a message is logged to stderr in the appropriate format
+
+
+stderr reporting format: warnings:
+
+/full/path:line_number: warning: message
+
+errors:
+
+/full/path:line_number: error: message
+
+
+
+
+================================================================================
+Notes about mock objects
+================================================================================
+
+OCMock requires you to have a class which responds to all the selectors you want to mock. WOTest allows you to mock anything without writing anything. You do need to have the class that's being mocked available at runtime, but it can be totally empty.
+
+
+================================================================================
+Namespace issues
+================================================================================
+
+WOTest adds a number of methods to existing Foundation classes via categories. All added methods are prefixed with the "WOTest_" suffix to avoid namespace clashes with the software being tested. Yes it's ugly, and yes such names are not suitable for use in a Key/Value Coding context, but the methods are intended for internal use within WOTest only and so the tradeoff is deemed worthwhile.
+
+
+================================================================================
+Author contact and website
+================================================================================
+
+Author:             Wincent Colaiuta <win@wincent.com>
+Product website:    http://test.wincent.com/
+
+================================================================================
+Credits and thanks
+================================================================================
+
+Thanks James Duncan Davidson (UnitKit) for providing the inspiration to make a lean and elegant unit testing framework.
+
+http://unitkit.org/
+
+Thanks to Mulle Kybernetik (OCMock) for the idea of using the trampoline paradigm to elegantly implement mock objects.
+
+http://www.mulle-kybernetik.com/software/OCMock/
+
+================================================================================
+License and warranty
+================================================================================
+
+WOTest is licensed under the GNU GPL (General Public License). It is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the file LICENSE.txt for more details.
