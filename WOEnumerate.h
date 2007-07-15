@@ -10,8 +10,6 @@
 //  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 //  in the accompanying file, "LICENSE.txt", for more details.
 //
-//  $Id: WOEnumerate.h 93 2006-08-18 13:24:51Z wincent $
-//
 
 //! \file WOEnumerate.h
 

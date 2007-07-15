@@ -1,5 +1,3 @@
-$Id: exc-notes.txt 116 2006-10-27 11:21:01Z wincent $
-
 The files:
 
     exc.h

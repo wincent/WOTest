@@ -1,5 +1,3 @@
-$Id: TODO.txt 153 2007-04-24 12:32:52Z wincent $
-
 - method for converting command line arguments into absolute paths if they don't start with a / (based on CWD env variable? or NSProcessInfo?)
 
 - Add information on code coverage testing to docs:

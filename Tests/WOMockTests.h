@@ -10,7 +10,6 @@
 //  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
 //  in the accompanying file, "LICENSE.txt", for more details.
 //
-//  $Id: WOMockTests.h 208 2007-07-07 19:02:28Z wincent $
 
 #import <Foundation/Foundation.h>
 #import "WOTest.h"
