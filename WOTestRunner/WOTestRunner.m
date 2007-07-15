@@ -2,7 +2,7 @@
 //  WOTestRunner.m
 //  WOTest
 //
-//  Created by Wincent Colaiuta on 12/03/05.
+//  Created by Wincent Colaiuta on 12 March 2005.
 //
 //  Copyright 2004-2007 Wincent Colaiuta.
 //  This program is free software: you can redistribute it and/or modify

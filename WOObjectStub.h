@@ -2,7 +2,7 @@
 //  WOObjectStub.h
 //  WOTest
 //
-//  Created by Wincent Colaiuta on 10/02/06.
+//  Created by Wincent Colaiuta on 10 February 2006.
 //
 //  Copyright 2006-2007 Wincent Colaiuta.
 //  This program is free software: you can redistribute it and/or modify

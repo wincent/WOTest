@@ -2,7 +2,7 @@
 //  WOProtocolMock.h
 //  WOTest
 //
-//  Created by Wincent Colaiuta on 28/01/06.
+//  Created by Wincent Colaiuta on 28 January 2006.
 //
 //  Copyright 2006-2007 Wincent Colaiuta.
 //  This program is free software: you can redistribute it and/or modify

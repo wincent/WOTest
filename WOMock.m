@@ -2,7 +2,7 @@
 //  WOMock.m
 //  WOTest
 //
-//  Created by Wincent Colaiuta on 14/06/05.
+//  Created by Wincent Colaiuta on 14 June 2005.
 //
 //  Copyright 2005-2007 Wincent Colaiuta.
 //  This program is free software: you can redistribute it and/or modify

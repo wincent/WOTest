@@ -1,8 +1,8 @@
 //
 //  WOEnumerate.h
-//  WOTest (imported from WODebug 28/01/06)
+//  WOTest (imported from WODebug 28 January 2006)
 //
-//  Created by Wincent Colaiuta on 12/10/04.
+//  Created by Wincent Colaiuta on 12 October 2004.
 //
 //  Copyright 2004-2006 Wincent Colaiuta.
 //  This program is distributed in the hope that it will be useful, but WITHOUT
