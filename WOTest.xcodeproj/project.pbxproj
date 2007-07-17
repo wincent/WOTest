@@ -839,7 +839,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${SOURCE_ROOT}\"\n\"${BUILDTOOLS_DIR}/UpdateSubversionRevisionNumbers.rb\"\n. \"${BUILDTOOLS_DIR}/UpdateBuildVersionNumbers.sh\" \"WOTest_Version.h\"";
+			shellScript = "set -e\ncd \"${SOURCE_ROOT}\"\n. \"${BUILDTOOLS_DIR}/UpdateBuildVersionNumbers.sh\" \"WOTest_Version.h\"";
 		};
 		BC90C96C09B29B4F00AAF708 /* Run Script (InfoPlist.strings preprocessing) */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -908,7 +908,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -e\ncd \"${SOURCE_ROOT}/WOTestRunner\"\n\"${BUILDTOOLS_DIR}/UpdateSubversionRevisionNumbers.rb\"\n. \"${BUILDTOOLS_DIR}/UpdateBuildVersionNumbers.sh\" \"WOTestRunner/WOTestRunner_Version.h\"";
+			shellScript = "set -e\ncd \"${SOURCE_ROOT}/WOTestRunner\"\n. \"${BUILDTOOLS_DIR}/UpdateBuildVersionNumbers.sh\" \"WOTestRunner/WOTestRunner_Version.h\"";
 		};
 		BCF8EE7E09AF40190095BCD2 /* Run Script (packaging) */ = {
 			isa = PBXShellScriptBuildPhase;

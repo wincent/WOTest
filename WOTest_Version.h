@@ -23,9 +23,6 @@
  
  */
 
-/* Some of the information formerly stored in this file is now kept elsewhere to keep gratuitous changes out of the repository. */
-#include "com.wincent.buildtools.svnrev.h"
-
 /* START: Auto-updated macro definitions */
 
 #define WO_COPYRIGHT_YEAR   2004-2007
@@ -47,9 +44,7 @@ The publicly visible "marketing" version, updated manually.
 /*! Double-stringification macro. Turns macro EXAMPLE into string "contents of EXAMPLE macro after expansion". */
 #define WO_STRINGIFY_TWICE(var)     WO_STRINGIFY(var)
 
-#define WO_BUILDNUMBER_STRING       WO_STRINGIFY_TWICE(WO_BUILDNUMBER)
 #define WO_MARKETINGVERSION         WO_STRINGIFY_TWICE(WO_INFO_PLIST_VERSION)
-
 #define WO_COPYRIGHT_YEAR_STRING    WO_STRINGIFY_TWICE(WO_COPYRIGHT_YEAR)
 #define WO_COPYRIGHT                "Copyright " WO_COPYRIGHT_YEAR_STRING " Wincent Colaiuta"
 
@@ -68,8 +63,6 @@ static const char *const rcsid_ ## tag[] __attribute__((used)) =    \
 
 #ifndef WO_PREPROCESSING_FOR_INFO_PLIST
 
-WO_TAGGED_RCSID("Build date: " WO_BUILDDATE, builddate);
-WO_TAGGED_RCSID("Build number: " WO_BUILDNUMBER_STRING, build);
 WO_TAGGED_RCSID(WO_COPYRIGHT, copyright);
 
 #if defined(__ppc__)
