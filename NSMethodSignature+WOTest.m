@@ -23,9 +23,9 @@
 #import <objc/objc-class.h>
 
 /*
- 
+
  The real 10.4 NSMethodSignature API (obtained using class-dump; TODO: run class-dump to get 10.5 API):
- 
+
 @interface NSMethodSignature : NSObject
 {
     char *_types;
@@ -58,13 +58,13 @@ The public API:
 
 @interface NSMethodSignature : NSObject {
     @private
-    const char	*_types;
-    int		_nargs;
-    unsigned	_sizeofParams;
-    unsigned	_returnValueLength;
-    void	*_parmInfoP;
-    int		*_fixup;
-    void	*_reserved;
+    const char  *_types;
+    int         _nargs;
+    unsigned    _sizeofParams;
+    unsigned    _returnValueLength;
+    void        *_parmInfoP;
+    int         *_fixup;
+    void        *_reserved;
 }
 
 - (unsigned)numberOfArguments;
@@ -106,17 +106,17 @@ See also http://www.stuffonfire.com/2005/12/signaturewithobjctypes_is_stil.html
     NSParameterAssert(types != NULL);
 
 #ifdef WO_USE_OWN_METHOD_SIGNATURE_IMPLEMENTATION
-    
+
     return [[[self alloc] initWithObjCTypes:types] autorelease];
-    
+
 #else /* use private Apple API */
-    
+
     NSAssert([self respondsToSelector:@selector(signatureWithObjCTypes:)],
              @"signatureWithObjCTypes: selector not recognized");
     return [self signatureWithObjCTypes:types];
 
 #endif
-    
+
 }
 
 - (id)initWithObjCTypes:(const char *)types
@@ -128,9 +128,9 @@ See also http://www.stuffonfire.com/2005/12/signaturewithobjctypes_is_stil.html
         // loop through args
 /*        unsigned method_getNumberOfArguments(Method);
         unsigned method_getSizeOfArguments(Method); */
-        
+
         // I hate using private Apple APIs, even ones that appear stable, but
-        // not sure that meddling with these instance variables is a good idea        
+        // not sure that meddling with these instance variables is a good idea
     }
     return self;
 }

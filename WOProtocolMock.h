@@ -31,7 +31,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol);
 @interface WOProtocolMock : WOMock {
 
     Protocol    *mockedProtocol;
-    
+
 }
 
 #pragma mark -

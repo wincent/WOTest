@@ -26,7 +26,7 @@
 #ifndef _C_LNGLNG
 
 /*! Type macros missing from objc-class.h at the time of writing; definition taken from docs file:///Developer/ADC%20Reference%20Library/documentation/Cocoa/Conceptual/ObjectiveC/index.html */
-#define _C_LNGLNG 'q' 
+#define _C_LNGLNG 'q'
 
 #endif
 
@@ -59,7 +59,7 @@ Any object can be compared to any other object for equality provided that it imp
 Objects can be compared to one another for ordering provided that they are of the same class (or at least have a super-subclass relationship) and at least one of the objects implement the compare: method. If neither of these conditions are true then an NSInvalidArgument exception will be raised.
 
 Class objects, method selectors (SEL), void types, character strings (char *), arrays, structs, unions and pointers have no special behaviour implemented in this category. If you try to compare them the standard isEqualTo: NSValue method will be used and testing the ordering will raise an NSInvalidArgument exception. */
-@interface NSValue (WOTest) 
+@interface NSValue (WOTest)
 
 #pragma mark -
 #pragma mark Value creation methods
@@ -139,25 +139,25 @@ Class objects, method selectors (SEL), void types, character strings (char *), a
 
 + (BOOL)WOTest_typeIsInt:(NSString *)typeString;
 
-+ (BOOL)WOTest_typeIsShort:(NSString *)typeString;  
++ (BOOL)WOTest_typeIsShort:(NSString *)typeString;
 
-+ (BOOL)WOTest_typeIsLong:(NSString *)typeString;      
++ (BOOL)WOTest_typeIsLong:(NSString *)typeString;
 
 + (BOOL)WOTest_typeIsLongLong:(NSString *)typeString;
 
 + (BOOL)WOTest_typeIsUnsignedChar:(NSString *)typeString;
 
-+ (BOOL)WOTest_typeIsUnsignedInt:(NSString *)typeString;    
++ (BOOL)WOTest_typeIsUnsignedInt:(NSString *)typeString;
 
-+ (BOOL)WOTest_typeIsUnsignedShort:(NSString *)typeString;  
++ (BOOL)WOTest_typeIsUnsignedShort:(NSString *)typeString;
 
-+ (BOOL)WOTest_typeIsUnsignedLong:(NSString *)typeString;   
++ (BOOL)WOTest_typeIsUnsignedLong:(NSString *)typeString;
 
 + (BOOL)WOTest_typeIsUnsignedLongLong:(NSString *)typeString;
 
-+ (BOOL)WOTest_typeIsFloat:(NSString *)typeString;          
++ (BOOL)WOTest_typeIsFloat:(NSString *)typeString;
 
-+ (BOOL)WOTest_typeIsDouble:(NSString *)typeString;  
++ (BOOL)WOTest_typeIsDouble:(NSString *)typeString;
 
 + (BOOL)WOTest_typeIsC99Bool:(NSString *)typeString;
 
@@ -176,7 +176,7 @@ Class objects, method selectors (SEL), void types, character strings (char *), a
 + (BOOL)WOTest_typeIsPointerToVoid:(NSString *)typeString;
 
 + (BOOL)WOTest_typeIsPointer:(NSString *)typeString;
-    
+
 + (BOOL)WOTest_typeIsArray:(NSString *)typeString;
 
 + (BOOL)WOTest_typeIsStruct:(NSString *)typeString;
@@ -189,7 +189,7 @@ Class objects, method selectors (SEL), void types, character strings (char *), a
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark High-level test methods
 
 /*!
@@ -221,7 +221,7 @@ Special case handling notwithstanding, attempting to compare a non-zero int with
 WO_TEST_EQUAL(25, aString);             // raises
 \endcode
 
-In all other cases the default NSValue isEqualToValue: method is used as a fallback. 
+In all other cases the default NSValue isEqualToValue: method is used as a fallback.
 
 <table>
 <tr>
@@ -527,7 +527,7 @@ Table corresponds to the warnings produced by the version of GCC 4.0 that ships 
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Utility methods
 
 //! \name Utility methods
@@ -727,7 +727,7 @@ When encoded as NSValues the two constant strings in the example above would be 
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Low-level test methods
 
 /*!

@@ -21,7 +21,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSMethodSignature (WOTest) 
+@interface NSMethodSignature (WOTest)
 
 + (id)WOTest_signatureBasedOnObjCTypes:(const char *)types;
 

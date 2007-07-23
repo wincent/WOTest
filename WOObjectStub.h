@@ -25,7 +25,7 @@
 @interface WOObjectStub : WOStub {
 
     Class           mockedClass;
-    
+
 }
 
 #pragma mark -

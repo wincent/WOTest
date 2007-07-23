@@ -29,7 +29,7 @@
     NSString    *string     = @"foobar";
     NSScanner   *scanner    = [NSScanner scannerWithString:string];
     unichar     character;
-    
+
     WO_TEST_THROWS([scanner WOTest_peekCharacter:NULL]);        // test response to NULL
     [scanner setScanLocation:0];                                // move to start
     WO_TEST([scanner WOTest_peekCharacter:&character]);         // scans
@@ -45,7 +45,7 @@
     NSString    *string     = @"foobar";
     NSScanner   *scanner    = [NSScanner scannerWithString:string];
     unichar     character   = 0;
-    
+
     WO_TEST_DOES_NOT_THROW([scanner WOTest_scanCharacter:NULL]);    // test with NULL
     [scanner setScanLocation:0];                                    // move to start
     WO_TEST_TRUE([scanner WOTest_scanCharacter:&character]);        // scans
@@ -63,58 +63,58 @@
 - (void)testScanReturnTypeIntoString
 {
     // handles nil correctly
-    
+
     // return types must be at beginning of string
 }
 
 - (void)testScanTypeIntoString
 {
     // handles nil correctly
-    
-    
-    
+
+
+
 }
 
 - (void)testScanQualifiersIntoString
 {
     // handles nil correctly
-    
+
 }
 
 - (void)testScanNonCompoundTypeIntoString
 {
     // test handles nil correctly
-    
+
 }
 
 - (void)testScanBitfieldIntoString
 {
     // test handles nil correctly
-    
+
 }
 
 - (void)testScanArrayIntoString
 {
     // test handles nil correctly
-    
+
 }
 
 - (void)testScanIdentifierIntoString
 {
     // test handles nil correctly
-    
+
 }
 
 - (void)testScanStructIntoString
 {
     // test handles nil correctly
-    
+
 }
 
 - (void)testScanUnionIntoString
 {
     // test handles nil correctly
-    
+
 }
 
 - (void)testScanPointerIntoString
@@ -123,22 +123,22 @@
     NSString    *string     = @"^i";
     NSScanner   *scanner    = [NSScanner scannerWithString:string];
     NSString    *result     = nil;
-    
+
     // test handles nil correctly
     WO_TEST_TRUE([scanner scanPointerIntoString:nil]);
-    
+
     // test scanning a pointer to something
     [scanner setScanLocation:0];
     WO_TEST_TRUE([scanner scanPointerIntoString:&result]);
     WO_TEST_EQUAL(string, result);
-    
+
     // test scanning a pointer to a pointer to something
     string  = @"^^{WOStruct=fi@}";
     scanner = [NSScanner scannerWithString:string];
     result  = nil;
     WO_TEST_TRUE([scanner scanPointerIntoString:&result]);
     WO_TEST_EQUAL(string, result);
-    
+
     // test against a non-pointer
     string  = @"{WOStruct=^fi@}";
     scanner = [NSScanner scannerWithString:string];
@@ -160,11 +160,11 @@
         (@"{_NSRect={_NSPoint=ff}{_NSSize=ff}}"
          @"28@0:4{_NSRect={_NSPoint=ff}{_NSSize=ff}}8I24")];
     NSScanner *scanner9 = [NSScanner scannerWithString:@"@12@0:4@8"];
-    
+
     // WOTest_peekCharacter: and WOTest_scanCharacter:
     unichar character;
     [scanner1 WOTest_scanCharacter:&character];
-    WO_TEST_EQUAL(character, '@'); 
+    WO_TEST_EQUAL(character, '@');
     WO_TEST_EQUAL([scanner1 scanLocation], (unsigned)1);        // should advance
     [scanner1 WOTest_peekCharacter:&character];
     WO_TEST_EQUAL(character, '8');
@@ -177,7 +177,7 @@
     WO_TEST_FALSE([scanner1 WOTest_peekCharacter:&character]);  // atEnd
     WO_TEST_FALSE([scanner1 WOTest_scanCharacter:&character]);  // atEnd
     [scanner1 setScanLocation:0];                               // reset
-    
+
     // using higher level scanning methods to parse: @8@0:4
     NSString *type;
     WO_TEST_TRUE([scanner1 WOTest_scanNonCompoundTypeIntoString:&type]);
@@ -201,7 +201,7 @@
     WO_TEST_FALSE([scanner1 WOTest_scanUnionIntoString:&type]);
     WO_TEST_FALSE([scanner1 scanPointerIntoString:&type]);
     WO_TEST_EQUAL([scanner1 scanLocation], (unsigned)0);    // still at start
-    
+
     // parsing: r*8@0:4
     WO_TEST_FALSE([scanner2 WOTest_scanNonCompoundTypeIntoString:&type]);
     WO_TEST_TRUE([scanner2 WOTest_scanTypeIntoString:&type]);
@@ -225,37 +225,37 @@
     WO_TEST_FALSE([scanner2 WOTest_scanUnionIntoString:&type]);
     WO_TEST_FALSE([scanner2 scanPointerIntoString:&type]);
     WO_TEST_EQUAL([scanner2 scanLocation], (unsigned)0);    // still at start
-    
+
     // parse: ^v8@0:4
     type = nil;
     WO_TEST_TRUE([scanner3 WOTest_scanReturnTypeIntoString:&type]);
     WO_TEST_EQUAL(type, @"^v");
-    
+
     // parse: c12@0:4@8
     type = nil;
     WO_TEST_TRUE([scanner4 WOTest_scanReturnTypeIntoString:&type]);
     WO_TEST_EQUAL(type, @"c");
-    
+
     // parse: @12@0:4^{_NSZone=}8
     type = nil;
     WO_TEST_TRUE([scanner5 WOTest_scanReturnTypeIntoString:&type]);
     WO_TEST_EQUAL(type, @"@");
-    
+
     // parse: #8@0:4
     type = nil;
     WO_TEST_TRUE([scanner6 WOTest_scanReturnTypeIntoString:&type]);
     WO_TEST_EQUAL(type, @"#");
-    
+
     // parse: v20@0:4@8:12@16
     type = nil;
     WO_TEST_TRUE([scanner7 WOTest_scanReturnTypeIntoString:&type]);
     WO_TEST_EQUAL(type, @"v");
-    
+
     // parse: {_NSRect={_NSPoint=ff}{_NSSize=ff}}28@0:4{_NSRect={_NSPoint=f...
     type = nil;
     WO_TEST_TRUE([scanner8 WOTest_scanReturnTypeIntoString:&type]);
     WO_TEST_EQUAL(type, @"{_NSRect={_NSPoint=ff}{_NSSize=ff}}");
-    
+
     // parse: @12@0:4@8
     type = nil;
     WO_TEST_TRUE([scanner9 WOTest_scanReturnTypeIntoString:&type]);

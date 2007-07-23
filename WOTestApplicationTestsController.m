@@ -35,7 +35,7 @@
 {
     static int32_t initialized = 0;
     if (OSAtomicIncrement32Barrier(&initialized) != 1) return;  // do this once only
-        
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     (void)[[self alloc] initWithPath:__FILE__ keepComponents:3]; // will release self after running tests
     [pool release];
@@ -61,14 +61,14 @@ extern NSString *NSApplicationDidFinishLaunchingNotification;
         unsigned componentCount = [components count];
         NSAssert(componentCount > count, @"componentCount must be greater than count");
         _trimPathComponents = componentCount - count;
-        
+
         // wait until the app has finish launching before running the tests; means we can test stuff in nibs etc
         NSAssert((NSApplicationDidFinishLaunchingNotification != NULL), @"NSApplicationDidFinishLaunchingNotification not defined");
-        [[NSNotificationCenter defaultCenter] addObserver:self 
-                                                 selector:@selector(runTests:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(runTests:)
                                                      name:NSApplicationDidFinishLaunchingNotification
                                                    object:nil];
-        
+
         [self performSelector:@selector(applicationFailedToFinishLaunching:) withObject:nil afterDelay:10.0];
     }
     return self;
@@ -77,11 +77,11 @@ extern NSString *NSApplicationDidFinishLaunchingNotification;
 - (void)runTests:(NSNotification *)aNotification
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(applicationFailedToFinishLaunching:) object:nil];
-    
+
     WOTest *tester = [WOTest sharedInstance];
     [tester setTrimInitialPathComponents:_trimPathComponents];
     [tester runAllTests];
-    
+
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self release];                                 // balance alloc/init in load method
 }

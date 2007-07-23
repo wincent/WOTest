@@ -72,7 +72,7 @@ Below is the set characteristics I wanted for WOTest which I couldn't find in an
 
 3. Xcode integration. It should be easy to automatically run the test suite from within Xcode, and not just by performing a "Run" (Command-R) but as a part of the actual build process (Command-B). You should be able to click on failed test results and be taken to the corresponding line in the source code.
 
-4. Separation of test target and non-test target. It should be possible to have a target in Xcode that doesn't run any tests, and a separate target that does run the tests. 
+4. Separation of test target and non-test target. It should be possible to have a target in Xcode that doesn't run any tests, and a separate target that does run the tests.
 
 5. No parallel hierarchies (either class hierarchies or category hierarchies). It shouldn't be necessary to maintain two hierarchies of code (one for the product and one for the tests) which could get out of synchronization (see the following two points).
 
@@ -84,7 +84,7 @@ Below is the set characteristics I wanted for WOTest which I couldn't find in an
 
 9. Ability to run unit tests from within the debugger.
 
-9. The code that ships should be tested, not the code that doesn't ship. I don't want to only test the "Development" build of the product and then ship an (untested!) "Deployment" build. Nor do I want to test a selection of classes from the product in isolation (for example, taking the source files for those selected classes and compiling them into my test suite). I want to test the exact code which will ship to customers. 
+9. The code that ships should be tested, not the code that doesn't ship. I don't want to only test the "Development" build of the product and then ship an (untested!) "Deployment" build. Nor do I want to test a selection of classes from the product in isolation (for example, taking the source files for those selected classes and compiling them into my test suite). I want to test the exact code which will ship to customers.
 
 10. Customers and beta-testers should be able to run the tests (if you want them to, that is). It's useful that third parties can run the tests for the purposes of support or squishing bugs. It is possible that the tests may pass "in house", but fail on other hardware or other configurations, and information gathered on those configurations is of obvious value.
 
@@ -124,18 +124,18 @@ But yes, the idea of unit testing did appeal to me. I looked at the existing uni
 There's a lot more to it than that, but this is what essentially lies at the heart of unit testing. So instead of grappling with any of those tools, I came up with a set of macros that enabled me to do unit testing. Here is a basic example:
 
     #ifdef DEBUG
-    
+
     /*! Test for a positive result (> 0) */
     #define WO_TEST_POSITIVE(expr)                                          \
     do {                                                                    \
         if ((expr) <= 0)                                                    \
             ELOG(@"Unit test failed (expected POSITIVE; obtained <= 0)");   \
     } while (0)
-    
+
     #else /* DEBUG not defined*/
-    
+
     #define WO_TEST_POSITIVE(expr)
-    
+
     #endif
 
 The ELOG macro was defined elsewhere, and logged the class, method, line number and so forth where the error was produced. Note that when the DEBUG flag is not defined (as is the case with "Deployment" builds), the tests produce no code. This means that the tests don't wind up in production code shipped to customers (which was in keeping with my goal at the time), but the down side is that the code that is tested is the "Development" build and not the "Deployment" build. It's conceivable (although it never happened to me) that tests could pass in the Development build yet the same function could fail in the "real world" deployment build.
@@ -157,7 +157,7 @@ WOTest can test itself
 
 Before I could use it to test itself, I had to complete a significant proportion of the code. "Test-Driven Development" was not an option, because until I had written the testing mechanism I didn't even know how I could write the tests. Now that WOTest is basically complete, it can be used to test itself. The key piece that needed to be written before I could start using WOTest to test itself was the WOTestRunner command-line executable.
 
-The tests appear in the file, "WOTestSelfTests.m". The file is a fairly comprehensive example of the kinds of tests that are possible with WOTest. Because the objective is to test the tests, all of the test methods include two approaches to the testing: one batch of tests that are expected to pass (in other words, if a test passes when it is expected to pass, then this is a pass); and a second batch of tests that are expected to fail (in other words, if a test fails a test when it is expected to fail, then this also is a pass). In this respect, this shows a highly atypical application of the tests; generally you would write code with the intention that all tests should pass, but in order to test that the tests work you must show that the both pass when you expect them to pass and fail when you expect them to fail. 
+The tests appear in the file, "WOTestSelfTests.m". The file is a fairly comprehensive example of the kinds of tests that are possible with WOTest. Because the objective is to test the tests, all of the test methods include two approaches to the testing: one batch of tests that are expected to pass (in other words, if a test passes when it is expected to pass, then this is a pass); and a second batch of tests that are expected to fail (in other words, if a test fails a test when it is expected to fail, then this also is a pass). In this respect, this shows a highly atypical application of the tests; generally you would write code with the intention that all tests should pass, but in order to test that the tests work you must show that the both pass when you expect them to pass and fail when you expect them to fail.
 
 However, the presence of all those failure warnings in the build log can make the test results hard to read. For this reason, WOTest implements a special variable (expectFailures) that should be used only during WOTest self-testing. When the flag is set, in addition to the standard "Failed" and "Passed" status messages, there are an additional two messages: "Failed (expected failure)" and "Passed (unexpected pass)". Normally in your own unit tests you wouldn't need to set the expectFailures variable; rather you would write tests such that an expected failure results in pass. This is much safer, because there's no risk of you setting the expectFailures variable to YES and later forgetting to set it back to NO.
 
@@ -184,7 +184,7 @@ To illustrate how this works, consider the following example. Imagine a tool tha
 By including the AppKit header file you ensure that the compiler doesn't give you any warnings, but if you try to build such code the linker will give you an error that "NSView" is an undefined symbol. Of course, even if you could produce an executable and run it, it wouldn't work because the executable isn't linked to the AppKit.framework. One way to force the framework to load is to set environment variables and then run the product from the command-line. For example, in the bash shell:
 
 export DYLD_FRAMEWORK_PATH=/System/Library/Frameworks
-export DYLD_INSERT_LIBRARIES=/System/Library/Frameworks/AppKit.framework/AppKit 
+export DYLD_INSERT_LIBRARIES=/System/Library/Frameworks/AppKit.framework/AppKit
 /path/to/executable
 
 On running, the executable has access to all of the AppKit.framework's classes, even though it didn't link to them. But this still doesn't solve the problem that the linker will complain about undefined symbols. One way around this is to pass "-undefined define_a_way" to the linker when building your executable (see the ld (1) man page for more options).
@@ -195,14 +195,14 @@ A far more elegant way to solve this problem is to take advantage of the dynamic
 
 - (void)callAppKitMethod
 {
-    NSBundle *theBundle = 
+    NSBundle *theBundle =
     [NSBundle bundleWithPath:@"/System/Library/Frameworks/AppKit.framework"];
     Class   viewClass   = [theBundle classNamed:@"NSView"];
     NSView  *aView      = [[viewClass alloc] initWithFrame:NSZeroRect];
     [aView release];
 }
 
-No compiler warnings, no linker errors, everything just works. WOTest uses this technique to allow you to load code "on the fly" without having to link to it. All it has to do is look for bundles, load them, and then run the test methods on them. 
+No compiler warnings, no linker errors, everything just works. WOTest uses this technique to allow you to load code "on the fly" without having to link to it. All it has to do is look for bundles, load them, and then run the test methods on them.
 
 ================================================================================
 How to test frameworks
@@ -310,7 +310,7 @@ Injecting a test bundle into a running application. Example taken from REnamer.a
 export WOTestInjectBundle="/Users/wincent/trabajo/build/Release/REnamer.app/Contents/Resources/ApplicationTests.bundle"
 export DYLD_INSERT_LIBRARIES="/Users/wincent/trabajo/build/Release/REnamer.app/Contents/Frameworks/WOTest.framework/WOTest"
 export DYLD_PRINT_LIBRARIES=1
-/Users/wincent/trabajo/build/Release/REnamer.app/Contents/MacOS/REnamer 
+/Users/wincent/trabajo/build/Release/REnamer.app/Contents/MacOS/REnamer
 
 ================================================================================
 Shipping testable production applications

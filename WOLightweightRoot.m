@@ -34,8 +34,8 @@
 
 + (id)newLightweightRoot
 {
-	Class class = object_getClass(self);
-	return class_createInstance(class, 0);
+    Class class = object_getClass(self);
+    return class_createInstance(class, 0);
 }
 
 - (void)dealloc

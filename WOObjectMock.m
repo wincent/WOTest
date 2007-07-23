@@ -46,7 +46,7 @@
     NSParameterAssert([NSObject WOTest_isRegisteredClass:aClass]);     // only registered classes pass (do not pass meta classes)
 
     if ((self = [super init]))
-        [self setMockedClass:aClass];                
+        [self setMockedClass:aClass];
     return self;
 }
 
@@ -96,12 +96,12 @@
 }
 
 #pragma mark -
-#pragma mark Proxy methods 
+#pragma mark Proxy methods
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
     NSParameterAssert(anInvocation != nil);
-    
+
     // check if in reject list
     WO_ENUMERATE(rejected, stub)
         if ([stub matchesInvocation:anInvocation])
@@ -110,16 +110,16 @@
                 NSStringFromSelector([anInvocation selector]), NSStringFromClass([self mockedClass])];
             return;
         }
-    
+
     // check if expectedInOrder
     WO_ENUMERATE(expectedInOrder, stub)
         if ([stub matchesInvocation:anInvocation])
         {
             NSAssert2(([expectedInOrder objectAtIndex:0] == stub), @"Invocation selector %@ class %@ received out of order",
                       NSStringFromSelector([anInvocation selector]), NSStringFromClass([self mockedClass]));
-            
+
             [expectedInOrder removeObjectAtIndex:0];    // if in order, remove from head of list
-            
+
             // and move to "accepted"
             [accepted addObject:stub];
             [self storeReturnValue:[stub returnValue] forInvocation:anInvocation];
@@ -138,7 +138,7 @@
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     // check if expected
     WO_ENUMERATE(expected, stub)
         if ([stub matchesInvocation:anInvocation])
@@ -150,7 +150,7 @@
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     // check if accepted once
     WO_ENUMERATE(acceptedOnce, stub)
         if ([stub matchesInvocation:anInvocation])
@@ -162,7 +162,7 @@
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     // check if accepted
     WO_ENUMERATE(accepted, stub)
         if ([stub matchesInvocation:anInvocation])
@@ -171,9 +171,9 @@
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     if ([self acceptsByDefault]) return;
-    
+
     // no matches! (should never get here)
     [NSException raise:NSInternalInconsistencyException format:@"No matching invocations found (selector %@, class %@)",
         NSStringFromSelector([anInvocation selector]), NSStringFromClass([self mockedClass])];
@@ -181,11 +181,11 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    // avoid an infinite loop (docs warn "Be sure to avoid an infinite loop when necessary by checking that aSelector isn't the 
+    // avoid an infinite loop (docs warn "Be sure to avoid an infinite loop when necessary by checking that aSelector isn't the
     // selector for this method itself and by not sending any message that might invoke this method.")
     if (([self mockedClass] == [self class]) && (aSelector == _cmd)) return nil;
-    
-    // search only for instance methods here; forcing the programmer to use WOClassMock for searching for class methods avoids 
+
+    // search only for instance methods here; forcing the programmer to use WOClassMock for searching for class methods avoids
     // ambiguity in cases where an instance method and a class method share the same name
     return [[self mockedClass] instanceMethodSignatureForSelector:aSelector];
 }

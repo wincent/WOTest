@@ -34,7 +34,7 @@
 @interface WOTestApplicationTestsController : NSObject {
 
     unsigned    _trimPathComponents;
-    
+
 }
 
 //! For example, if your test controller was implemented in a source file at:

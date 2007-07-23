@@ -83,7 +83,7 @@
 
 + (NSValue *)WOTest_valueWithUnsignedLongLong:(unsigned long long)anUnsignedLongLong
 {
-    return [NSValue value:&anUnsignedLongLong withObjCType:@encode(unsigned long long)]; 
+    return [NSValue value:&anUnsignedLongLong withObjCType:@encode(unsigned long long)];
 }
 
 + (NSValue *)WOTest_valueWithFloat:(float)aFloat
@@ -103,7 +103,7 @@
 
 + (NSValue *)WOTest_valueWithConstantCharacterString:(const char *)aConstantCharString
 {
-    return [NSValue value:&aConstantCharString withObjCType:@encode(const char *)]; 
+    return [NSValue value:&aConstantCharString withObjCType:@encode(const char *)];
 }
 
 + (NSValue *)WOTest_valueWithCharacterString:(char *)aCharacterString
@@ -140,7 +140,7 @@
 
     if ([self WOTest_typeIsBitfield:typeString])
         return sizeof(int);
-    
+
 #if defined (__i386__)
 
     if ([self WOTest_typeIsC99Bool:typeString]                         ||
@@ -174,11 +174,11 @@
         // long double        16 bytes
         // vector (64 bits)   8 bytes
         // vector (128 bits)  16 bytes
-        [NSException raise:NSInternalInconsistencyException 
+        [NSException raise:NSInternalInconsistencyException
                     format:@"Type %@ not supported by WOTest_maximumEmbeddedSizeForType:", typeString];
-                        
+
 #elif defined (__ppc__)
-    
+
     if ([self WOTest_typeIsUnsignedChar:typeString]                    ||
         [self WOTest_typeIsChar:typeString])
         size = 1;   // scalars of size/alignment 1
@@ -209,7 +209,7 @@
         // long double  8 bytes (Mac OS X < 10.4, GCC < 4.0)
         // long double  16 bytes (Mac OS X >= 10.4, GCC >= 4.0)
         // vector       16 bytes
-        [NSException raise:NSInternalInconsistencyException 
+        [NSException raise:NSInternalInconsistencyException
                     format:@"Type %@ not supported by WOTest_maximumEmbeddedSizeForType:", typeString];
 
 #elif defined (__ppc64__)
@@ -243,15 +243,15 @@
         // documented in "Mac OS X ABI Function Call Guide" but not supported:
         // long double  16 bytes
         // vector       16 bytes
-        [NSException raise:NSInternalInconsistencyException 
+        [NSException raise:NSInternalInconsistencyException
                     format:@"Type %@ not supported by WOTest_maximumEmbeddedSizeForType:", typeString];
-                        
+
 #else
-                        
+
 #error Unsupported architecture
 
 #endif
-                            
+
     return size;
 }
 
@@ -259,30 +259,30 @@
 {
     NSParameterAssert(typeString != nil);
     size_t size = 0;
-    
+
     if ([self WOTest_typeIsChar:typeString])
         size = sizeof(char);
     else if ([self WOTest_typeIsInt:typeString])
         size = sizeof(int);
-    else if ([self WOTest_typeIsShort:typeString])  
+    else if ([self WOTest_typeIsShort:typeString])
         size = sizeof(short);
-    else if ([self WOTest_typeIsLong:typeString])      
+    else if ([self WOTest_typeIsLong:typeString])
         size = sizeof(long);
     else if ([self WOTest_typeIsLongLong:typeString])
         size = sizeof(long long);
     else if ([self WOTest_typeIsUnsignedChar:typeString])
         size = sizeof(unsigned char);
-    else if ([self WOTest_typeIsUnsignedInt:typeString])    
+    else if ([self WOTest_typeIsUnsignedInt:typeString])
         size = sizeof(unsigned int);
-    else if ([self WOTest_typeIsUnsignedShort:typeString])  
+    else if ([self WOTest_typeIsUnsignedShort:typeString])
         size = sizeof(unsigned short);
-    else if ([self WOTest_typeIsUnsignedLong:typeString])   
+    else if ([self WOTest_typeIsUnsignedLong:typeString])
         size = sizeof(unsigned long);
     else if ([self WOTest_typeIsUnsignedLongLong:typeString])
         size = sizeof(unsigned long long);
-    else if ([self WOTest_typeIsFloat:typeString])          
+    else if ([self WOTest_typeIsFloat:typeString])
         size = sizeof(float);
-    else if ([self WOTest_typeIsDouble:typeString])  
+    else if ([self WOTest_typeIsDouble:typeString])
         size = sizeof(double);
     else if ([self WOTest_typeIsC99Bool:typeString])
         size = sizeof(_Bool);
@@ -311,8 +311,8 @@
             unichar startMarker, endMarker;
             int count;
             NSString *elementType;
-            if ([scanner WOTest_scanCharacter:&startMarker] && 
-                (startMarker == _C_ARY_B) && [scanner scanInt:&count] && 
+            if ([scanner WOTest_scanCharacter:&startMarker] &&
+                (startMarker == _C_ARY_B) && [scanner scanInt:&count] &&
                 [scanner WOTest_scanTypeIntoString:&elementType] &&
                 [scanner WOTest_scanCharacter:&endMarker] && (endMarker == _C_ARY_E) &&
                 [scanner isAtEnd])
@@ -321,28 +321,28 @@
                 size = [self WOTest_sizeForType:elementType] * count;
             }
             else
-                [NSException raise:NSInternalInconsistencyException 
+                [NSException raise:NSInternalInconsistencyException
                             format:@"scanner error in sizeForType for type %@", typeString];
         }
         else if ([self WOTest_typeIsStruct:typeString])
         {
             NSScanner *scanner = [NSScanner scannerWithString:typeString];
             unichar startMarker, endMarker;
-            
-            if ([scanner WOTest_scanCharacter:&startMarker] && 
+
+            if ([scanner WOTest_scanCharacter:&startMarker] &&
                 (startMarker == _C_STRUCT_B))
             {
                 // scan optional identifier
-                if ([scanner WOTest_scanIdentifierIntoString:nil]) 
+                if ([scanner WOTest_scanIdentifierIntoString:nil])
                     [scanner WOTest_scanCharacter:NULL]; // scan past "="
-                                
+
                 NSString    *memberType;
                 size_t      largestMember   = 0;
                 while ([scanner WOTest_scanTypeIntoString:&memberType])
                 {
                     size_t memberSize = [self WOTest_maximumEmbeddedSizeForType:memberType];
                     largestMember = MAX(largestMember, memberSize);
-                    
+
                     if (memberSize != 0) // watch out for division by zero
                     {
                         // check for alignment gap
@@ -350,22 +350,22 @@
                         if (modulo != 0) // fill alignment gap
                             size += (memberSize - modulo);
                     }
-                    
+
                     size += memberSize;
                 }
-                
+
 #if defined (__i386__) || defined (__ppc64)
-                    
+
                 // Special rules for i386:
                 // 1. Composite data types (structs/arrays/unions) take on the alignment of the member with the highest alignment
-                // 2. Size of composite type is a multiple of its alignment 
+                // 2. Size of composite type is a multiple of its alignment
 
                 // Special rules for ppc64 (equivalent):
                 // 1. Embedding alignment of composite types (array/struct) is same as largest embedding align of members.
                 // 2. Total size of the composite is rounded up to multiple of its embedding alignment.
-                
+
                 // Special rules for ppc: None.
-                
+
                 if (largestMember != 0) // watch out for division by zero
                 {
                     // check for alignment gap
@@ -373,35 +373,35 @@
                     if (modulo != 0) // fill alignment gap
                         size += (largestMember - modulo);
                 }
-                        
+
 #endif
-                
+
                 if ([scanner WOTest_scanCharacter:&endMarker] && (endMarker == _C_STRUCT_E) && [scanner isAtEnd])
                     return size; // all done
             }
-                
+
             [NSException raise:NSInternalInconsistencyException format:@"scanner error in sizeForType for type %@", typeString];
         }
         else if ([self WOTest_typeIsUnion:typeString])
         {
             NSScanner *scanner = [NSScanner scannerWithString:typeString];
             unichar startMarker, endMarker;
-            
-            if ([scanner WOTest_scanCharacter:&startMarker] && (startMarker == _C_UNION_B)) 
+
+            if ([scanner WOTest_scanCharacter:&startMarker] && (startMarker == _C_UNION_B))
             {
                 // scan optional identifier
-                if ([scanner WOTest_scanIdentifierIntoString:nil]) 
+                if ([scanner WOTest_scanIdentifierIntoString:nil])
                     [scanner WOTest_scanCharacter:NULL]; // scan past "="
-                
+
                 NSString *memberType;
                 while ([scanner WOTest_scanTypeIntoString:&memberType])
                     // size of union is size of largest type in the union
-                    size = MAX(size, [self WOTest_maximumEmbeddedSizeForType:memberType]); 
-                
+                    size = MAX(size, [self WOTest_maximumEmbeddedSizeForType:memberType]);
+
                 if ([scanner WOTest_scanCharacter:&endMarker] && (endMarker == _C_UNION_E) && [scanner isAtEnd])
                     return size; // all done
             }
-            
+
             [NSException raise:NSInternalInconsistencyException format:@"scanner error in sizeForType for type %@", typeString];
         }
         else if ([self WOTest_typeIsBitfield:typeString])
@@ -409,31 +409,31 @@
         else if ([self WOTest_typeIsUnknown:typeString])
         {
             // could be a function pointer, but could be something else
-            [NSException raise:NSInternalInconsistencyException format: @"Cannot calculate buffer size for type %@", typeString]; 
+            [NSException raise:NSInternalInconsistencyException format: @"Cannot calculate buffer size for type %@", typeString];
         }
         else // we officially have no idea whatsoever
-            [NSException raise:NSInternalInconsistencyException 
+            [NSException raise:NSInternalInconsistencyException
                         format:@"Cannot calculate buffer size for unknown type %@", typeString];
     }
-    
-    return size;    
+
+    return size;
 }
 
 /*! Returns YES if \p typeString contains a numeric scalar value (char, int, short, long, long long, unsigned char, unsigned int, unsigned short, unsigned long, unsigned long long, float, double, C99 _Bool). Returns NO if the receiver contains any other type, object or pointer (id, Class, SEL, void, char *, as well as arrays, structures and pointers). */
 + (BOOL)WOTest_typeIsNumericScalar:(NSString *)typeString
 {
     if (!typeString) return NO;
-    return ([self WOTest_typeIsChar:typeString]                || 
+    return ([self WOTest_typeIsChar:typeString]                ||
             [self WOTest_typeIsInt:typeString]                 ||
-            [self WOTest_typeIsShort:typeString]               || 
+            [self WOTest_typeIsShort:typeString]               ||
             [self WOTest_typeIsLong:typeString]                ||
-            [self WOTest_typeIsLongLong:typeString]            || 
+            [self WOTest_typeIsLongLong:typeString]            ||
             [self WOTest_typeIsUnsignedChar:typeString]        ||
-            [self WOTest_typeIsUnsignedInt:typeString]         || 
+            [self WOTest_typeIsUnsignedInt:typeString]         ||
             [self WOTest_typeIsUnsignedShort:typeString]       ||
-            [self WOTest_typeIsUnsignedLong:typeString]        || 
+            [self WOTest_typeIsUnsignedLong:typeString]        ||
             [self WOTest_typeIsUnsignedLongLong:typeString]    ||
-            [self WOTest_typeIsFloat:typeString]               || 
+            [self WOTest_typeIsFloat:typeString]               ||
             [self WOTest_typeIsDouble:typeString]              ||
             [self WOTest_typeIsC99Bool:typeString]);
 }
@@ -462,14 +462,14 @@
 {
     if (!typeString) return NO;
     const char *type = [typeString UTF8String];
-    return ((strlen(type) == 1) && *type == _C_SHT);   
+    return ((strlen(type) == 1) && *type == _C_SHT);
 }
 
 + (BOOL)WOTest_typeIsLong:(NSString *)typeString
 {
     if (!typeString) return NO;
     const char *type = [typeString UTF8String];
-    return ((strlen(type) == 1) && *type == _C_LNG);   
+    return ((strlen(type) == 1) && *type == _C_LNG);
 }
 
 + (BOOL)WOTest_typeIsLongLong:(NSString *)typeString
@@ -511,7 +511,7 @@
 {
     if (!typeString) return NO;
     const char *type = [typeString UTF8String];
-    return ((strlen(type) == 1) && *type == _C_ULNGLNG);   
+    return ((strlen(type) == 1) && *type == _C_ULNGLNG);
 }
 
 + (BOOL)WOTest_typeIsFloat:(NSString *)typeString
@@ -525,14 +525,14 @@
 {
     if (!typeString) return NO;
     const char *type = [typeString UTF8String];
-    return ((strlen(type) == 1) && *type == _C_DBL);   
+    return ((strlen(type) == 1) && *type == _C_DBL);
 }
 
 + (BOOL)WOTest_typeIsC99Bool:(NSString *)typeString
 {
     if (!typeString) return NO;
     const char *type = [typeString UTF8String];
-    return ((strlen(type) == 1) && *type == _C_99BOOL);  
+    return ((strlen(type) == 1) && *type == _C_99BOOL);
 }
 
 + (BOOL)WOTest_typeIsVoid:(NSString *)typeString
@@ -621,7 +621,7 @@
     return ((strlen(type) == 1) && *type == _C_UNDEF);
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark High-level test methods
 
 - (BOOL)WOTest_testIsEqualToValue:(NSValue *)otherValue
@@ -642,7 +642,7 @@
                 return YES;
 
             @try {
-                if (selfObject && otherObject && [NSObject WOTest_object:selfObject respondsToSelector:@selector(isEqual:)]) 
+                if (selfObject && otherObject && [NSObject WOTest_object:selfObject respondsToSelector:@selector(isEqual:)])
                     return [selfObject isEqual:otherObject];
             }
             @catch (id e) {
@@ -655,11 +655,11 @@
             if (strcmp([otherValue objCType], @encode(typeof(nil))) == 0)
             {
                 typeof(nil) nilId = nil;
-                NSValue *nilValue = [NSValue valueWithBytes:&nilId objCType:@encode(typeof(nil))]; 
+                NSValue *nilValue = [NSValue valueWithBytes:&nilId objCType:@encode(typeof(nil))];
                 if ([otherValue WOTest_compare:nilValue] == NSOrderedSame) // comparing other value (nil) with self object
                     return ([self nonretainedObjectValue] == nil);
             }
-            
+
             // will raise exception (comparing numeric scalar with object)
             return ([self WOTest_compare:otherValue] == NSOrderedSame);
         }
@@ -673,8 +673,8 @@
     {
         // check for special case: comparing with nil
         typeof(nil) nilId = nil;
-        NSValue *nilValue = [NSValue valueWithBytes:&nilId objCType:@encode(typeof(nil))];         
-        if ((strcmp([self objCType], @encode(typeof(nil))) == 0) && ([self WOTest_compare:nilValue] == NSOrderedSame)) 
+        NSValue *nilValue = [NSValue valueWithBytes:&nilId objCType:@encode(typeof(nil))];
+        if ((strcmp([self objCType], @encode(typeof(nil))) == 0) && ([self WOTest_compare:nilValue] == NSOrderedSame))
         {
             // self is nil (or at least looks like nil)
             if ([otherValue WOTest_isObject])                          // comparing self (nil) with otherObject
@@ -682,7 +682,7 @@
             else if ([otherValue WOTest_isPointerToVoid])              // special case can compare to pointer to void if zero
                 return ((id)[otherValue pointerValue] == nil);
         }
-        
+
         // could raise exception (comparing numeric scalar with object)
         return ([self WOTest_compare:otherValue] == NSOrderedSame);
     }
@@ -694,12 +694,12 @@
         else if ([otherValue WOTest_isPointerToVoid])
             // this special case already necessary on Leopard, otherwise nil-to-nil comparison fails
             return ([self pointerValue] == [otherValue pointerValue]);
-        
+
         // fall through to standard case
         return ([self WOTest_compare:otherValue] == NSOrderedSame);
     }
-    else if (([self WOTest_isCharArray] || [self WOTest_isCharacterString] || [self WOTest_isConstantCharacterString]) && 
-             ([otherValue WOTest_isCharArray] || [otherValue WOTest_isCharacterString] || 
+    else if (([self WOTest_isCharArray] || [self WOTest_isCharacterString] || [self WOTest_isConstantCharacterString]) &&
+             ([otherValue WOTest_isCharArray] || [otherValue WOTest_isCharacterString] ||
               [otherValue WOTest_isConstantCharacterString]))
     {
         // another special case
@@ -737,24 +737,24 @@
 {
     if (!aValue)
         [NSException raise:NSInvalidArgumentException format:@"cannot compare to nil"];
-    
+
     // object case
     if ([self WOTest_isObject])
     {
         if (![aValue WOTest_isObject])
             [NSException raise:NSInvalidArgumentException format:@"cannot compare object with non-object"];
-        
+
         id selfObject   = [self nonretainedObjectValue];
         id otherObject  = [aValue nonretainedObjectValue];
-        
+
         if ([selfObject isKindOfClass:[otherObject class]] && [selfObject respondsToSelector:@selector(compare:)])
-            return ((NSComparisonResult (*)(id, SEL, id))objc_msgSend)(selfObject, @selector(compare:), otherObject); 
+            return ((NSComparisonResult (*)(id, SEL, id))objc_msgSend)(selfObject, @selector(compare:), otherObject);
         else if ([otherObject isKindOfClass:[selfObject class]] && [otherObject respondsToSelector:@selector(compare:)])
             return ((NSComparisonResult (*)(id, SEL, id))objc_msgSend)(otherObject, @selector(compare:), selfObject);
-        
+
         [NSException raise:NSInvalidArgumentException format:@"compared objects must be of same class and implement compare:"];
     }
-    
+
     // numeric scalar case
     if ([self WOTest_isNumericScalar] && [aValue WOTest_isNumericScalar])
     {
@@ -786,14 +786,14 @@
         else if ([aValue WOTest_isC99Bool])
             return [self WOTest_compareWithC99Bool:[aValue WOTest_C99BoolValue]];
     }
-    
+
     [NSException raise:NSInvalidArgumentException format:@"non-numeric value(s) passed"];
 
     // never reached, but necessary to suppress compiler warning
-    return NSOrderedSame;  
+    return NSOrderedSame;
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Utility methods
 
 - (size_t)WOTest_bufferSize
@@ -804,7 +804,7 @@
 - (void)WOTest_printSignCompareWarning:(NSString *)warning
 {
     NSParameterAssert(warning != nil);
-    
+
     // this conditional in here so that the warnings can be turned off in WOTest self-testing
     if ([[WOTest sharedInstance] warnsAboutSignComparisons])
     {
@@ -836,7 +836,7 @@
             if ([NSObject WOTest_object:valueContents isKindOfClass:[NSString class]])
                 return [[valueContents retain] autorelease];
             else if ([NSObject WOTest_object:valueContents respondsToSelector:@selector(description)] &&
-                     [NSObject WOTest_isIdReturnType:[NSObject WOTest_returnTypeForObject:valueContents 
+                     [NSObject WOTest_isIdReturnType:[NSObject WOTest_returnTypeForObject:valueContents
                                                                                  selector:@selector(description)]])
             {
                 NSString *description = objc_msgSend(valueContents, @selector(description));
@@ -900,7 +900,7 @@
     else if ([self WOTest_isSelector])
         return [NSString stringWithFormat:@"(SEL)%@", NSStringFromSelector([self WOTest_selectorValue])];
     else if ([self WOTest_isPointerToVoid])
-        return [NSString stringWithFormat:@"(void *)%#08x", [self WOTest_pointerToVoidValue]];    
+        return [NSString stringWithFormat:@"(void *)%#08x", [self WOTest_pointerToVoidValue]];
     return [self description];  // fallback case
 }
 
@@ -930,14 +930,14 @@
 
 - (unsigned)WOTest_arrayCount
 {
-    NSAssert([self WOTest_isArray], 
+    NSAssert([self WOTest_isArray],
              @"WOTest_arrayCount sent but receiver does not contain an array");
     NSScanner *scanner = [NSScanner scannerWithString:[self WOTest_objCTypeString]];
     unichar startMarker;
     int count = 0;
-    
+
     // attempt the scan: it should work
-    if (!([scanner WOTest_scanCharacter:&startMarker] && (startMarker == _C_ARY_B) && [scanner scanInt:&count])) 
+    if (!([scanner WOTest_scanCharacter:&startMarker] && (startMarker == _C_ARY_B) && [scanner scanInt:&count]))
         [NSException raise:NSInternalInconsistencyException format:@"scanner error in WOTest_arrayCount"];
 
     return (unsigned)count;
@@ -945,12 +945,12 @@
 
 - (NSString *)WOTest_arrayType
 {
-    NSAssert([self WOTest_isArray], @"WOTest_arrayType sent but receiver does not contain an array"); 
+    NSAssert([self WOTest_isArray], @"WOTest_arrayType sent but receiver does not contain an array");
     NSScanner *scanner = [NSScanner scannerWithString:[self WOTest_objCTypeString]];
     [scanner setScanLocation:1];
     NSString *typeString;
     if (!([scanner scanInt:nil] && [scanner WOTest_scanTypeIntoString:&typeString]))
-        [NSException raise:NSInternalInconsistencyException format:@"scanner error in WOTest_arrayType"]; 
+        [NSException raise:NSInternalInconsistencyException format:@"scanner error in WOTest_arrayType"];
     return typeString;
 }
 
@@ -1217,8 +1217,8 @@
     unichar startMarker, flag, endMarker;
     int count;
     return ([scanner WOTest_scanCharacter:&startMarker] && (startMarker == _C_ARY_B) &&
-            [scanner scanInt:&count] && 
-            [scanner WOTest_scanCharacter:&flag] && (flag == _C_CHR) && 
+            [scanner scanInt:&count] &&
+            [scanner WOTest_scanCharacter:&flag] && (flag == _C_CHR) &&
             [scanner WOTest_scanCharacter:&endMarker] && (endMarker == _C_ARY_E) &&
             [scanner isAtEnd]);
 }
@@ -1227,15 +1227,15 @@
 {
     @try {
         if ([self WOTest_isCharacterString] || [self WOTest_isConstantCharacterString])
-            return [NSString stringWithUTF8String:(const char *)[self pointerValue]]; 
+            return [NSString stringWithUTF8String:(const char *)[self pointerValue]];
         else // see if this is a char array
         {
-            NSScanner *scanner = [NSScanner scannerWithString:[self WOTest_objCTypeString]]; 
+            NSScanner *scanner = [NSScanner scannerWithString:[self WOTest_objCTypeString]];
             unichar startMarker, flag, endMarker;
             int count;
-            if ([scanner WOTest_scanCharacter:&startMarker] && 
-                (startMarker == _C_ARY_B) && [scanner scanInt:&count] && 
-                [scanner WOTest_scanCharacter:&flag] && (flag == _C_CHR) && 
+            if ([scanner WOTest_scanCharacter:&startMarker] &&
+                (startMarker == _C_ARY_B) && [scanner scanInt:&count] &&
+                [scanner WOTest_scanCharacter:&flag] && (flag == _C_CHR) &&
                 [scanner WOTest_scanCharacter:&endMarker] && (endMarker == _C_ARY_E) &&
                 [scanner isAtEnd])
             {
@@ -1243,10 +1243,10 @@
                 if (count > 0)
                 {
                     char *buffer = malloc(count * sizeof(char));
-                    NSAssert1(buffer != NULL, @"malloc() failed (size %d)", 
+                    NSAssert1(buffer != NULL, @"malloc() failed (size %d)",
                               (count * sizeof(char)));
                     [self getValue:buffer];
-                    
+
                     // confirm that this is a null-terminated string
                     for (int i = 0; i < count; i++)
                     {
@@ -1261,10 +1261,10 @@
     @catch (id e) {
         // fall through
     }
-    return nil;    
+    return nil;
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Low-level test methods
 
 /* Unfortunately there is a lot of very similar code repeated across these methods but it seems to be a necessary evil (600 lines of necessary evil). Firstly, it's necessary to explicitly declare the type of the right-hand value of the comparison. There are lots of permuations for implicit casts, explicit casts (and warnings), and GCC seems to warn about signed to unsigned comparisons differently depending on the types. */
@@ -1286,7 +1286,7 @@
     else if ([self WOTest_isUnsignedInt])
     {
         [self WOTest_printSignCompareWarning:@"comparison between signed and unsigned, to avoid this warning use an explicit cast"];
-        return WO_COMPARE_SCALARS([self WOTest_unsignedIntValue], (unsigned char)other); // explicit cast 
+        return WO_COMPARE_SCALARS([self WOTest_unsignedIntValue], (unsigned char)other); // explicit cast
     }
     else if ([self WOTest_isUnsignedShort])
         return WO_COMPARE_SCALARS([self WOTest_unsignedShortValue], other); // implicit cast
@@ -1307,11 +1307,11 @@
          return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1353,11 +1353,11 @@
         return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1401,9 +1401,9 @@
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
 
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1425,7 +1425,7 @@
     else if ([self WOTest_isUnsignedInt])
     {
         [self WOTest_printSignCompareWarning:@"comparison between signed and unsigned, to avoid this warning use an explicit cast"];
-        return WO_COMPARE_SCALARS([self WOTest_unsignedIntValue], (unsigned long)other); // explicit cast 
+        return WO_COMPARE_SCALARS([self WOTest_unsignedIntValue], (unsigned long)other); // explicit cast
     }
     else if ([self WOTest_isUnsignedShort])
         return WO_COMPARE_SCALARS([self WOTest_unsignedShortValue], other); // implicit cast
@@ -1446,11 +1446,11 @@
         return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1485,11 +1485,11 @@
         return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1521,11 +1521,11 @@
         return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;       // never reached, but necessary to suppress compiler warning
 }
 
@@ -1569,11 +1569,11 @@
         return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1607,9 +1607,9 @@
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
 
     // all other cases
-    [NSException raise:NSInvalidArgumentException  
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1655,9 +1655,9 @@
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
 
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;       // never reached, but necessary to suppress compiler warning
 }
 
@@ -1666,7 +1666,7 @@
     if ([self WOTest_isChar]) // (also BOOL)
     {
         [self WOTest_printSignCompareWarning:@"comparison between signed and unsigned, to avoid this warning use an explicit cast"];
-        return WO_COMPARE_SCALARS((unsigned char)[self WOTest_charValue], other); // explicit cast 
+        return WO_COMPARE_SCALARS((unsigned char)[self WOTest_charValue], other); // explicit cast
     }
     else if ([self WOTest_isInt])
     {
@@ -1704,11 +1704,11 @@
         return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1742,9 +1742,9 @@
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
 
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1778,9 +1778,9 @@
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // implicit cast
 
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;   // never reached, but necessary to suppress compiler warning
 }
 
@@ -1812,11 +1812,11 @@
         return WO_COMPARE_SCALARS([self WOTest_doubleValue], other); // implicit cast
     else if ([self WOTest_isC99Bool])
         return WO_COMPARE_SCALARS([self WOTest_C99BoolValue], other); // no cast
-    
+
     // all other cases
-    [NSException raise:NSInvalidArgumentException 
+    [NSException raise:NSInvalidArgumentException
                 format:@"cannot compare type \"%s\" with type \"%s\"", [self objCType], @encode(typeof(other))];
-    
+
     return NSOrderedSame;       // never reached, but necessary to suppress compiler warning
 }
 

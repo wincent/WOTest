@@ -24,7 +24,7 @@
 @interface WOTest : NSObject {
 
     NSDate      *startDate;
-    
+
     unsigned    classesWithTests;
     unsigned    classesWithoutTests;
     unsigned    methodsWithTests;
@@ -32,12 +32,12 @@
     unsigned    testsPassed;
     unsigned    testsFailed;
     unsigned    uncaughtExceptions;
-    
+
     //! test sense inversion: should only be used during WOTest self-testing
     unsigned    testsFailedExpected;
     unsigned    testsPassedUnexpected;
     BOOL        expectFailures;
-    
+
     //! low-level exception handling inversion: should only be used during WOTest self-testing
     unsigned    lowLevelExceptionsExpected;
     unsigned    lowLevelExceptionsUnexpected;
@@ -45,21 +45,21 @@
 
     //! Optionally refrain from handling low level exceptions
     BOOL        handlesLowLevelExceptions;
-    
+
     //! Internal use only: used for keeping track of whether low-level exception handlers have been installed or not
     //! Necessary because tested methods may change the low-level-exception-catching status mid-test
     BOOL        lowLevelExceptionHandlerInstalled;
-    
+
     //! 0 = mostly silent operation; 1 = verbose; 2 = very verbose
     unsigned    verbosity;
-    
+
     //! Optionally trim leading path components when printing path names to console.
     unsigned    trimInitialPathComponents;
-    
+
     //! Cache last reported path and last reported line number for use when printing warnings and errors which don't include file and line information
     NSString    *lastReportedFile;
     int         lastReportedLine;
-    
+
     //! Defaults to YES.
     BOOL        warnsAboutSignComparisons;
 }
@@ -67,7 +67,7 @@
 #pragma mark -
 #pragma mark Singleton pattern enforcement methods
 
-/*! \name Singleton pattern enforcement methods 
+/*! \name Singleton pattern enforcement methods
 \startgroup */
 
 + (WOTest *)sharedInstance;
@@ -77,7 +77,7 @@
 #pragma mark -
 #pragma mark Utility methods
 
-/*! \name Utility methods 
+/*! \name Utility methods
     \startgroup */
 
 /*! Returns an NSString based on sending the "description" selector to anObject, compressing whitespace and truncating if necessary at index and appending an ellipsis. Returns nil if anObject is nil. Optionally returns YES or NO indirectyl via /p didTruncate to indicate whether truncation actually occurred. Pass \p index of 0 to return an untruncated, uncompressed description. */
@@ -91,10 +91,10 @@
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Test-running methods
 
-/*! \name Test-running test methods 
+/*! \name Test-running test methods
     \startgroup */
 
 /*! Runs all tests currently visible in the runtime. Returns YES if all tests pass, NO if any test fails. */
@@ -127,10 +127,10 @@
 
 - (void)growlNotifyTitle:(NSString *)title message:(NSString *)message isWarning:(BOOL)isWarning sticky:(BOOL)sticky;
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Logging methods
 
-//! \name Logging methods 
+//! \name Logging methods
 //! \startgroup
 
 //! Keep track of last known file and line number
@@ -156,10 +156,10 @@
 
 //! \endgroup
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Empty (do-nothing) test methods
 
-/*! \name Empty (do-nothing) test methods 
+/*! \name Empty (do-nothing) test methods
     \startgroup */
 
 /*! An empty test which always passes. */
@@ -170,10 +170,10 @@
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Boolean test methods
 
-/*! \name Boolean test methods 
+/*! \name Boolean test methods
     \startgroup */
 
 - (void)testTrue:(BOOL)expr inFile:(char *)path atLine:(int)line;
@@ -185,7 +185,7 @@
 #pragma mark -
 #pragma mark NSValue-based tests
 
-/*! \name NSValue-based tests 
+/*! \name NSValue-based tests
     \startgroup */
 
 - (void)testValue:(NSValue *)actual isEqualTo:(NSValue *)expected inFile:(char *)path atLine:(int)line;
@@ -202,10 +202,10 @@
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Pointer to void test methods
 
-/*! \name Pointer to void test methods 
+/*! \name Pointer to void test methods
     \startgroup */
 
 - (void)testNil:(void *)pointer inFile:(char *)path atLine:(int)line;
@@ -221,7 +221,7 @@
 #pragma mark -
 #pragma mark int test methods
 
-/*! \name int test methods 
+/*! \name int test methods
     \startgroup */
 
 /*! The WO_TEST_IS_INT macro uses \@encode(typeof()) to pass a string encoding of the type. */
@@ -255,7 +255,7 @@
 #pragma mark -
 #pragma mark unsigned test methods
 
-/*! \name unsigned test methods 
+/*! \name unsigned test methods
     \startgroup */
 
 /*! The WO_TEST_IS_UNSIGNED macro uses \@encode(typeof()) to pass a string encoding of the type. */
@@ -285,7 +285,7 @@
 #pragma mark -
 #pragma mark float test methods without error margins
 
-/*! \name float test methods without error margins 
+/*! \name float test methods without error margins
     \startgroup */
 
 /*! The WO_TEST_IS_FLOAT macro uses \@encode(typeof()) to pass a string encoding of the type. */
@@ -319,7 +319,7 @@
 #pragma mark -
 #pragma mark float test methods with error margins
 
-/*! \name float test methods with error margins 
+/*! \name float test methods with error margins
     \startgroup */
 
 - (void)testFloatPositive:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line;
@@ -347,7 +347,7 @@
 #pragma mark -
 #pragma mark double test methods without error margins
 
-/*! \name double test methods without error margins 
+/*! \name double test methods without error margins
     \startgroup */
 
 /*! The WO_TEST_IS_DOUBLE macro uses \@encode(typeof()) to pass a string encoding of the type. */
@@ -381,7 +381,7 @@
 #pragma mark -
 #pragma mark double test methods with error margins
 
-/*! \name double test methods with error margins 
+/*! \name double test methods with error margins
     \startgroup */
 
 - (void)testDoublePositive:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line;
@@ -409,7 +409,7 @@
 #pragma mark -
 #pragma mark Object test methods
 
-/*! \name Object test methods 
+/*! \name Object test methods
     \startgroup */
 
 - (void)testObject:(id)actual isEqualTo:(id)expected inFile:(char *)path atLine:(int)line;
@@ -421,7 +421,7 @@
 #pragma mark -
 #pragma mark NSString test methods
 
-/*! \name NSString test methods 
+/*! \name NSString test methods
     \startgroup */
 
 - (void)testString:(NSString *)actual isEqualTo:(NSString *)expected inFile:(char *)path atLine:(int)line;
@@ -445,7 +445,7 @@
 #pragma mark -
 #pragma mark NSArray test methods
 
-/*! \name NSArray test methods 
+/*! \name NSArray test methods
     \startgroup */
 
 - (void)testArray:(NSArray *)actual isEqualTo:(NSArray *)expected inFile:(char *)path atLine:(int)line;
@@ -457,7 +457,7 @@
 #pragma mark -
 #pragma mark NSDictionary test methods
 
-/*! \name NSDictionary test methods 
+/*! \name NSDictionary test methods
     \startgroup */
 
 - (void)testDictionary:(NSDictionary *)actual isEqualTo:(NSDictionary *)expected inFile:(char *)path atLine:(int)line;
@@ -469,7 +469,7 @@
 #pragma mark -
 #pragma mark Exception test methods
 
-/*! \name Exception test methods 
+/*! \name Exception test methods
     \startgroup */
 
 - (void)testThrowsException:(id)exception inFile:(char *)path atLine:(int)line;
@@ -482,7 +482,7 @@
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Random value generator methods
 
 /*! \name Random value generator methods
@@ -529,10 +529,10 @@
 
 /*! \endgroup */
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Accessors
 
-//! \name Accessors 
+//! \name Accessors
 //! \startgroup
 
 - (NSDate *)startDate;

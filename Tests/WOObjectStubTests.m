@@ -33,12 +33,12 @@
     id              mock    = nil;
     WOObjectStub    *stub   = nil;
     NSValue         *value  = [NSValue WOTest_valueWithObject:@"foobar"];
-    
+
     // should raise if returning: invoked but return value already recorded
     stub = [WOObjectStub stubForClass:[NSString class] withDelegate:nil];
     WO_TEST_DOES_NOT_THROW([stub returning:value]);
     WO_TEST_THROWS([stub returning:value]);
-    
+
     // should return expected value
     mock = [WOObjectMock mockForClass:[NSString class]];
     [[[mock accept] returning:value] lowercaseString];
@@ -53,24 +53,24 @@
     NSException *exception = [NSException exceptionWithName:@"WOFooException"
                                                      reason:@"foo exception"
                                                    userInfo:nil];
-    
+
     // should raise if raising: invoked but exception already recorded
     stub = [WOObjectStub stubForClass:[NSString class] withDelegate:nil];
     WO_TEST_DOES_NOT_THROW([stub raising:exception]);
     WO_TEST_THROWS([stub raising:exception]);
-    
+
     // try with different kind of exception object (not NSException)
     stub = [WOObjectStub stubForClass:[NSString class] withDelegate:nil];
     WO_TEST_DOES_NOT_THROW([stub raising:@"foo"]);
     WO_TEST_THROWS([stub raising:@"bar"]);
-    
-    // should raise if raising: passed an object that does not respond to 
+
+    // should raise if raising: passed an object that does not respond to
     // retain, release or autorelease
     WOLightweightRoot *root = [WOLightweightRoot newLightweightRoot];
     stub = [WOObjectStub stubForClass:[NSString class] withDelegate:nil];
     WO_TEST_THROWS([stub raising:root]);
     [root dealloc];
-    
+
     // should raise expected exception
     mock = [WOObjectMock mockForClass:[NSString class]];
     [[[mock accept] raising:exception] lowercaseString];

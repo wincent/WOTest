@@ -21,11 +21,11 @@
 
 #import <Foundation/Foundation.h>
 
-/*! WOTest is designed to work with any Objective-C class or object. You are not limited to working only with classes that derive from the Apple root classes (NSObject and NSProxy) or the other root classes (such as Object and NSZombie) that are implemented in libobjc (libobjc is part of Darwin and open source but the headers do not ship with Mac OS X). In most Objective-C programming you can assume that the objects with which you are working descend from NSObject and implement the NSObject protocol. This means that you can avoid exceptions by testing objects to see whether they implement selectors before sending messages; NSObject methods such as conformsToProtocol:, respondsToSelector: and performSelector: are frequently used for this purpose. 
+/*! WOTest is designed to work with any Objective-C class or object. You are not limited to working only with classes that derive from the Apple root classes (NSObject and NSProxy) or the other root classes (such as Object and NSZombie) that are implemented in libobjc (libobjc is part of Darwin and open source but the headers do not ship with Mac OS X). In most Objective-C programming you can assume that the objects with which you are working descend from NSObject and implement the NSObject protocol. This means that you can avoid exceptions by testing objects to see whether they implement selectors before sending messages; NSObject methods such as conformsToProtocol:, respondsToSelector: and performSelector: are frequently used for this purpose.
 
 If you try sending these messages to objects which do not implement them then you could cause a non-catchable exception (generated in _objc_error and _objc_trap) which will terminate the testing process. One of the goals of WOTest is to be extremely robust; exceptions should be caught and reported and they should not crash the program. It is true that custom root classes are extremely uncommon but WOTest nevertheless has been designed to cope with them. WOTest interacts with the Objective-C runtime at a low level and implements a number of convenience wrapper routines that enable the framework to work with any Objective-C object without fear of provoking uncatchable exceptions. The wrapper methods are described in this section. In simple cases (for example when invoking the objc_msgSend function) the framework calls the function directly without a wrapper. */
 
-@interface NSObject (WOTest) 
+@interface NSObject (WOTest)
 
 /*! Substitute for NSObject description method. Returns "(nil)" if \p anObject is nil. */
 + (NSString *)WOTest_descriptionForObject:(id)anObject;

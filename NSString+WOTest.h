@@ -27,7 +27,7 @@ void _WOLog(NSString *format, ...);
 /*! This function is an alternative to NSLogv that accepts the same kinds of format specifiers (including the "%@" format specifier to print object descriptions) but which omits the prelimary information that is prepended by NSLogv (date, time, process name, process number). Named with a preceding underscore for consistency with the _WOLog function. */
 void _WOLogv(NSString *format, va_list args);
 
-@interface NSString (WOTest) 
+@interface NSString (WOTest)
 
 + (NSString *)WOTest_stringWithFormat:(NSString *)format arguments:(va_list)argList;
 

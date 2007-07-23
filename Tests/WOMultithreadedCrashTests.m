@@ -39,15 +39,15 @@
 - (void)secondaryThreadCrasher:(id)sender
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    
+
     // Apple's InstallExceptionHandler doesn't catch crashes on secondary threads
     // - in the case of Carbon threads a separate handler is automatically installed for each thread
     // - pthreads and Cocoa threads don't get extra handlers automatically installed
     // - these are per-thread handlers because the per-process handler port is used by the crash reporter
-    
+
     // TODO: write a Mach per-process exception handler
     return;                                                     // don't continue (would crash WOTestRunner)
-    
+
     WO_TEST_PASS;                                               // force update of "lastKnownLocation"
     id *object = NULL;                                          // cause a crash, but WOTest should keep running
     *object = @"foo";                                           // SIGBUS here

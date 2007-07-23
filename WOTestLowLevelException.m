@@ -27,12 +27,12 @@
 {
     NSString *reason = [NSString stringWithFormat:
         @"a low-level exception (\"%@\") was caught during execution: the most likely cause is a programming error in the software "
-        @"being tested; be aware that the reliability of the most recent test and all subsequent tests may be adversely affected", 
+        @"being tested; be aware that the reliability of the most recent test and all subsequent tests may be adversely affected",
         [self nameForType:kind]];
-    
+
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInt:kind], WOTestLowLevelExceptionKind, nil];
-    
+
     return [[[self alloc] initWithName:WOTestLowLevelExceptionName reason:reason userInfo:userInfo] autorelease];
 }
 

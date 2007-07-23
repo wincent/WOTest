@@ -1,4 +1,4 @@
-WOTest is an Objective-C unit testing framework written by Wincent Colaiuta 
+WOTest is an Objective-C unit testing framework written by Wincent Colaiuta
 <win@wincent.com>. More information available at:
 
 http://test.wincent.com/

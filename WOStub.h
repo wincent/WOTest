@@ -23,15 +23,15 @@
 
 /*! The WOStub class provides a temporary "trampoline" object that can be used to record invocations (selectors and arguments) and desired return values. It is a "stub" because it is a temporary object that operates behind the scenes and is effectively indistinguishable from the object for which it temporarily stands in. It is a "trampoline" because it serves to bounce back the invocations and desired return values to the object for which it temporarily stands in. */
 @interface WOStub : NSProxy {
-    
+
     id              delegate;
-    
+
     NSInvocation    *invocation;
-    
+
     NSValue         *returnValue;
-        
+
     id              exception;
-    
+
     /*! YES if the stub should accept any arguments. The default behaviour (NO) indicates that the stub should only accept the arguments that were passed when it was first created and any discrepancies will result in an exception. */
     BOOL            acceptsAnyArguments;
 }

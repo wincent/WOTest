@@ -54,13 +54,13 @@
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    // avoid an infinite loop (docs warn "Be sure to avoid an infinite loop when necessary by checking that aSelector isn't the 
+    // avoid an infinite loop (docs warn "Be sure to avoid an infinite loop when necessary by checking that aSelector isn't the
     // selector for this method itself and by not sending any message that might invoke this method.")
     if (([self mockedClass] == [self class]) && (aSelector == _cmd)) return nil;
-    
+
     // see if method really exists in mocked class, if not forward:: will have to do something special
     return [[self mockedClass] instanceMethodSignatureForSelector:aSelector];
-}    
+}
 
 #pragma mark -
 #pragma mark NSObject protocol
@@ -81,13 +81,13 @@
             NSValue         *otherValue             = [anObject returnValue];
             id              thisException           = [self exception];
             id              otherException          = [anObject exception];
-            
+
             if ([self mockedClass] != [anObject mockedClass])
                 return NO;
-            
+
             if ([self acceptsAnyArguments] != [anObject acceptsAnyArguments])
                 return NO;
-            
+
             if (!thisInvocation && !otherInvocation) // both nil
                 invocationsAreEqual = YES;
             else if (thisInvocation && otherInvocation) // both non-nil
@@ -97,18 +97,18 @@
                 else
                     invocationsAreEqual = [thisInvocation WOTest_isEqualToInvocation:otherInvocation];
             }
-            
+
             if (!thisValue && !otherValue) // both nil
                 returnValuesAreEqual = YES;
             else if (thisValue && otherValue) // both non-nil
                 returnValuesAreEqual = [thisValue isEqual:otherValue];
-            
+
             if (!thisException && !otherException) // both nil
                 exceptionsAreEqual = YES;
             else if (thisException && otherException) // both non-nil
                 exceptionsAreEqual = [thisException isEqual:otherException];
-            
-            if (invocationsAreEqual && returnValuesAreEqual && 
+
+            if (invocationsAreEqual && returnValuesAreEqual &&
                 exceptionsAreEqual)
                 return YES;
         }

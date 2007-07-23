@@ -41,8 +41,8 @@
 #pragma mark Accessors
 
     /*!
-    \name  Accessor methods 
-     \startgroup 
+    \name  Accessor methods
+     \startgroup
      */
 
 - (Class)mockedClass;

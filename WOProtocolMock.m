@@ -38,7 +38,7 @@
 NSString *WOStringFromProtocol(Protocol *aProtocol)
 {
     if (aProtocol == NULL) return nil;
-	return [NSString stringWithUTF8String:protocol_getName(aProtocol)];
+    return [NSString stringWithUTF8String:protocol_getName(aProtocol)];
 }
 
 @implementation WOProtocolMock
@@ -57,7 +57,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
     NSParameterAssert(aProtocol != NULL);
 
     // TODO: test for validity of the Protocol by checking with the runtime
-    
+
     if ((self = [super init]))
         [self setMockedProtocol:aProtocol];
     return self;
@@ -109,12 +109,12 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
 }
 
 #pragma mark -
-#pragma mark Proxy methods 
+#pragma mark Proxy methods
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
     NSParameterAssert(anInvocation != nil);
-    
+
     // check if in reject list
     WO_ENUMERATE(rejected, stub)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
@@ -123,23 +123,23 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
                 NSStringFromSelector([anInvocation selector]), WOStringFromProtocol([self mockedProtocol])];
             return;
         }
-    
+
     // check if expectedInOrder
     WO_ENUMERATE(expectedInOrder, stub)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
         {
             NSAssert(([expectedInOrder objectAtIndex:0] != stub), @"invocation received out of order");
-            
+
             // if in order, remove from head of list
             [expectedInOrder removeObjectAtIndex:0];
-            
+
             // and move to "accepted"
             [accepted addObject:stub];
             [self storeReturnValue:[stub returnValue] forInvocation:anInvocation];
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     // check if expected once
     WO_ENUMERATE(expectedOnce, stub)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
@@ -151,7 +151,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     // check if expected
     WO_ENUMERATE(expected, stub)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
@@ -163,7 +163,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     // check if accepted once
     WO_ENUMERATE(acceptedOnce, stub)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
@@ -175,7 +175,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
+
     // check if accepted
     WO_ENUMERATE(accepted, stub)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
@@ -184,10 +184,10 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
             if ([stub exception]) @throw [stub exception];
             return;
         }
-    
-    
+
+
     if ([self acceptsByDefault]) return;
-    
+
     // no matches! (should never get here)
     [NSException raise:NSInternalInconsistencyException format:@"No matching invocations found (selector %@, protocol %@)",
         NSStringFromSelector([anInvocation selector]), WOStringFromProtocol([self mockedProtocol])];
@@ -195,12 +195,12 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
 
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
-    // avoid an infinite loop (docs warn "Be sure to avoid an infinite loop when necessary by checking that aSelector isn't the 
+    // avoid an infinite loop (docs warn "Be sure to avoid an infinite loop when necessary by checking that aSelector isn't the
     // selector for this method itself and by not sending any message that might invoke this method.")
     if (aSelector == _cmd) return nil;
-    
-	BOOL isRequiredMethod = YES;	// no idea what to pass here
-	struct objc_method_description description = protocol_getMethodDescription([self mockedProtocol], aSelector, isRequiredMethod, YES);
+
+    BOOL isRequiredMethod = YES;    // no idea what to pass here
+    struct objc_method_description description = protocol_getMethodDescription([self mockedProtocol], aSelector, isRequiredMethod, YES);
     return [NSMethodSignature WOTest_signatureBasedOnObjCTypes:description.types];
 }
 
@@ -209,7 +209,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
 
 - (Protocol *)mockedProtocol
 {
-    return mockedProtocol; 
+    return mockedProtocol;
 }
 
 - (void)setMockedProtocol:(Protocol *)aMockedProtocol

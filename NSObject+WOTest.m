@@ -35,25 +35,25 @@
 + (NSString *)WOTest_descriptionForObject:(id)anObject
 {
     if (!anObject) return @"(nil)";
-    
+
     @try
     {
         // special case handling for NSValue objects
         if ([self WOTest_object:anObject isKindOfClass:[NSValue class]])
             return [(NSValue *)anObject WOTest_description];
-        
+
         // fallback case: try "description" selector
         if ([self WOTest_object:anObject respondsToSelector:@selector(description)])
         {
             NSString *returnType = [self WOTest_returnTypeForObject:anObject selector:@selector(description)];
-            
+
             if ([self WOTest_isIdReturnType:returnType])
             {
                 NSString *description = [anObject description];
                 if ([self WOTest_object:description isKindOfClass:[NSString class]])
                     return description;
             }
-            else if ([self WOTest_isCharacterStringReturnType:returnType] || 
+            else if ([self WOTest_isCharacterStringReturnType:returnType] ||
                      [self WOTest_isConstantCharacterStringReturnType:returnType])
             {
                 const char *charString = (const char *)[anObject description];
@@ -61,7 +61,7 @@
             }
         }
     }
-    @catch (id e) 
+    @catch (id e)
     {
         // fall through
     }
@@ -71,12 +71,12 @@
 + (BOOL)WOTest_isRegisteredClass:(Class)aClass
 {
     if (!aClass) return NO;
-    
+
     BOOL    isRegisteredClass   = NO;
     int     numClasses          = 0;
     int     newNumClasses       = objc_getClassList(NULL, 0);
     Class   *classes            = NULL;
-    
+
     // get list of all classes on the system
     while (numClasses < newNumClasses)
     {
@@ -86,11 +86,11 @@
         NSAssert1((classes != NULL), @"realloc() failed (size %d)", bufferSize);
         newNumClasses       = objc_getClassList(classes, numClasses);
     }
-    
+
     if (classes)
     {
         for (int i = 0; i < newNumClasses; i++)
-        { 
+        {
             if (aClass == classes[i])   // found in list!
             {
                 isRegisteredClass = YES;
@@ -106,12 +106,12 @@
 + (BOOL)WOTest_isMetaClass:(Class)aClass
 {
     if (!aClass) return NO;
-    
+
     BOOL    isMetaClass     = NO;
     int     numClasses      = 0;
     int     newNumClasses   = objc_getClassList(NULL, 0);
     Class   *classes        = NULL;
-    
+
     // get a list of all classes on the system
     // get list of all classes on the system
     while (numClasses < newNumClasses)
@@ -122,14 +122,14 @@
         NSAssert1((classes != NULL), @"realloc() failed (size %d)", bufferSize);
         newNumClasses       = objc_getClassList(classes, numClasses);
     }
-    
+
     if (classes)
     {
         for (int i = 0; i < newNumClasses; i++)
         {
             if (class_isMetaClass(classes[i]))  // looking at a meta class
             {
-                if (aClass == classes[i])		// found in list!
+                if (aClass == classes[i])       // found in list!
                 {
                     isMetaClass = YES;
                     break;
@@ -146,7 +146,7 @@
         }
         free(classes);
     }
-    return isMetaClass;    
+    return isMetaClass;
 }
 
 + (BOOL)WOTest_object:(id)anObject isKindOfClass:(Class)aClass
@@ -155,17 +155,17 @@
     NSParameterAssert([self WOTest_isRegisteredClass:aClass] || [self WOTest_isMetaClass:aClass]);
     if (!anObject)  return NO;
     Class objectClass = object_getClass(anObject);
-    
+
     if (objectClass == aClass)
         return YES;
     else
     {
-		// check superclass
+        // check superclass
         Class superClass = class_getSuperclass(objectClass);
-		if (superClass)
-			return [self WOTest_instancesOfClass:superClass areKindOfClass:aClass];                
+        if (superClass)
+            return [self WOTest_instancesOfClass:superClass areKindOfClass:aClass];
     }
-    
+
     return NO; // give up
 }
 
@@ -175,14 +175,14 @@
     NSParameterAssert([self WOTest_isRegisteredClass:aClass] || [self WOTest_isMetaClass:aClass]);
     if (!otherClass)    return NO;
     NSParameterAssert([self WOTest_isRegisteredClass:otherClass] || [self WOTest_isMetaClass:otherClass]);
-    
+
     if (aClass == otherClass)
         return YES;
-	
-	Class superClass = class_getSuperclass(aClass);
+
+    Class superClass = class_getSuperclass(aClass);
     if (superClass)
         return [self WOTest_instancesOfClass:superClass areKindOfClass:otherClass];
-    
+
     return NO; // give up
 }
 
@@ -218,12 +218,12 @@
     if (!aClass)    return NO;
     NSParameterAssert([self WOTest_isRegisteredClass:aClass] || [self WOTest_isMetaClass:aClass]);
     if (!aProtocol) return NO;
-	if (class_conformsToProtocol(aClass, aProtocol))
-		return YES;
-	Class superClass = class_getSuperclass(aClass);
-	if (superClass)
+    if (class_conformsToProtocol(aClass, aProtocol))
+        return YES;
+    Class superClass = class_getSuperclass(aClass);
+    if (superClass)
         return [self WOTest_instancesOfClass:superClass conformToProtocol:aProtocol];
-    
+
     return NO;  // give up
 }
 
@@ -233,19 +233,19 @@
     NSParameterAssert([self WOTest_isRegisteredClass:aClass] || [self WOTest_isMetaClass:aClass]);
     NSParameterAssert(aSelector != NULL);
     Method theMethod = class_getClassMethod(aClass, aSelector);
-    
+
     if (theMethod == NULL) // class does not respond to this selector
         return nil;
 
     // get return type and list of arguments
-	char *returnType = method_copyReturnType(theMethod);
-	if (returnType)
-	{
-		NSString *returnString = [[NSString alloc] initWithUTF8String:returnType];
-		free(returnType);
-		return returnString;
-	}
-	return nil;
+    char *returnType = method_copyReturnType(theMethod);
+    if (returnType)
+    {
+        NSString *returnString = [[NSString alloc] initWithUTF8String:returnType];
+        free(returnType);
+        return returnString;
+    }
+    return nil;
 }
 
 + (NSString *)WOTest_returnTypeForObject:(id)anObject selector:(SEL)aSelector
@@ -253,19 +253,19 @@
     NSParameterAssert(anObject != nil);
     NSParameterAssert(aSelector != NULL);
     Method theMethod = class_getInstanceMethod(object_getClass(anObject), aSelector);
-		
-	if (theMethod == NULL) // object does not respond to this selector
+
+    if (theMethod == NULL) // object does not respond to this selector
         return nil;
-	
+
     // get return type and list of arguments
-	char *returnType = method_copyReturnType(theMethod);
-	if (returnType)
-	{
-		NSString *typeString = [NSString stringWithUTF8String:returnType];
-		free(returnType);
-		return typeString;
-	}
-	return nil;    
+    char *returnType = method_copyReturnType(theMethod);
+    if (returnType)
+    {
+        NSString *typeString = [NSString stringWithUTF8String:returnType];
+        free(returnType);
+        return typeString;
+    }
+    return nil;
 }
 
 + (BOOL)WOTest_isIdReturnType:(NSString *)returnType
@@ -301,7 +301,7 @@
 {
     NSParameterAssert(anObject != nil);
     NSParameterAssert(aSelector != NULL);
-    return [self WOTest_isConstantCharacterStringReturnType:[self WOTest_returnTypeForObject:anObject selector:aSelector]];    
+    return [self WOTest_isConstantCharacterStringReturnType:[self WOTest_returnTypeForObject:anObject selector:aSelector]];
 }
 
 @end

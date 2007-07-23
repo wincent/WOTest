@@ -36,7 +36,7 @@
     WOProtocolStub *stub = [WOProtocolStub alloc];
     WO_TEST_THROWS([stub initWithProtocol:NULL delegate:nil]);
     [stub dealloc];
-    
+
     // otherwise works
     stub = [WOProtocolStub alloc];
     WO_TEST_DOES_NOT_THROW([stub initWithProtocol:@protocol(WOTest) delegate:nil]);
@@ -46,7 +46,7 @@
 - (void)testMethodSignatureForSelector
 {
     // throws if selector not present in protocol, otherwise works
-    WOProtocolStub *stub = 
+    WOProtocolStub *stub =
         [WOProtocolStub stubForProtocol:@protocol(NSCopying) withDelegate:nil];
     WO_TEST_THROWS([stub methodSignatureForSelector:@selector(retain)]);
     WO_TEST_DOES_NOT_THROW

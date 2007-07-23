@@ -35,7 +35,7 @@
     static int32_t initialized = 0;
     if (OSAtomicIncrement32Barrier(&initialized) != 1)
         return;
-        
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     char *inject = getenv("WOTestInjectBundle");
     if (inject)

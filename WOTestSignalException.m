@@ -27,12 +27,12 @@
 {
     NSString *reason = [NSString stringWithFormat:
         @"a %@ signal was caught during execution: the most likely cause is a programming error in the software being tested; be "
-        @"aware that the reliability of the most recent test and all subsequent tests may be adversely affected", 
+        @"aware that the reliability of the most recent test and all subsequent tests may be adversely affected",
         [self nameForSignal:signal]];
-    
+
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInt:signal], WOTestSignalExceptionSignalNumber, nil];
-    
+
     return [[self alloc] initWithName:WOTestSignalExceptionName reason:reason userInfo:userInfo];
 }
 

@@ -110,7 +110,7 @@ do {                                                                           \
                                                                                \
     fprintf(stderr, "error: could not load WOTest.framework bundle\n");        \
 } while (0);
- 
+
 #pragma mark -
 #pragma mark Random value generator method macros
 
@@ -146,7 +146,7 @@ do {                                                                            
 #pragma mark -
 #pragma mark Empty (do-nothing) test macros
 
-//! \name Empty (do-nothing) test macros 
+//! \name Empty (do-nothing) test macros
 //! \startgroup
 
 //! This macro is not a test but you can optionally include it at the start of a test method so that WOTest can cache the current file name and line number. This is useful for cases where a test method might cause an uncaught exception. If WOTest has a cached copy of the last known location then the user can quickly go to the site of the exception (or near to the site) by clicking in the build results window.
@@ -163,7 +163,7 @@ do {                                                                            
 #pragma mark -
 #pragma mark Boolean test macros
 
-/*! \name Boolean test macros 
+/*! \name Boolean test macros
 \startgroup */
 
 /*! The expression should evalutate to TRUE. */
@@ -199,7 +199,7 @@ do {                                                                            
 
 Implicit casting is performed between numeric types (char, int, short, long, long long, unsigned char, unsigned int, unsigned short, unsigned long, unsigned long long, float, double and _Bool). Casting is not performed between types such as id, Class and SEL.
 
-If you wish to avoid the cast or make a stricter comparison you should use macros such as WO_TEST_IS_INT to confirm the type of the value before comparison. You could also use the WO_TEST_INTS_EQUAL macro (or similar) to force the compiler to cast the values to your chosen type prior to comparison. 
+If you wish to avoid the cast or make a stricter comparison you should use macros such as WO_TEST_IS_INT to confirm the type of the value before comparison. You could also use the WO_TEST_INTS_EQUAL macro (or similar) to force the compiler to cast the values to your chosen type prior to comparison.
 
 In most cases the WO_TEST_EQUAL macro is the best choice because it is equivalent to allowing the compiler to transparently perform a cast as in the following example; this is what most programmers expect when they perform an equality test:
 
@@ -318,7 +318,7 @@ do {                                                                            
 #pragma mark -
 #pragma mark Pointer to void test macros
 
-/*! \name Pointer to void test macros 
+/*! \name Pointer to void test macros
 \startgroup */
 
 /*! The pointer should be nil (0). Given that the pointer is passed as a pointer to void, this test should work with pointers to Objective-C objects as well as other pointers to other objects. The comparison is done using the equal-to operator ("=="). */
@@ -340,7 +340,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testPointer:(actual) isNotEqualTo:(expe
 #pragma mark -
 #pragma mark int test macros
 
-/*! \name int test macros 
+/*! \name int test macros
 \startgroup */
 
 #define WO_TEST_IS_INT(aScalar)                                 \
@@ -376,13 +376,13 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testInt:(actual) isNotEqualTo:(expected
 
 #define WO_TEST_INT_GREATER_THAN(actual, expected)    \
 WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testInt:(actual) greaterThan:(expected) inFile:__FILE__ atLine:__LINE__])
-    
+
 #define WO_TEST_INT_NOT_GREATER_THAN(actual, expected)    \
 WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testInt:(actual) notGreaterThan:(expected) inFile:__FILE__ atLine:__LINE__])
-    
+
 #define WO_TEST_INT_LESS_THAN(actual, expected)   \
 WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testInt:(actual) lessThan:(expected) inFile:__FILE__ atLine:__LINE__])
-    
+
 #define WO_TEST_INT_NOT_LESS_THAN(actual, expected)   \
 WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testInt:(actual) notLessThan:(expected) inFile:__FILE__ atLine:__LINE__])
 
@@ -391,7 +391,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testInt:(actual) notLessThan:(expected)
 #pragma mark -
 #pragma mark unsigned test macros
 
-/*! \name unsigned test macros 
+/*! \name unsigned test macros
 \startgroup */
 
 #define WO_TEST_IS_UNSIGNED(aScalar)                                \
@@ -418,7 +418,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testUnsigned:(actual) isNotEqualTo:(exp
 
 #define WO_TEST_UNSIGNED_GREATER_THAN(actual, expected) \
 WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testUnsigned:(actual) greaterThan:(expected) inFile:__FILE__ atLine:__LINE__])
-    
+
 #define WO_TEST_UNSIGNED_NOT_GREATER_THAN(actual, expected) \
 WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testUnsigned:(actual) notGreaterThan:(expected) inFile:__FILE__ atLine:__LINE__])
 
@@ -433,7 +433,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testUnsigned:(actual) notLessThan:(expe
 #pragma mark -
 #pragma mark float test macros without error margins
 
-/*! \name float test macros without error margins 
+/*! \name float test macros without error margins
 \startgroup */
 
 #define WO_TEST_IS_FLOAT(aScalar)                               \
@@ -481,7 +481,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testFloat:(actual) notLessThan:(expecte
 #pragma mark -
 #pragma mark float test macros with error margins
 
-/*! \name float test macros with error margins 
+/*! \name float test macros with error margins
 \startgroup */
 
 #define WO_TEST_FLOAT_POSITIVE_WITHIN_ERROR(aFloat, error)  \
@@ -549,7 +549,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testFloatNotZero:(aFloat) withinError:(
 #pragma mark -
 #pragma mark double test macros without error margins
 
-/*! \name double test macros without error margins 
+/*! \name double test macros without error margins
 \startgroup */
 
 #define WO_TEST_IS_DOUBLE(aScalar)                                  \
@@ -597,7 +597,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testDouble:(actual) notLessThan:(expect
 #pragma mark -
 #pragma mark double test macros with error margins
 
-/*! \name double test macros with error margins 
+/*! \name double test macros with error margins
 \startgroup */
 
 #define WO_TEST_DOUBLE_POSITIVE_WITHIN_ERROR(aDouble, error)    \
@@ -661,9 +661,9 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testDoubleNotZero:(aDouble) withinError
 #pragma mark -
 #pragma mark Object test macros
 
-/*! 
-\name Object test macros 
-\startgroup 
+/*!
+\name Object test macros
+\startgroup
 */
 
 /*! \note If both objects are nil they are considered to be equal. */
@@ -686,7 +686,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testObject:actual isNotEqualTo:expected
 #pragma mark NSString test macros
 
 /*!
-\name NSString test macros 
+\name NSString test macros
 \startgroup
  */
 
@@ -739,7 +739,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testString:(actual) doesNotContain:(exp
 #pragma mark -
 #pragma mark NSArray test macros
 
-/*! \name NSArray test macros 
+/*! \name NSArray test macros
 \startgroup */
 
 /*!  */
@@ -761,7 +761,7 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testArray:(actual) isNotEqualTo:(expect
 #pragma mark -
 #pragma mark NSDictionary test macros
 
-/*! \name NSDictionary test macros 
+/*! \name NSDictionary test macros
 \startgroup */
 
 /*!  */
@@ -783,9 +783,9 @@ WO_TEST_WRAPPER([WO_TEST_SHARED_INSTANCE testDictionary:(actual) isNotEqualTo:(e
 #pragma mark -
 #pragma mark Exception test macros
 
-//! \name Exception test macros 
+//! \name Exception test macros
 //! The lengthy local variable names (WOTestMacroException and WOTestMacroCaughtException) are contrived so as to minimize the likelihood of namespace clashes.
-//! \startgroup 
+//! \startgroup
 
 /*! Passes only if an exception is thrown during the evaluation of the expression, expr. */
 #define WO_TEST_THROWS(expr)                                                    \

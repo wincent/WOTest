@@ -37,7 +37,7 @@
 
 - (id)init
 {
-    return self; // super (NSProxy) has no init method    
+    return self; // super (NSProxy) has no init method
 }
 
 - (void)dealloc
@@ -84,7 +84,7 @@
 }
 
 #pragma mark -
-#pragma mark Proxy methods 
+#pragma mark Proxy methods
 
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
@@ -94,15 +94,15 @@
 }
 
 /*
- 
+
  http://lists.apple.com/archives/cocoa-dev/2004/Jun/msg00990.html
- 
+
  "On PPC, the prearg area is used to store the 13 floating-point parameter registers, which may contain method parameters that need to be restored when the marg_list is used. The i386 function call ABI has no additional registers to be saved, so its prearg area is empty. The implementations of _objc_msgForward() and objc_msgSendv() in objc4's objc-msg-ppc.s contain more details that may be useful to you.
- 
- In general, you probably want to avoid marg_list and objc_msgSendv(). Together they are primarily an implementation detail of forward:: ." 
+
+ In general, you probably want to avoid marg_list and objc_msgSendv(). Together they are primarily an implementation detail of forward:: ."
 
  (Greg Parker, Apple)
- 
+
  */
 
 - forward:(SEL)sel :(marg_list)args
@@ -112,28 +112,28 @@
     // let standard event flow take place (but note that NSProxy implementation raises so subclasses must do the real work)
     if ([self methodSignatureForSelector:sel])
       return [super forward:sel :args];
-    
+
     // fallback to internal lookup
     NSMethodSignature *signature = [[delegate methodSignatures] objectForKey:NSStringFromSelector(sel)];
-    
+
     // at this point it would be great to be able to improvise but it's not possible to figure out an accurate method signature
     NSAssert((signature != nil), ([NSString stringWithFormat:@"no method signature for selector %@", NSStringFromSelector(sel)]));
-    
+
     NSInvocation *forwardInvocation = [NSInvocation invocationWithMethodSignature:signature];
     [forwardInvocation setSelector:sel];
-    
-    
+
+
     // store arguments in invocation
     int offset = 0;
     for (unsigned i = 0, max = [signature numberOfArguments]; i < max; i++)
     {
         const char *type = [signature getArgumentTypeAtIndex:i];    // always id, SEL, ...
-                
+
 #if defined(__ppc__)
 
         // TODO: finish this implementation and copy it (or otherwise make it available) to WOMock.m
         // leave the compiler warnings about "unused variable 'type'" and "unused variable 'offset'" to remind me to do it
-        
+
         // the PPC ABI has special conventions for floats, doubles, structs
 
         // contents of floating point registers f1 through f13 stored at args + 0 through args + 96
@@ -147,23 +147,23 @@
         // 6th param: r8 args + (13 * 8) + 44
         // 7th param: r9 args + (13 * 8) + 48
         // 8th param: r10 args + (13 * 8) + 52
-        // the remaining parameters are on the stack (starting at args + (13 * 8) + 56) 
+        // the remaining parameters are on the stack (starting at args + (13 * 8) + 56)
         // note that marg_prearg_size is defined in the headers for ppc and equals 128 (13 * 8 + 24 bytes for linkage area)
-        
+
         // from http://darwinsource.opendarwin.org/10.4.3/objc4-267/runtime/Messengers.subproj/objc-msg-ppc.s
 //        typedef struct objc_sendv_margs {
-//            double	floatingPointArgs[13];
-//            int     linkageArea[6];
-//            int		registerArgs[8];
-//            int		stackArgs[variable];
+//            double    floatingPointArgs[13];
+//            int       linkageArea[6];
+//            int       registerArgs[8];
+//            int       stackArgs[variable];
 //        };
-//        
+//
 //        if (strcmp(type, @encode(float)) == 0)
 //        {}
 //        else if (strcmp(type, @encode(double)) == 0)
 //        {}
 //        else
-        
+
 #elif defined(__i386__)
 
         // on i386 the marg_getRef macro and its helper, marg_adjustedOffset, should work fine
@@ -179,19 +179,19 @@
         }
         else
             [NSException raise:NSGenericException format:@"type %s not supported", type];
-        
+
         offset += [NSValue WOTest_sizeForType:[NSString stringWithUTF8String:type]];
 
 #elif defined(__ppc64__)
         // there is no objc-msg-ppc.s so for now just omit support rather than make assumptions
 #error ppc64 not supported yet
-            
+
 #else
 
 #error Unsupported architecture
 
 #endif
-        
+
     }
     [self forwardInvocation:forwardInvocation];
     return nil; // nobody cares what a stub returns
@@ -203,13 +203,13 @@
 - (NSInvocation *)recordedInvocation
 {
     NSInvocation *recordedInvocation = [self invocation];
-    NSAssert((recordedInvocation != nil), @"WOStub sent recordedInvocation but no invocation yet recorded");    
+    NSAssert((recordedInvocation != nil), @"WOStub sent recordedInvocation but no invocation yet recorded");
     return recordedInvocation;
 }
 
 - (NSInvocation *)invocation
 {
-    return [[invocation retain] autorelease]; 
+    return [[invocation retain] autorelease];
 }
 
 - (void)setInvocation:(NSInvocation *)anInvocation
@@ -224,7 +224,7 @@
 
 - (NSValue *)returnValue
 {
-    return [[returnValue retain] autorelease]; 
+    return [[returnValue retain] autorelease];
 }
 
 - (void)setReturnValue:(NSValue *)aReturnValue
@@ -249,7 +249,7 @@
 
 - (id)exception
 {
-    return [[exception retain] autorelease]; 
+    return [[exception retain] autorelease];
 }
 
 - (void)setException:(id)anException

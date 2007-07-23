@@ -29,20 +29,20 @@
 
     // raises if sent nil
     WO_TEST_THROWS([stub matchesInvocation:nil]);
-    
+
     // raises if no recorded invocation
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:
         [self methodSignatureForSelector:@selector(testMatchesInvocation)]];
     WO_TEST_THROWS([stub matchesInvocation:invocation]);
     [stub setInvocation:invocation];
     WO_TEST_DOES_NOT_THROW([stub matchesInvocation:invocation]);
-    
+
     // test strict matching
-    
-    
+
+
     // test loose matching (arguments not checked)
-    
-    
+
+
 }
 
 @end

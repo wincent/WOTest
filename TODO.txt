@@ -19,15 +19,15 @@ Think about alternative syntax for mock objects; instead of:
 Consider:
 
     [mock expectSelector:@selector(substringFromIndex:)
-                  return:@"foo" 
+                  return:@"foo"
                arguments:3];
 
 Regressions:
 
-- write WOMultithreadedCrash class for WOTest (regression test for multithreaded low level exception handling failure); for now just 
+- write WOMultithreadedCrash class for WOTest (regression test for multithreaded low level exception handling failure); for now just
 WO_TEST_FAIL
 
-- also write WOLocaleFormatterCrash class (copy and refactor WOLocaleFormatter class and tests so that the WOCommon crash problem 
+- also write WOLocaleFormatterCrash class (copy and refactor WOLocaleFormatter class and tests so that the WOCommon crash problem
 can be manifested  in the WOTest tests); again, for now will just be WO_TEST_FAIL
 
 - for Leopard: use RubyCocoa bridge for writing specs in Ruby

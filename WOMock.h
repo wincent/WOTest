@@ -21,9 +21,9 @@
 
 #import <Foundation/Foundation.h>
 
-/*! 
+/*!
 
-There are a small number of methods defined in the WOMock class that you can use to create a mock object and then tell it how to behave. The accept, acceptOnce, reject, expect, expectOnce methods tell the mock object which selectors to accept, reject and expect. 
+There are a small number of methods defined in the WOMock class that you can use to create a mock object and then tell it how to behave. The accept, acceptOnce, reject, expect, expectOnce methods tell the mock object which selectors to accept, reject and expect.
 
 Each of these methods returns an object of type id which allows you to chain selectors together using the standard Objective-C pattern:
 
@@ -38,24 +38,24 @@ The mocked class must at least implement the NSObject method, instanceMethodSign
 
     /*! Selectors that should be accepted. */
     NSMutableSet            *accepted;
-    
+
     /*! Selectors that should be accepted once only. */
     NSMutableSet            *acceptedOnce;
-    
+
     /*! Selectors that should be expected. */
     NSMutableSet            *expected;
-    
+
     /*! Selectors that should be expected once only. */
     NSMutableSet            *expectedOnce;
-    
+
     /*! Selectors that should be expected in a specific order. */
     NSMutableArray          *expectedInOrder;
 
     /*! Selectors that should be rejected. */
-    NSMutableSet            *rejected; 
-    
+    NSMutableSet            *rejected;
+
     NSMutableDictionary     *methodSignatures;
-    
+
     BOOL                    acceptsByDefault;
 }
 
@@ -92,7 +92,7 @@ The mocked class must at least implement the NSObject method, instanceMethodSign
  These are recording methods used for setting up expectations about which selectors should be rejected, accepted, accepted once, expected, expected once, or expected in order.
 
  When the mock receives a message it checks its internal lists in the following order (in order of decreasing specificity):
- 
+
  -# rejected
  -# expected in order
  -# expected once
@@ -101,18 +101,18 @@ The mocked class must at least implement the NSObject method, instanceMethodSign
  -# accepted
 
  Rejected selectors cause an exception to be raised.
- 
+
  By default, if a selector does not appear in any of the internal lists an exception is raised. This latter behaviour requires you to be explicit about <em>all</em> selectors which a mock object may receive. For example, you may have a mock object that stands in for an NSString instance and expect that it be sent a "lowercaseString" selector. If during your test you also send an "uppercaseString" selector then an exception will be raised (because the selector does not appear in the internal lists, even though it is a valid NSString selector). A small number of methods will be accepted even without being explicitly added the the lists; these include methods like retain and release and other NSObject protocol methods. These are accepted because they are inherited from the parent class of WOMock (NSProxy).
- 
+
  If you wish to override this behaviour you may send the setAcceptsByDefault message passing a flag of YES, but be aware that selectors which fall through to the "accepts by default" cannot return any defined value. For control over return values the selector in question must be explicitly set up with the expectInOrder, expectOnce, expect, acceptOnce or accept methods.
- 
+
  If a selector does appear in the lists but has been set to throw an exception an exception will be raised. It is the responsibility of the caller to avoid ambiguous list membership; for example, it does not make any sense to add a selector to both the "expected once" and the "accepted" lists.
- 
+
  \startgroup
 */
 
 /*! Instructs the receiver to accept a selector. The following example shows how to instruct the WOMock instance mock to accept the connect selector:
-    
+
 \code
 [[mock accept] connect];
 \endcode
@@ -122,11 +122,11 @@ If the selector takes arguments then the arguments passed to the mock must match
 \code
 [[mock accept] connectTo:server] anyArguments];
 \endcode
-    
+
 You can explicitly instruct a mock to reject selectors by using the reject method. Selectors added with the accept method will be accepted by the receiver at any time, in any order, until removed with the reject method.
 
 See the WOMockTests class in WOTestSelfTests for usage examples.
-    
+
 \see WOStub::anyArguments */
 - (id)accept;
 
@@ -153,13 +153,13 @@ See the WOMockTests class in WOTestSelfTests for usage examples.
 If the selector takes arguments then the arguments passed to the mock must match those used when registering the selector with the expect method, otherwise an exception is raised. */
 - (id)expect;
 
-/*! Instructs the receiver to expect the selector once and only once. If the selector is performed twice then the second invocation will cause an exception to be raised. 
+/*! Instructs the receiver to expect the selector once and only once. If the selector is performed twice then the second invocation will cause an exception to be raised.
 
 \see accept */
 - (id)expectOnce;
 
 /*! Instructs the receiver to expect the selector as part of an ordered sequence. You can build a list of expected selectors by repeatedly calling expectInOrder with the selectors that should appear in the sequence as illustrated in this example:
-    
+
 \code
 [[mock expectInOrder] connect];
 [[mock expectInOrder] logStats];
@@ -195,9 +195,9 @@ If the selector takes arguments then the arguments passed to the mock must match
 #pragma mark -
 #pragma mark Accessors
 
-//! \name  Accessor methods 
+//! \name  Accessor methods
 //! Note that the majority of instance variables in this class do not have accessors so as to avoid namespace pollution.
-//! \startgroup 
+//! \startgroup
 
 - (BOOL)acceptsByDefault;
 - (void)setAcceptsByDefault:(BOOL)flag;

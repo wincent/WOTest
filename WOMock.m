@@ -45,8 +45,8 @@
 {
     // avoid infinite loops if called by subclass
     if (self != [WOMock class])
-        [NSException raise:NSInternalInconsistencyException format:@"mockForObjectClass: called from WOMock subclass"]; 
-    
+        [NSException raise:NSInternalInconsistencyException format:@"mockForObjectClass: called from WOMock subclass"];
+
     return [WOObjectMock mockForClass:aClass];
 }
 
@@ -54,7 +54,7 @@
 {
     // avoid infinite loops if called by subclass
     if (self != [WOMock class])
-        [NSException raise:NSInternalInconsistencyException format:@"mockForClass: called from WOMock subclass"]; 
+        [NSException raise:NSInternalInconsistencyException format:@"mockForClass: called from WOMock subclass"];
 
     return [WOClassMock mockForClass:aClass];
 }
@@ -63,7 +63,7 @@
 {
     // avoid infinite loops if called by subclass
     if (self != [WOMock class])
-        [NSException raise:NSInternalInconsistencyException format:@"mockForProtocol: called from WOMock subclass"]; 
+        [NSException raise:NSInternalInconsistencyException format:@"mockForProtocol: called from WOMock subclass"];
 
     return [WOProtocolMock mockForProtocol:aProtocol];
 }
@@ -72,9 +72,9 @@
 - (id)initWithObjectClass:(Class)aClass
 {
     // avoid infinite loops if called by subclass
-    if ([self class] != [WOMock class]) 
+    if ([self class] != [WOMock class])
         [NSException raise:NSInternalInconsistencyException format:@"initWithObjectClass: called from WOMock subclass"];
-    
+
     id subclass = [[WOObjectMock allocWithZone:[self zone]] initWithClass:aClass];
 
     [self dealloc];
@@ -86,11 +86,11 @@
 {
     // avoid infinite loops if called by subclass
     if ([self class] != [WOMock class])
-        [NSException raise:NSInternalInconsistencyException format:@"initWithClass: called from WOMock subclass"]; 
-    
-    id subclass = [[WOClassMock allocWithZone:[self zone]] initWithClass:aClass]; 
+        [NSException raise:NSInternalInconsistencyException format:@"initWithClass: called from WOMock subclass"];
+
+    id subclass = [[WOClassMock allocWithZone:[self zone]] initWithClass:aClass];
     [self dealloc];
-    return subclass;    
+    return subclass;
 }
 
 // a true Apple-style cluster would do this by allocating a placeholder object
@@ -98,11 +98,11 @@
 {
     // avoid infinite loops if called by subclass
     if ([self class] != [WOMock class])
-        [NSException raise:NSInternalInconsistencyException format:@"initWithProtocol: called from WOMock subclass"]; 
-    
-    id subclass = [[WOProtocolMock allocWithZone:[self zone]] initWithProtocol:aProtocol]; 
+        [NSException raise:NSInternalInconsistencyException format:@"initWithProtocol: called from WOMock subclass"];
+
+    id subclass = [[WOProtocolMock allocWithZone:[self zone]] initWithProtocol:aProtocol];
     [self dealloc];
-    return subclass;    
+    return subclass;
 }
 
 - (id)init
@@ -133,37 +133,37 @@
 
 - (id)accept
 {
-    [NSException raise:NSInternalInconsistencyException format:@"accept invoked on WOMock abstract class"]; 
+    [NSException raise:NSInternalInconsistencyException format:@"accept invoked on WOMock abstract class"];
     return nil;
 }
 
 - (id)acceptOnce
 {
-    [NSException raise:NSInternalInconsistencyException format:@"acceptOnce invoked on WOMock abstract class"]; 
+    [NSException raise:NSInternalInconsistencyException format:@"acceptOnce invoked on WOMock abstract class"];
     return nil;
 }
 
 - (id)reject
 {
-    [NSException raise:NSInternalInconsistencyException format:@"reject invoked on WOMock abstract class"]; 
+    [NSException raise:NSInternalInconsistencyException format:@"reject invoked on WOMock abstract class"];
     return nil;
 }
 
 - (id)expect
 {
-    [NSException raise:NSInternalInconsistencyException format:@"expect invoked on WOMock abstract class"]; 
+    [NSException raise:NSInternalInconsistencyException format:@"expect invoked on WOMock abstract class"];
     return nil;
 }
 
 - (id)expectOnce
 {
-    [NSException raise:NSInternalInconsistencyException format:@"expectOnce invoked on WOMock abstract class"]; 
+    [NSException raise:NSInternalInconsistencyException format:@"expectOnce invoked on WOMock abstract class"];
     return nil;
 }
 
 - (id)expectInOrder
 {
-    [NSException raise:NSInternalInconsistencyException format:@"expectInOrder invoked on WOMock abstract class"]; 
+    [NSException raise:NSInternalInconsistencyException format:@"expectInOrder invoked on WOMock abstract class"];
     return nil;
 }
 
@@ -187,7 +187,7 @@
 #pragma mark -
 #pragma mark Utility methods
 
-- (void)storeReturnValue:(NSValue *)aValue forInvocation:(NSInvocation *)invocation 
+- (void)storeReturnValue:(NSValue *)aValue forInvocation:(NSInvocation *)invocation
 {
     NSParameterAssert(invocation != nil);
     if (!aValue) return; // nothing to do
@@ -198,14 +198,14 @@
 
     size_t bufferSize = [aValue WOTest_bufferSize];
     void *buffer = malloc(bufferSize);
-    NSAssert1((buffer != NULL), @"malloc() failed (size %d)", bufferSize); 
+    NSAssert1((buffer != NULL), @"malloc() failed (size %d)", bufferSize);
     [aValue getValue:buffer];
     [invocation setReturnValue:buffer];
 }
 
 - (void)setObjCTypes:(NSString *)types forSelector:(SEL)aSelector
 {
-    [methodSignatures setObject:[NSMethodSignature WOTest_signatureBasedOnObjCTypes:[types UTF8String]] 
+    [methodSignatures setObject:[NSMethodSignature WOTest_signatureBasedOnObjCTypes:[types UTF8String]]
                          forKey:NSStringFromSelector(aSelector)];
 }
 
@@ -220,27 +220,27 @@
 
     // fallback to internal lookup
     NSMethodSignature *signature = [methodSignatures objectForKey:NSStringFromSelector(sel)];
-        
+
     // at this point it would be great to be able to improvise but it's not possible to figure out an accurate method signature
     NSAssert((signature != nil), ([NSString stringWithFormat:@"no method signature for selector %@", NSStringFromSelector(sel)]));
-    
+
     NSInvocation *forwardInvocation = [NSInvocation invocationWithMethodSignature:signature];
     [forwardInvocation setSelector:sel];
-        
+
     // store arguments in invocation
     int offset = 0;
     for (unsigned i = 0, max = [signature numberOfArguments]; i < max; i++)
     {
         const char *type = [signature getArgumentTypeAtIndex:i];    // always id, SEL, ...
-        
+
 #if defined(__ppc__)
 
         // TODO: finish version in WOStub and copy it here
         // leave the compiler warnings about "unused variable 'type'" and "unused variable 'offset'" to remind me to do it
-        // may be able to use libffi to help here    
-        
+        // may be able to use libffi to help here
+
 #elif defined(__i386__)
-            
+
         // on i386 the marg_getRef macro and its helper, marg_adjustedOffset, should work fine
         if (strcmp(type, @encode(id)) == 0)
         {
@@ -253,30 +253,30 @@
             [forwardInvocation WOTest_setArgumentValue:[NSValue valueWithBytes:ref objCType:type] atIndex:i];
         }
         else
-            [NSException raise:NSGenericException format:@"type %s not supported", type];     
-                
+            [NSException raise:NSGenericException format:@"type %s not supported", type];
+
         offset += [NSValue WOTest_sizeForType:[NSString stringWithUTF8String:type]];
-        
+
 #elif defined(__ppc64__)
         // there is no objc-msg-ppc.s so for now just omit support rather than make assumptions
 #error ppc64 not supported yet
-        
+
 #else
-        
+
 #error Unsupported architecture
-        
+
 #endif
-        
+
     }
     [self forwardInvocation:forwardInvocation]; // stores return value in invocation
-    
+
     unsigned bufferSize = [signature methodReturnLength];
     void *returnBuffer = malloc(bufferSize);
     NSAssert1((returnBuffer != NULL), @"malloc() failed (size %d)", bufferSize);
     [forwardInvocation getReturnValue:&returnBuffer];
     return returnBuffer; // TODO: cast according to the return type
 }
-    
+
 #pragma mark -
 #pragma mark Accessors
 

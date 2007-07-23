@@ -2,7 +2,7 @@ The files:
 
     exc.h
     excServer.c
-    excUser.c 
+    excUser.c
 
 Generated using the following MiG (Mach Interface Generator) command:
 

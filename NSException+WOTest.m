@@ -33,7 +33,7 @@
         else if ([NSObject WOTest_object:exception respondsToSelector:@selector(name)])
         {
             NSString *name = nil; // attempt to get name
-            
+
             if ([NSObject WOTest_objectReturnsId:exception forSelector:@selector(name)])
             {
                 name = [exception name];
@@ -46,7 +46,7 @@
                 const char *charString = (const char *)[exception name];
                 name = [NSString stringWithUTF8String:charString];
             }
-            
+
             NSString *reason = nil; // attempt to get reason
             if ([NSObject WOTest_object:exception respondsToSelector:@selector(reason)])
             {
@@ -63,7 +63,7 @@
                     reason = [NSString stringWithUTF8String:charString];
                 }
             }
-            
+
             if (name && reason)
                 return [NSString stringWithFormat:@"%@: %@", name, reason];
             else if (name)
@@ -74,13 +74,13 @@
         else
         {
             return [NSObject WOTest_descriptionForObject:exception];
-        }            
+        }
     }
     @catch (id e)
     {
         // fall through
     }
-    
+
     // last resort
     return [NSString stringWithFormat:@"unknown exception (%x)", exception];
 }
@@ -109,13 +109,13 @@
                 returnString = [NSString stringWithUTF8String:charString];
             }
         }
-        else 
+        else
             returnString = [NSObject WOTest_descriptionForObject:exception];
     }
     @catch (id e)
     {
         returnString = @"(exception caught trying to determine exception name)";
-    }    
+    }
     return returnString;
 }
 

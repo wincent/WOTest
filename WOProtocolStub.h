@@ -25,7 +25,7 @@
 @interface WOProtocolStub : WOStub {
 
     Protocol    *mockedProtocol;
-    
+
 }
 
 #pragma mark -

@@ -27,7 +27,7 @@
 #define WO_TEST_USERINFO_LINE   @"WOTestLine"
 #define WO_TEST_USERINFO_PATH   @"WOTestPath"
 
-@interface NSException (WOTest) 
+@interface NSException (WOTest)
 
 /*! Cocoa allows any Objective-C object to be thrown in an exception. Although NSException objects are most commonly used for this purpose there is no limitation that prevents other objects from being used. These objects may or may not respond to the name, reason and userInfo methods that are implemented by NSException. This method accepts any object and attempts to produce a textual description, using the name and reason methods if implemented and otherwise resorting to the description method if implented and finally a basic description based on the name of the class if not. */
 + (NSString *)WOTest_descriptionForException:(id)exception;

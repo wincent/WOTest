@@ -84,18 +84,18 @@ static ExceptionHandlerUPP      WOOldLowLevelExceptionHandler;
 typedef struct WOJumpBuffer {
     unsigned long eax;      // store/restore
     unsigned long ebx;      // store/restore
-    unsigned long ecx; 
+    unsigned long ecx;
     unsigned long edx;
     unsigned long edi;      // store/restore
     unsigned long esi;      // store/restore
     unsigned long ebp;      // store/restore
     unsigned long esp;      // store/restore
-    unsigned long ss; 
-    unsigned long eflags;  
-    unsigned long cs; 
-    unsigned long ds; 
-    unsigned long es; 
-    unsigned long fs; 
+    unsigned long ss;
+    unsigned long eflags;
+    unsigned long cs;
+    unsigned long ds;
+    unsigned long es;
+    unsigned long fs;
     unsigned long gs;
 } WOJumpBuffer;
 static volatile WOJumpBuffer WOLowLevelExceptionJumpBuffer;
@@ -118,18 +118,18 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
         fprintf(stderr, "error: WOTest internal error (unexpected exception in WOLowLevelExceptionHandler)\n");
         fprintf(stderr, "Exception type: %lu\n", (unsigned long)(theException->theKind));
         fflush(NULL);
-        
+
         // forwarding to old exception handler doesn't seem to work (get into infinite loop)
         //return InvokeExceptionHandlerUPP(theException, WOOldLowLevelExceptionHandler);
         _exit(EXIT_FAILURE);
     }
-    
+
     WOLastLowLevelException     = theException->theKind;
     WOTestCanJump               = NO;
 
     // set flag to indicate that an exception was triggerd
     WOTestExceptionTriggered    = 1;
-    
+
     // will resume execution at previously marked "safe place": longjmp would be fine here
 #ifdef __i386__
     // set only the registers that setjmp() saves and longjmp() restores
@@ -140,10 +140,10 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
     theException->registerImage->EDI    = WOLowLevelExceptionJumpBuffer.edi;
     theException->registerImage->ESI    = WOLowLevelExceptionJumpBuffer.esi;
     theException->registerImage->ESP    = WOLowLevelExceptionJumpBuffer.esp;
-    
+
     // clear out exception state (probably not necessary)
     theException->info.memoryInfo = NULL;
-    
+
 #elif defined (__ppc__)
     theException->machineState->PC  = WOProgramCounter;
     // TODO: must restore more state here
@@ -196,7 +196,7 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
             if ((self = [super init]))
             {
                 // once-off initialization and setting of defaults:
-                self->handlesLowLevelExceptions = YES; 
+                self->handlesLowLevelExceptions = YES;
                 self->warnsAboutSignComparisons = YES;
             }
             WOTestSharedInstance = self;
@@ -266,7 +266,7 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
 {
     if (didTruncate)    *didTruncate    = NO;
     NSString            *description    = nil;
-    if (!anObject) 
+    if (!anObject)
         description = @"(nil)";
     else
     {
@@ -367,19 +367,19 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
                 NSDate              *startMethod    = [NSDate date];
                 SEL                 preflight       = @selector(preflight);
                 SEL                 postflight      = @selector(postflight);
-                
+
                 _WOLog(@"Running test method %@", method);
                 @try
                 {
                     // minimize time spent with exception handlers in place
                     [self installLowLevelExceptionHandler];
-                    
+
                     // record program counter and some other registers right now
 #ifdef __i386__
-                    // LowLevelABI.pdf says "EDI, ESI, EBX, EBP" are the preserved registers (across function calls)                    
+                    // LowLevelABI.pdf says "EDI, ESI, EBX, EBP" are the preserved registers (across function calls)
                     // ebp is the "saved frame pointer": "the base address of the caller's stack frame"
                     // eax is used to return pointer and integral results to callers: "The called function places integral or pointer results in EAX"
-                    
+
                     // info on inline assembly: http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html
                     __asm__ volatile("movl %%eax, %0\n" : "=m" (WOLowLevelExceptionJumpBuffer.eax));
                     __asm__ volatile("movl %%ebx, %0\n" : "=m" (WOLowLevelExceptionJumpBuffer.ebx));
@@ -400,16 +400,16 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
 #error Unsupported architecture
 #endif
                     WOTestCanJump = YES;
-                    
+
                     goto jump_point; // necessary to silence compiler warning about unused label
 jump_point:
                     // if flag set, that means we crashed: throw an exception
                     if (WOTestExceptionTriggered)
                     {
-                        WOTestExceptionTriggered = 0;                        
+                        WOTestExceptionTriggered = 0;
                         @throw [WOTestLowLevelException exceptionWithType:WOLastLowLevelException];
                     }
-                    
+
                     if ([self isClassMethod:method])
                     {
                         if ([NSObject WOTest_class:aClass respondsToSelector:preflight])
@@ -435,7 +435,7 @@ jump_point:
                         }
                         else
                         {
-                            [self writeError:@"Class %@ must respond to the alloc, init and release selectors", 
+                            [self writeError:@"Class %@ must respond to the alloc, init and release selectors",
                                 NSStringFromClass(aClass)];
                             [self writeLastKnownLocation];
                         }
@@ -460,7 +460,7 @@ jump_point:
                 }
                 @catch (id e)
                 {
-                    [self writeError:@"uncaught exception (%@) in test method %@", [NSException WOTest_descriptionForException:e], 
+                    [self writeError:@"uncaught exception (%@) in test method %@", [NSException WOTest_descriptionForException:e],
                         method];
                     [self writeLastKnownLocation];
                     noTestFailed = NO;
@@ -478,7 +478,7 @@ jump_point:
     }
     @catch (id e)
     {
-        [self writeError:@"uncaught exception (%@) testing class %@", [NSException WOTest_descriptionForException:e], 
+        [self writeError:@"uncaught exception (%@) testing class %@", [NSException WOTest_descriptionForException:e],
             NSStringFromClass(aClass)];
         [self writeLastKnownLocation];
         noTestFailed = NO;
@@ -495,17 +495,17 @@ jump_point:
 {
     // return an array of class names
     NSMutableArray *testableClasses = [NSMutableArray array];
-    
+
     unsigned    classCount                 = 0; // the total number of classes
     unsigned    conformingClassCount       = 0; // classes conforming to WOTest
     unsigned    nonconformingClassCount    = 0; // unconforming classes
     unsigned    excludedClassCount         = 0; // excluded classes
-    unsigned    exceptionCount             = 0; // classes provoking exceptions    
-    
+    unsigned    exceptionCount             = 0; // classes provoking exceptions
+
     int         numClasses                  = 0;
     int         newNumClasses               = objc_getClassList(NULL, 0);
     Class       *classes                    = NULL;
-    
+
     // get a list of all classes on the system
     while (numClasses < newNumClasses)
     {
@@ -515,30 +515,30 @@ jump_point:
         NSAssert1((classes != NULL), @"realloc() failed (size %d)", bufferSize);
         newNumClasses       = objc_getClassList(classes, numClasses);
     }
-    
-    @try 
+
+    @try
     {
         if (classes)
-        {   
+        {
             // skip over some classes because they not only cause exceptions but also spew out ugly console messages
             SInt32 systemVersion;
             Gestalt(gestaltSystemVersion, &systemVersion);
-            systemVersion = systemVersion & 0x0000ffff; // Apple instructs to ignore the high-order word    
+            systemVersion = systemVersion & 0x0000ffff; // Apple instructs to ignore the high-order word
 
             NSArray *excludedClasses = (systemVersion < 0x00001040) ?
                 [NSArray arrayWithObjects: @"Protocol", @"List", @"Object", @"_NSZombie", nil] :                        // 10.3
                 [NSArray arrayWithObjects: @"Protocol", @"List", @"Object", @"_NSZombie", @"NSATSGlyphGenerator", nil]; // 10.4
-            
+
             if ([self verbosity] > 1)
                 _WOLog(@"Examining classes for WOTest protocol compliance");
-            
+
             for (int i = 0; i < newNumClasses; i++)
             {
                 classCount++;
-                
+
                 Class       aClass      = classes[i];
                 NSString    *className  = NSStringFromClass(aClass);
-                
+
                 @try
                 {
                     if ([excludedClasses containsObject:className])
@@ -572,13 +572,13 @@ jump_point:
             }
             free(classes);
         }
-        
+
     }
     @catch (id e)
     {
         _WOLog(@"Uncaught exception...");
     }
-        
+
     _WOLog(@"Runtime Summary:\n"
            @"Total classes:                                         %d\n"
            @"Classes which conform to the WOTest protocol:          %d\n"
@@ -590,7 +590,7 @@ jump_point:
            nonconformingClassCount,
            excludedClassCount,
            exceptionCount);
-    
+
     return [testableClasses sortedArrayUsingSelector:@selector(compare:)];
 }
 
@@ -598,7 +598,7 @@ jump_point:
 {
     NSArray         *allClasses = [self testableClasses];
     NSMutableArray  *classNames = [NSMutableArray array];
-    
+
     if (aBundle)    // only search if actually passed a non-nil bundle
     {
         // add only classes that match the passed bundle and conform to WOTest
@@ -610,7 +610,7 @@ jump_point:
                 [classNames addObject:className];
         }
     }
-    
+
     // return autoreleased, immutable NSArray
     return [NSArray arrayWithArray:classNames];
 }
@@ -619,9 +619,9 @@ jump_point:
 {
     // catch crashes caused by passing an "id" instead of a "Class"
     NSParameterAssert([NSObject WOTest_isRegisteredClass:aClass] || [NSObject WOTest_isMetaClass:aClass]);
-    
+
     NSMutableArray *methodNames = [NSMutableArray array];
-    @try 
+    @try
     {
         NSString *prefix = @"-";            // default prefix (instance methods)
         if (class_isMetaClass(aClass))
@@ -632,21 +632,21 @@ jump_point:
             Class   metaClass       = object_getClass(aClass);
             NSArray *classMethods   = [self testableMethodsFrom:metaClass];
             [methodNames addObjectsFromArray:classMethods];
-        }        
-        
-		unsigned int count;
-		Method *methods = class_copyMethodList(aClass, &count);
-		if (methods)
-		{
-			for (unsigned int i = 0, max = count; i < max; i++)
-			{
-				SEL			aSelector	= method_getName(methods[i]);
-				NSString	*name		= NSStringFromSelector(aSelector);
-				if (name && [name hasPrefix:@"test"])
-					[methodNames addObject:[NSString stringWithFormat:@"%@%@", prefix, name]];
-			}
-			free(methods);
-		}
+        }
+
+        unsigned int count;
+        Method *methods = class_copyMethodList(aClass, &count);
+        if (methods)
+        {
+            for (unsigned int i = 0, max = count; i < max; i++)
+            {
+                SEL         aSelector   = method_getName(methods[i]);
+                NSString    *name       = NSStringFromSelector(aSelector);
+                if (name && [name hasPrefix:@"test"])
+                    [methodNames addObject:[NSString stringWithFormat:@"%@%@", prefix, name]];
+            }
+            free(methods);
+        }
     }
     @catch (id e)
     {
@@ -654,7 +654,7 @@ jump_point:
             NSStringFromClass(aClass)];
         [self writeError:error];
     }
-    
+
     return [methodNames sortedArrayUsingSelector:@selector(compare:)];
 }
 
@@ -679,28 +679,28 @@ jump_point:
            testsPassed,    testsFailedExpected,    successRate,
            testsFailed,    testsPassedUnexpected,  failureRate,
            uncaughtExceptions,
-           lowLevelExceptionsUnexpected, lowLevelExceptionsExpected, 
+           lowLevelExceptionsUnexpected, lowLevelExceptionsExpected,
            -[[self startDate] timeIntervalSinceNow]);
-    
+
     if (testsRun == 0)
         _WOLog(@"warning: no tests were run\n");
-    
+
     // TODO: make Growl notifications optional
     // TODO: include information about project being tested in Growl notification title
     // TODO: add options for showing coalesced growl notifications showing individual test failures (with path and line info)
     // TODO: make clicking on notification bring Xcode to the front, or open the file with the last failure in it etc
-    NSString *status = [NSString stringWithFormat:@"%d tests passed, %d tests failed", 
+    NSString *status = [NSString stringWithFormat:@"%d tests passed, %d tests failed",
         testsPassed + testsFailedExpected, testsFailed + testsPassedUnexpected];
-        
+
     if ([self testsWereSuccessful])
         [self growlNotifyTitle:@"WOTest run successful" message:status isWarning:NO sticky:NO];
     else
     {
-        _WOLog(@"error: testing did not complete without errors\n");    
+        _WOLog(@"error: testing did not complete without errors\n");
         [self growlNotifyTitle:@"WOTest run failed" message:status isWarning:YES sticky:YES];
-        
+
     }
-    
+
     // reset start date
     [self setStartDate:nil];
 }
@@ -723,7 +723,7 @@ jump_point:
 }
 
 - (void)removeLowLevelExceptionHandler
-{        
+{
     if (lowLevelExceptionHandlerInstalled)
     {
         DisposeExceptionHandlerUPP(InstallExceptionHandler(WOOldLowLevelExceptionHandler));
@@ -738,18 +738,18 @@ jump_point:
 {
     NSParameterAssert(title != nil);
     NSParameterAssert(message != nil);
-    
+
     // clean up enviroment a bit (hides possible warnings caused if these set for WOTestRunner)
     NSMutableDictionary *environment = [NSMutableDictionary dictionaryWithDictionary:[[NSProcessInfo processInfo] environment]];
     [environment removeObjectForKey:@"DYLD_INSERT_LIBRARIES"];
     [environment removeObjectForKey:@"WOTestBundleInjector"];
-    
+
     NSTask *task = [[[NSTask alloc] init] autorelease];
     [task setLaunchPath:@"/usr/bin/env"];   // use env so as to pick up PATH, if set
     [task setEnvironment:environment];
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"growlnotify",
-        @"--name",      @"com.wincent.WOTest", 
-        @"--appIcon",   @"Xcode", 
+        @"--name",      @"com.wincent.WOTest",
+        @"--appIcon",   @"Xcode",
         @"--priority",  (isWarning ? @"2" : @"0"),
         @"--message",   message,
         title,          nil];
@@ -773,7 +773,7 @@ jump_point:
 {
     NSParameterAssert(path != NULL);
     NSString *pathString = [NSString stringWithUTF8String:path];
-    
+
     unsigned trim = [self trimInitialPathComponents];
     if (trim == 0) return pathString;
     if (![pathString isAbsolutePath]) return pathString;    // only trim absolute paths
@@ -784,8 +784,8 @@ jump_point:
     return [NSString pathWithComponents:[components subarrayWithRange:NSMakeRange(trim + 1, count - trim - 1)]];
 }
 
-- (void)writePassed:(BOOL)passed 
-             inFile:(char *)path 
+- (void)writePassed:(BOOL)passed
+             inFile:(char *)path
              atLine:(int)line
             message:(NSString *)message, ...
 {
@@ -818,7 +818,7 @@ jump_point:
         {
             [self writeErrorInFile:path atLine:line message:[NSString stringWithFormat:@"Failed: %@", string]];
             testsFailed++;
-        }    
+        }
     }
 }
 
@@ -845,7 +845,7 @@ jump_point:
     va_end(args);
 }
 
-- (void)writeWarningInFile:(char *)path atLine:(int)line message:(NSString *)message, ... 
+- (void)writeWarningInFile:(char *)path atLine:(int)line message:(NSString *)message, ...
 {
     va_list args;
     va_start(args, message);
@@ -861,7 +861,7 @@ jump_point:
     uncaughtExceptions++;
 }
 
-- (void)writeStatusInFile:(char *)path atLine:(int)line message:(NSString *)message, ... 
+- (void)writeStatusInFile:(char *)path atLine:(int)line message:(NSString *)message, ...
 {
     va_list args;
     va_start(args, message);
@@ -877,7 +877,7 @@ jump_point:
     va_start(args, message);
     NSString *status = [NSString WOTest_stringWithFormat:message arguments:args];
     _WOLog(@"%@", status);
-    va_end(args);    
+    va_end(args);
 }
 
 - (void)writeWarning:(NSString *)message, ...
@@ -886,7 +886,7 @@ jump_point:
     va_start(args, message);
     NSString *warning = [NSString WOTest_stringWithFormat:message arguments:args];
     _WOLog(@"warning: %@", warning); // older versions of Xcode required initial colons "::" to show this as a warning
-    va_end(args);    
+    va_end(args);
 }
 
 - (void)writeError:(NSString *)message, ...
@@ -898,7 +898,7 @@ jump_point:
     va_end(args);
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Empty (do-nothing) test methods
 
 - (void)passTestInFile:(char *)path atLine:(int)line
@@ -911,7 +911,7 @@ jump_point:
     [self writePassed:NO inFile:path atLine:line message:@"(always fails)"];
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Boolean test methods
 
 - (void)testTrue:(BOOL)expr inFile:(char *)path atLine:(int)line
@@ -932,7 +932,7 @@ jump_point:
     NSParameterAssert(actual);
     NSParameterAssert(expected);
     BOOL equal = NO;
-        
+
     // NSValue category will throw an exception for invalid input(s)
     @try {
         equal = [actual WOTest_testIsEqualToValue:expected];
@@ -952,7 +952,7 @@ jump_point:
     NSParameterAssert(actual);
     NSParameterAssert(expected);
     BOOL equal = NO;
-    
+
     // NSValue category will throw an exception for invalid input(s)
     @try {
         equal = [actual WOTest_testIsEqualToValue:expected];
@@ -972,7 +972,7 @@ jump_point:
     NSParameterAssert(actual);
     NSParameterAssert(expected);
     BOOL greaterThan = NO;
-    
+
     // NSValue category will throw an exception for invalid input(s)
     @try {
         greaterThan = [actual WOTest_testIsGreaterThanValue:expected];
@@ -992,7 +992,7 @@ jump_point:
     NSParameterAssert(actual);
     NSParameterAssert(expected);
     BOOL notGreaterThan = NO;
-    
+
     // NSValue category will throw an exception for invalid input(s)
     @try {
         notGreaterThan = [actual WOTest_testIsNotGreaterThanValue:expected];
@@ -1012,7 +1012,7 @@ jump_point:
     NSParameterAssert(actual);
     NSParameterAssert(expected);
     BOOL lessThan = NO;
-    
+
     // NSValue category will throw an exception for invalid input(s)
     @try {
         lessThan = [actual WOTest_testIsLessThanValue:expected];
@@ -1032,7 +1032,7 @@ jump_point:
     NSParameterAssert(actual);
     NSParameterAssert(expected);
     BOOL notLessThan = NO;
-    
+
     // NSValue category will throw an exception for invalid input(s)
     @try {
         notLessThan = [actual WOTest_testIsNotLessThanValue:expected];
@@ -1053,7 +1053,7 @@ jump_point:
 - (void)testNil:(void *)pointer inFile:(char *)path atLine:(int)line
 {
     BOOL result = (pointer ? NO : YES);
-    [self writePassed:result inFile:path atLine:line message:@"expected nil, got %@", 
+    [self writePassed:result inFile:path atLine:line message:@"expected nil, got %@",
         (result ? @"nil" : [NSString stringWithFormat:@"%x", pointer])];
 }
 
@@ -1079,10 +1079,10 @@ jump_point:
 #pragma mark -
 #pragma mark int test methods
 
-- (void)testIsInt:(char *)type inFile:(char *)path atLine:(int)line 
+- (void)testIsInt:(char *)type inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (strcmp(type, "i") == 0); 
-    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"i\", got \"%s\"", type]]; 
+    BOOL result = (strcmp(type, "i") == 0);
+    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"i\", got \"%s\"", type]];
 }
 
 - (void)testIsNotInt:(char *)type inFile:(char *)path atLine:(int)line
@@ -1114,64 +1114,64 @@ jump_point:
     [self testInt:aInt isNotEqualTo:(int)0 inFile:path atLine:line];
 }
 
-- (void)testInt:(int)actual isEqualTo:(int)expected inFile:(char *)path atLine:(int)line 
+- (void)testInt:(int)actual isEqualTo:(int)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual == expected); 
-    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat:@"expected %d, got %d", expected, actual]]; 
+    BOOL result = (actual == expected);
+    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat:@"expected %d, got %d", expected, actual]];
 }
 
-- (void)testInt:(int)actual isNotEqualTo:(int)expected inFile:(char *)path atLine:(int)line 
+- (void)testInt:(int)actual isNotEqualTo:(int)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual != expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected (not) %d, got %d", expected, actual]]; 
+    BOOL result = (actual != expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected (not) %d, got %d", expected, actual]];
 }
 
-- (void)testInt:(int)actual greaterThan:(int)expected inFile:(char *)path atLine:(int)line 
+- (void)testInt:(int)actual greaterThan:(int)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual > expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected > %d, got %d", expected, actual]]; 
+    BOOL result = (actual > expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected > %d, got %d", expected, actual]];
 }
 
-- (void)testInt:(int)actual notGreaterThan:(int)expected inFile:(char *)path atLine:(int)line 
+- (void)testInt:(int)actual notGreaterThan:(int)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual <= expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected <= %d, got %d", expected, actual]]; 
+    BOOL result = (actual <= expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected <= %d, got %d", expected, actual]];
 }
 
-- (void)testInt:(int)actual lessThan:(int)expected inFile:(char *)path atLine:(int)line 
+- (void)testInt:(int)actual lessThan:(int)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual < expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected < %d, got %d", expected, actual]]; 
+    BOOL result = (actual < expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected < %d, got %d", expected, actual]];
 }
 
-- (void)testInt:(int)actual notLessThan:(int)expected inFile:(char *)path atLine:(int)line 
+- (void)testInt:(int)actual notLessThan:(int)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual >= expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected >= %d, got %d", expected, actual]]; 
+    BOOL result = (actual >= expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected >= %d, got %d", expected, actual]];
 }
 
 #pragma mark -
 #pragma mark unsigned test methods
 
-- (void)testIsUnsigned:(char *)type inFile:(char *)path atLine:(int)line 
+- (void)testIsUnsigned:(char *)type inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (strcmp(type, "I") == 0); 
-    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"I\", got \"%s\"", type]]; 
+    BOOL result = (strcmp(type, "I") == 0);
+    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"I\", got \"%s\"", type]];
 }
 
 - (void)testIsNotUnsigned:(char *)type inFile:(char *)path atLine:(int)line
@@ -1183,68 +1183,68 @@ jump_point:
               message:[NSString stringWithFormat:@"expected type (not) \"I\", got \"%s\"", type]];
 }
 
-- (void)testUnsignedZero:(unsigned)aUnsigned inFile:(char *)path atLine:(int)line 
+- (void)testUnsignedZero:(unsigned)aUnsigned inFile:(char *)path atLine:(int)line
 {
-    return [self testUnsigned:aUnsigned isEqualTo:(unsigned)0 inFile:path atLine:line]; 
+    return [self testUnsigned:aUnsigned isEqualTo:(unsigned)0 inFile:path atLine:line];
 }
 
-- (void)testUnsignedNotZero:(unsigned)aUnsigned inFile:(char *)path atLine:(int)line 
+- (void)testUnsignedNotZero:(unsigned)aUnsigned inFile:(char *)path atLine:(int)line
 {
-    return [self testUnsigned:aUnsigned isNotEqualTo:(unsigned)0 inFile:path atLine:line]; 
+    return [self testUnsigned:aUnsigned isNotEqualTo:(unsigned)0 inFile:path atLine:line];
 }
 
 - (void)testUnsigned:(unsigned)actual isEqualTo:(unsigned)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual == expected);    
-    [self writePassed:result 
-               inFile:path 
+    BOOL result = (actual == expected);
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:[NSString stringWithFormat:@"expected %u, got %u", expected, actual]];
 }
 
-- (void)testUnsigned:(unsigned)actual isNotEqualTo:(unsigned)expected inFile:(char *)path atLine:(int)line 
+- (void)testUnsigned:(unsigned)actual isNotEqualTo:(unsigned)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual != expected);    
-    [self writePassed:result 
-               inFile:path 
+    BOOL result = (actual != expected);
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:[NSString stringWithFormat:@"expected (not) %u, got %u", expected, actual]];
 }
 
-- (void)testUnsigned:(unsigned)actual greaterThan:(unsigned)expected inFile:(char *)path atLine:(int)line 
+- (void)testUnsigned:(unsigned)actual greaterThan:(unsigned)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual > expected);    
-    [self writePassed:result 
-               inFile:path 
+    BOOL result = (actual > expected);
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:[NSString stringWithFormat:@"expected > %u, got %u", expected, actual]];
 }
 
-- (void)testUnsigned:(unsigned)actual notGreaterThan:(unsigned)expected inFile:(char *)path atLine:(int)line 
+- (void)testUnsigned:(unsigned)actual notGreaterThan:(unsigned)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual <= expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected <= %u, got %u", expected, actual]]; 
+    BOOL result = (actual <= expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected <= %u, got %u", expected, actual]];
 }
 
-- (void)testUnsigned:(unsigned)actual lessThan:(unsigned)expected inFile:(char *)path atLine:(int)line 
+- (void)testUnsigned:(unsigned)actual lessThan:(unsigned)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual < expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected < %u, got %u", expected, actual]]; 
+    BOOL result = (actual < expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected < %u, got %u", expected, actual]];
 }
 
-- (void)testUnsigned:(unsigned)actual notLessThan:(unsigned)expected inFile:(char *)path atLine:(int)line 
+- (void)testUnsigned:(unsigned)actual notLessThan:(unsigned)expected inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (actual >= expected); 
-    [self writePassed:result 
-               inFile:path 
-               atLine:line 
-              message:[NSString stringWithFormat:@"expected >= %u, got %u", expected, actual]]; 
+    BOOL result = (actual >= expected);
+    [self writePassed:result
+               inFile:path
+               atLine:line
+              message:[NSString stringWithFormat:@"expected >= %u, got %u", expected, actual]];
 }
 
 #pragma mark -
@@ -1253,7 +1253,7 @@ jump_point:
 - (void)testIsFloat:(char *)type inFile:(char *)path atLine:(int)line
 {
     BOOL result = (strcmp(type, "f") == 0);
-    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"f\", got \"%s\"", type]]; 
+    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"f\", got \"%s\"", type]];
 }
 
 - (void)testIsNotFloat:(char *)type inFile:(char *)path atLine:(int)line
@@ -1265,94 +1265,94 @@ jump_point:
               message:[NSString stringWithFormat:@"expected type (not) \"f\", got \"%s\"", type]];
 }
 
-- (void)testFloatPositive:(float)aFloat inFile:(char *)path atLine:(int)line 
+- (void)testFloatPositive:(float)aFloat inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat greaterThan:(float)0.0 withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:aFloat greaterThan:(float)0.0 withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloatNegative:(float)aFloat inFile:(char *)path atLine:(int)line 
+- (void)testFloatNegative:(float)aFloat inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat lessThan:(float)0.0 withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:aFloat lessThan:(float)0.0 withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloatZero:(float)aFloat inFile:(char *)path atLine:(int)line 
+- (void)testFloatZero:(float)aFloat inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat isEqualTo:(float)0.0 withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:aFloat isEqualTo:(float)0.0 withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloatNotZero:(float)aFloat inFile:(char *)path atLine:(int)line 
+- (void)testFloatNotZero:(float)aFloat inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat isNotEqualTo:(float)0.0 withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:aFloat isNotEqualTo:(float)0.0 withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloat:(float)actual isEqualTo:(float)expected inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual isEqualTo:(float)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:actual isEqualTo:expected withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:actual isEqualTo:expected withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloat:(float)actual isNotEqualTo:(float)expected inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual isNotEqualTo:(float)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:actual isNotEqualTo:expected withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:actual isNotEqualTo:expected withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloat:(float)actual greaterThan:(float)expected inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual greaterThan:(float)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:actual greaterThan:expected withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:actual greaterThan:expected withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloat:(float)actual notGreaterThan:(float)expected inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual notGreaterThan:(float)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:actual notGreaterThan:expected withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:actual notGreaterThan:expected withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloat:(float)actual lessThan:(float)expected inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual lessThan:(float)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:actual lessThan:expected withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:actual lessThan:expected withinError:(float)0.0 inFile:path atLine:line];
 }
 
-- (void)testFloat:(float)actual notLessThan:(float)expected inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual notLessThan:(float)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:actual notLessThan:expected withinError:(float)0.0 inFile:path atLine:line]; 
+    return [self testFloat:actual notLessThan:expected withinError:(float)0.0 inFile:path atLine:line];
 }
 
 #pragma mark -
 #pragma mark float test methods with error margins
 
-- (void)testFloatPositive:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloatPositive:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat greaterThan:(float)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testFloat:aFloat greaterThan:(float)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testFloatNegative:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloatNegative:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat lessThan:(float)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testFloat:aFloat lessThan:(float)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testFloatZero:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloatZero:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat isEqualTo:(float)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testFloat:aFloat isEqualTo:(float)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testFloatNotZero:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloatNotZero:(float)aFloat withinError:(float)error inFile:(char *)path atLine:(int)line
 {
-    return [self testFloat:aFloat isNotEqualTo:(float)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testFloat:aFloat isNotEqualTo:(float)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testFloat:(float)actual isEqualTo:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual isEqualTo:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (fabsf(actual - expected) <= error);   
-    [self writePassed:result 
-               inFile:path 
+    BOOL result = (fabsf(actual - expected) <= error);
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
 }
 
-- (void)testFloat:(float)actual isNotEqualTo:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual isNotEqualTo:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (fabsf(actual - expected) > -error);   
-    [self writePassed:result 
-               inFile:path 
+    BOOL result = (fabsf(actual - expected) > -error);
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected (not) %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
@@ -1361,8 +1361,8 @@ jump_point:
 - (void)testFloat:(float)actual greaterThan:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line
 {
     BOOL result = ((actual - expected) > -error);
-    [self writePassed:result 
-               inFile:path 
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected > %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
@@ -1371,28 +1371,28 @@ jump_point:
 - (void)testFloat:(float)actual notGreaterThan:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line
 {
     BOOL result = ((actual - expected) <= error);
-    [self writePassed:result 
-               inFile:path 
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected <= %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
 }
 
-- (void)testFloat:(float)actual lessThan:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual lessThan:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line
 {
     BOOL result = ((actual - expected) < -error);
-    [self writePassed:result 
-               inFile:path 
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected < %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
 }
 
-- (void)testFloat:(float)actual notLessThan:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testFloat:(float)actual notLessThan:(float)expected withinError:(float)error inFile:(char *)path atLine:(int)line
 {
     BOOL result = ((actual - expected) >= error);
-    [self writePassed:result 
-               inFile:path 
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected >= %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
@@ -1404,7 +1404,7 @@ jump_point:
 - (void)testIsDouble:(char *)type inFile:(char *)path atLine:(int)line
 {
     BOOL result = (strcmp(type, "d") == 0);
-    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"d\", got \"%s\"", type]]; 
+    [self writePassed:result inFile:path atLine:line message:[NSString stringWithFormat: @"expected type \"d\", got \"%s\"", type]];
 }
 
 - (void)testIsNotDouble:(char *)type inFile:(char *)path atLine:(int)line
@@ -1416,94 +1416,94 @@ jump_point:
               message:[NSString stringWithFormat:@"expected type (not) \"d\", got \"%s\"", type]];
 }
 
-- (void)testDoublePositive:(double)aDouble inFile:(char *)path atLine:(int)line 
+- (void)testDoublePositive:(double)aDouble inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble greaterThan:(double)0.0 withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:aDouble greaterThan:(double)0.0 withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDoubleNegative:(double)aDouble inFile:(char *)path atLine:(int)line 
+- (void)testDoubleNegative:(double)aDouble inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble lessThan:(double)0.0 withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:aDouble lessThan:(double)0.0 withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDoubleZero:(double)aDouble inFile:(char *)path atLine:(int)line 
+- (void)testDoubleZero:(double)aDouble inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble isEqualTo:(double)0.0 withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:aDouble isEqualTo:(double)0.0 withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDoubleNotZero:(double)aDouble inFile:(char *)path atLine:(int)line 
+- (void)testDoubleNotZero:(double)aDouble inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble isNotEqualTo:(double)0.0 withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:aDouble isNotEqualTo:(double)0.0 withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDouble:(double)actual isEqualTo:(double)expected inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual isEqualTo:(double)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:actual isEqualTo:expected withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:actual isEqualTo:expected withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDouble:(double)actual isNotEqualTo:(double)expected inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual isNotEqualTo:(double)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:actual isNotEqualTo:expected withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:actual isNotEqualTo:expected withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDouble:(double)actual greaterThan:(double)expected inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual greaterThan:(double)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:actual greaterThan:expected withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:actual greaterThan:expected withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDouble:(double)actual notGreaterThan:(double)expected inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual notGreaterThan:(double)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:actual notGreaterThan:expected withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:actual notGreaterThan:expected withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDouble:(double)actual lessThan:(double)expected inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual lessThan:(double)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:actual lessThan:expected withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:actual lessThan:expected withinError:(double)0.0 inFile:path atLine:line];
 }
 
-- (void)testDouble:(double)actual notLessThan:(double)expected inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual notLessThan:(double)expected inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:actual notLessThan:expected withinError:(double)0.0 inFile:path atLine:line]; 
+    return [self testDouble:actual notLessThan:expected withinError:(double)0.0 inFile:path atLine:line];
 }
 
 #pragma mark -
 #pragma mark double test methods with error margins
 
-- (void)testDoublePositive:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDoublePositive:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble greaterThan:(double)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testDouble:aDouble greaterThan:(double)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testDoubleNegative:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDoubleNegative:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble lessThan:(double)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testDouble:aDouble lessThan:(double)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testDoubleZero:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDoubleZero:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble isEqualTo:(double)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testDouble:aDouble isEqualTo:(double)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testDoubleNotZero:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDoubleNotZero:(double)aDouble withinError:(double)error inFile:(char *)path atLine:(int)line
 {
-    return [self testDouble:aDouble isNotEqualTo:(double)0.0 withinError:error inFile:path atLine:line]; 
+    return [self testDouble:aDouble isNotEqualTo:(double)0.0 withinError:error inFile:path atLine:line];
 }
 
-- (void)testDouble:(double)actual isEqualTo:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual isEqualTo:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (fabs(actual - expected) <= error);   
-    [self writePassed:result 
-               inFile:path 
+    BOOL result = (fabs(actual - expected) <= error);
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
 }
 
-- (void)testDouble:(double)actual isNotEqualTo:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual isNotEqualTo:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (fabs(actual - expected) > -error);   
-    [self writePassed:result 
-               inFile:path 
+    BOOL result = (fabs(actual - expected) > -error);
+    [self writePassed:result
+               inFile:path
                atLine:line
               message:
         [NSString stringWithFormat:@"expected (not) %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
@@ -1519,7 +1519,7 @@ jump_point:
         [NSString stringWithFormat:@"expected > %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
 }
 
-- (void)testDouble:(double)actual notGreaterThan:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual notGreaterThan:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line
 {
     BOOL result = ((actual - expected) <= error);
     [self writePassed:result
@@ -1529,7 +1529,7 @@ jump_point:
         [NSString stringWithFormat:@"expected <= %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
 }
 
-- (void)testDouble:(double)actual lessThan:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual lessThan:(double)expected withinError:(double)error inFile:(char *)path atLine:(int)line
 {
     BOOL result = ((actual - expected) < -error);
     [self writePassed:result
@@ -1539,7 +1539,7 @@ jump_point:
         [NSString stringWithFormat:@"expected < %f (%C%f), got %f", expected, WO_UNICODE_PLUS_MINUS_SIGN, error, actual]];
 }
 
-- (void)testDouble:(double)actual notLessThan:(double)expected withinError:(float)error inFile:(char *)path atLine:(int)line 
+- (void)testDouble:(double)actual notLessThan:(double)expected withinError:(float)error inFile:(char *)path atLine:(int)line
 {
     BOOL result = ((actual - expected) >= error);
     [self writePassed:result
@@ -1563,7 +1563,7 @@ jump_point:
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testObject:(id)actual isNotEqualTo:(id)expected inFile:(char *)path atLine:(int)line 
+- (void)testObject:(id)actual isNotEqualTo:(id)expected inFile:(char *)path atLine:(int)line
 {
     BOOL equal = NO;
     if (!actual && !expected) equal = YES; // equal (both nil)
@@ -1580,7 +1580,7 @@ jump_point:
 #pragma mark -
 #pragma mark NSString test methods
 
-- (void)testString:(NSString *)actual isEqualTo:(NSString *)expected inFile:(char *)path atLine:(int)line 
+- (void)testString:(NSString *)actual isEqualTo:(NSString *)expected inFile:(char *)path atLine:(int)line
 {
     if (actual && ![actual isKindOfClass:[NSString class]])
         [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
@@ -1593,10 +1593,10 @@ jump_point:
                            inFile:path
                            atLine:line];
     BOOL equal = NO;
-    if (!actual && !expected) equal = YES; // equal (both nil) 
-    else if (actual) equal = [actual isEqualToString:expected];    
+    if (!actual && !expected) equal = YES; // equal (both nil)
+    else if (actual) equal = [actual isEqualToString:expected];
     BOOL expectedTruncated, actualTruncated;
-    [self writePassed:equal inFile:path atLine:line message:@"expected \"%@\", got \"%@\"", WO_DESC(expected), WO_DESC(actual)]; 
+    [self writePassed:equal inFile:path atLine:line message:@"expected \"%@\", got \"%@\"", WO_DESC(expected), WO_DESC(actual)];
     if (expectedTruncated)  _WOLog(@"expected result (not truncated): %@", WO_LONG_DESC(expected));
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
@@ -1614,7 +1614,7 @@ jump_point:
                            inFile:path
                            atLine:line];
     BOOL equal = NO;
-    if (!actual && !expected) equal = YES; // equal (both nil) 
+    if (!actual && !expected) equal = YES; // equal (both nil)
     else if (actual) equal = [actual isEqualToString:expected];
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:equal
@@ -1625,7 +1625,7 @@ jump_point:
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testString:(NSString *)actual hasPrefix:(NSString *)expected inFile:(char *)path atLine:(int)line 
+- (void)testString:(NSString *)actual hasPrefix:(NSString *)expected inFile:(char *)path atLine:(int)line
 {
     if (!expected)
         [NSException WOTest_raise:WO_TEST_NIL_PARAMETER_EXCEPTION
@@ -1642,7 +1642,7 @@ jump_point:
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(expected)
                            inFile:path
                            atLine:line];
-    BOOL result = actual ? NO : [actual hasPrefix:expected]; 
+    BOOL result = actual ? NO : [actual hasPrefix:expected];
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:result
                inFile:path
@@ -1652,7 +1652,7 @@ jump_point:
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testString:(NSString *)actual doesNotHavePrefix:(NSString *)expected inFile:(char *)path atLine:(int)line 
+- (void)testString:(NSString *)actual doesNotHavePrefix:(NSString *)expected inFile:(char *)path atLine:(int)line
 {
     if (!expected)
         [NSException WOTest_raise:WO_TEST_NIL_PARAMETER_EXCEPTION
@@ -1669,7 +1669,7 @@ jump_point:
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(expected)
                            inFile:path
                            atLine:line];
-    BOOL result = actual ? (![actual hasPrefix:expected]) : NO; 
+    BOOL result = actual ? (![actual hasPrefix:expected]) : NO;
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:result
                inFile:path
@@ -1679,7 +1679,7 @@ jump_point:
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testString:(NSString *)actual hasSuffix:(NSString *)expected inFile:(char *)path atLine:(int)line 
+- (void)testString:(NSString *)actual hasSuffix:(NSString *)expected inFile:(char *)path atLine:(int)line
 {
     if (!expected)
         [NSException WOTest_raise:WO_TEST_NIL_PARAMETER_EXCEPTION
@@ -1696,7 +1696,7 @@ jump_point:
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(expected)
                            inFile:path
                            atLine:line];
-    BOOL result = actual ? NO : [actual hasSuffix:expected]; 
+    BOOL result = actual ? NO : [actual hasSuffix:expected];
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:result
                inFile:path
@@ -1706,7 +1706,7 @@ jump_point:
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testString:(NSString *)actual doesNotHaveSuffix:(NSString *)expected inFile:(char *)path atLine:(int)line 
+- (void)testString:(NSString *)actual doesNotHaveSuffix:(NSString *)expected inFile:(char *)path atLine:(int)line
 {
     if (!expected)
         [NSException WOTest_raise:WO_TEST_NIL_PARAMETER_EXCEPTION
@@ -1723,7 +1723,7 @@ jump_point:
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(expected)
                            inFile:path
                            atLine:line];
-    BOOL result = actual ? (![actual hasSuffix:expected]) : NO; 
+    BOOL result = actual ? (![actual hasSuffix:expected]) : NO;
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:result
                inFile:path
@@ -1733,7 +1733,7 @@ jump_point:
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testString:(NSString *)actual contains:(NSString *)expected inFile:(char *)path atLine:(int)line 
+- (void)testString:(NSString *)actual contains:(NSString *)expected inFile:(char *)path atLine:(int)line
 {
     if (!expected)
         [NSException WOTest_raise:WO_TEST_NIL_PARAMETER_EXCEPTION
@@ -1750,7 +1750,7 @@ jump_point:
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(expected)
                            inFile:path
                            atLine:line];
-    BOOL result = actual ? NO : (!NSEqualRanges([actual rangeOfString:expected], NSMakeRange(NSNotFound, 0))); 
+    BOOL result = actual ? NO : (!NSEqualRanges([actual rangeOfString:expected], NSMakeRange(NSNotFound, 0)));
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:result
                inFile:path
@@ -1760,7 +1760,7 @@ jump_point:
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testString:(NSString *)actual doesNotContain:(NSString *)expected inFile:(char *)path atLine:(int)line 
+- (void)testString:(NSString *)actual doesNotContain:(NSString *)expected inFile:(char *)path atLine:(int)line
 {
     if (!expected)
         [NSException WOTest_raise:WO_TEST_NIL_PARAMETER_EXCEPTION
@@ -1777,7 +1777,7 @@ jump_point:
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(expected)
                            inFile:path
                            atLine:line];
-    BOOL result = actual ? YES : (NSEqualRanges([actual rangeOfString:expected], NSMakeRange(NSNotFound, 0))); 
+    BOOL result = actual ? YES : (NSEqualRanges([actual rangeOfString:expected], NSMakeRange(NSNotFound, 0)));
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:result
                inFile:path
@@ -1790,28 +1790,7 @@ jump_point:
 #pragma mark -
 #pragma mark NSArray test methods
 
-- (void)testArray:(NSArray *)actual isEqualTo:(NSArray *)expected inFile:(char *)path atLine:(int)line 
-{
-    if (actual && ![actual isKindOfClass:[NSArray class]])
-        [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
-                            reason:WO_EXPECTED_ARRAY_EXCEPTION_REASON(actual)
-                            inFile:path
-                            atLine:line];
-    if (expected && ![expected isKindOfClass:[NSArray class]])
-        [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
-                            reason:WO_EXPECTED_ARRAY_EXCEPTION_REASON(expected)
-                            inFile:path
-                            atLine:line];
-    BOOL equal = NO;
-    if (!actual && !expected) equal = YES; // equal (both nil) 
-    else if (actual) equal = [actual isEqualToArray:expected]; 
-    BOOL expectedTruncated, actualTruncated;
-    [self writePassed:equal inFile:path atLine:line message:@"expected %@, got %@", WO_DESC(expected), WO_DESC(actual)]; 
-    if (expectedTruncated)  _WOLog(@"expected result (not truncated): %@", WO_LONG_DESC(expected));
-    if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
-}
-
-- (void)testArray:(NSArray *)actual isNotEqualTo:(NSArray *)expected inFile:(char *)path atLine:(int)line 
+- (void)testArray:(NSArray *)actual isEqualTo:(NSArray *)expected inFile:(char *)path atLine:(int)line
 {
     if (actual && ![actual isKindOfClass:[NSArray class]])
         [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
@@ -1827,7 +1806,28 @@ jump_point:
     if (!actual && !expected) equal = YES; // equal (both nil)
     else if (actual) equal = [actual isEqualToArray:expected];
     BOOL expectedTruncated, actualTruncated;
-    [self writePassed:(!equal) inFile:path atLine:line message:@"expected (not) %@, got %@", WO_DESC(expected), WO_DESC(actual)]; 
+    [self writePassed:equal inFile:path atLine:line message:@"expected %@, got %@", WO_DESC(expected), WO_DESC(actual)];
+    if (expectedTruncated)  _WOLog(@"expected result (not truncated): %@", WO_LONG_DESC(expected));
+    if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
+}
+
+- (void)testArray:(NSArray *)actual isNotEqualTo:(NSArray *)expected inFile:(char *)path atLine:(int)line
+{
+    if (actual && ![actual isKindOfClass:[NSArray class]])
+        [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
+                            reason:WO_EXPECTED_ARRAY_EXCEPTION_REASON(actual)
+                            inFile:path
+                            atLine:line];
+    if (expected && ![expected isKindOfClass:[NSArray class]])
+        [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
+                            reason:WO_EXPECTED_ARRAY_EXCEPTION_REASON(expected)
+                            inFile:path
+                            atLine:line];
+    BOOL equal = NO;
+    if (!actual && !expected) equal = YES; // equal (both nil)
+    else if (actual) equal = [actual isEqualToArray:expected];
+    BOOL expectedTruncated, actualTruncated;
+    [self writePassed:(!equal) inFile:path atLine:line message:@"expected (not) %@, got %@", WO_DESC(expected), WO_DESC(actual)];
     if (expectedTruncated)  _WOLog(@"expected result (not truncated): %@", WO_LONG_DESC(expected));
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
@@ -1835,7 +1835,7 @@ jump_point:
 #pragma mark -
 #pragma mark NSDictionary test methods
 
-- (void)testDictionary:(NSDictionary *)actual isEqualTo:(NSDictionary *)expected inFile:(char *)path atLine:(int)line 
+- (void)testDictionary:(NSDictionary *)actual isEqualTo:(NSDictionary *)expected inFile:(char *)path atLine:(int)line
 {
     if (actual && ![actual isKindOfClass:[NSArray class]])
         [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
@@ -1848,15 +1848,15 @@ jump_point:
                             inFile:path
                             atLine:line];
     BOOL equal = NO;
-    if (!actual && !expected) equal = YES; // equal (both nil) 
-    else if (actual) equal = [actual isEqualToDictionary:expected]; 
+    if (!actual && !expected) equal = YES; // equal (both nil)
+    else if (actual) equal = [actual isEqualToDictionary:expected];
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:equal inFile:path atLine:line message:@"expected %@, got %@", WO_DESC(expected), WO_DESC(actual)];
     if (expectedTruncated)  _WOLog(@"expected result (not truncated): %@", WO_LONG_DESC(expected));
     if (actualTruncated)    _WOLog(@"actual result (not truncated): %@", WO_LONG_DESC(actual));
 }
 
-- (void)testDictionary:(NSDictionary *)actual isNotEqualTo:(NSDictionary *)expected inFile:(char *)path atLine:(int)line 
+- (void)testDictionary:(NSDictionary *)actual isNotEqualTo:(NSDictionary *)expected inFile:(char *)path atLine:(int)line
 {
     if (actual && ![actual isKindOfClass:[NSDictionary class]])
         [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
@@ -1869,8 +1869,8 @@ jump_point:
                             inFile:path
                             atLine:line];
     BOOL equal = NO;
-    if (!actual && !expected) equal = YES; // equal (both nil) 
-    else if (actual) equal = [actual isEqualToDictionary:expected]; 
+    if (!actual && !expected) equal = YES; // equal (both nil)
+    else if (actual) equal = [actual isEqualToDictionary:expected];
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:(!equal) inFile:path atLine:line message:@"expected (not) %@, got %@", WO_DESC(expected), WO_DESC(actual)];
     if (expectedTruncated)  _WOLog(@"expected result (not truncated): %@", WO_LONG_DESC(expected));
@@ -1880,18 +1880,18 @@ jump_point:
 #pragma mark -
 #pragma mark Exception test methods
 
-- (void)testThrowsException:(id)exception inFile:(char *)path atLine:(int)line 
+- (void)testThrowsException:(id)exception inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (exception ? YES : NO); 
+    BOOL result = (exception ? YES : NO);
     [self writePassed:result
                inFile:path
                atLine:line
               message:[NSString stringWithFormat:@"expected exception, got %@", [NSException WOTest_nameForException:exception]]];
 }
 
-- (void)testDoesNotThrowException:(id)exception inFile:(char *)path atLine:(int)line 
+- (void)testDoesNotThrowException:(id)exception inFile:(char *)path atLine:(int)line
 {
-    BOOL result = (exception ? NO : YES); 
+    BOOL result = (exception ? NO : YES);
     [self writePassed:result
                inFile:path
                atLine:line
@@ -1899,30 +1899,30 @@ jump_point:
         [NSString stringWithFormat:@"expected no exception, got %@", [NSException WOTest_nameForException:exception]]];
 }
 
-- (void)testThrowsException:(id)exception named:(NSString *)name inFile:(char *)path atLine:(int)line 
+- (void)testThrowsException:(id)exception named:(NSString *)name inFile:(char *)path atLine:(int)line
 {
-    if (name && ![name isKindOfClass:[NSString class]]) 
+    if (name && ![name isKindOfClass:[NSString class]])
     {
         [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(name)
                            inFile:path
                            atLine:line];
     }
-    
-    BOOL        result      = NO; 
-    NSString    *actualName = [NSException WOTest_nameForException:exception]; 
-    
-    if (exception && [actualName isEqualToString:name]) result = YES; 
-    
+
+    BOOL        result      = NO;
+    NSString    *actualName = [NSException WOTest_nameForException:exception];
+
+    if (exception && [actualName isEqualToString:name]) result = YES;
+
     [self writePassed:result
                inFile:path
                atLine:line
               message:[NSString stringWithFormat:@"expected %@, got %@", name, actualName]];
 }
 
-- (void)testDoesNotThrowException:(id)exception named:(NSString *)name inFile:(char *)path atLine:(int)line 
+- (void)testDoesNotThrowException:(id)exception named:(NSString *)name inFile:(char *)path atLine:(int)line
 {
-    if (name && ![name isKindOfClass:[NSString class]]) 
+    if (name && ![name isKindOfClass:[NSString class]])
     {
         [NSException WOTest_raise:WO_TEST_CLASS_MISMATCH_EXCEPTION
                            reason:WO_EXPECTED_STRING_EXCEPTION_REASON(name)
@@ -1930,12 +1930,12 @@ jump_point:
                            atLine:line];
     }
 
-    BOOL        result      = YES; 
-    NSString    *actualName = [NSException WOTest_nameForException:exception]; 
-    
-    if (exception && [actualName isEqualToString:name]) result = NO; 
-    
-    [self writePassed:result inFile:path atLine:line message:@"expected (not) %@, got %@", name, actualName]; 
+    BOOL        result      = YES;
+    NSString    *actualName = [NSException WOTest_nameForException:exception];
+
+    if (exception && [actualName isEqualToString:name]) result = NO;
+
+    [self writePassed:result inFile:path atLine:line message:@"expected (not) %@, got %@", name, actualName];
 }
 
 #pragma mark -
@@ -2113,12 +2113,12 @@ jump_point:
     return (double)-(WO_SMALL_TEST_VALUE + (WO_RANDOM_OFFSET * WO_RANDOM_SIGN));
 }
 
-#pragma mark - 
+#pragma mark -
 #pragma mark Accessors
 
 - (NSDate *)startDate
 {
-    return [[startDate retain] autorelease]; 
+    return [[startDate retain] autorelease];
 }
 
 - (void)setStartDate:(NSDate *)aStartDate
@@ -2235,7 +2235,7 @@ jump_point:
 
 - (NSString *)lastReportedFile
 {
-    return [[lastReportedFile retain] autorelease]; 
+    return [[lastReportedFile retain] autorelease];
 }
 
 - (void)setLastReportedFile:(NSString *)aLastReportedFile

@@ -28,7 +28,7 @@
 {
     // first do a basic comparison without arguments
     if (![self WOTest_isEqualToInvocationIgnoringArguments:anInvocation]) return NO;
-    
+
     // compare arguments (skip first two: self and _cmd)
     NSMethodSignature *aSignature = [self methodSignature];
     NSMethodSignature *otherSignature = [anInvocation methodSignature];
@@ -37,11 +37,11 @@
         const char *aType = [aSignature getArgumentTypeAtIndex:i];
         const char *otherType = [otherSignature getArgumentTypeAtIndex:i];
         if (strcmp(aType, otherType) != 0) return NO;
-        
+
         // compare the two values
         return [[self WOTest_valueForArgumentAtIndex:i] isEqual:[anInvocation WOTest_valueForArgumentAtIndex:i]];
     }
-    
+
     return YES; // if get this far, all equality tests passed (no arguments)
 }
 
@@ -50,15 +50,15 @@
     // basic checks: compare against nil and against self
     if (!anInvocation) return NO;
     if (anInvocation == self) return YES;
-    
+
     // compare selectors
     if ([self selector] != [anInvocation selector]) return NO;
-    
+
     // compare signatures
     NSMethodSignature *aSignature = [self methodSignature];
     NSMethodSignature *otherSignature = [anInvocation methodSignature];
     if (![aSignature isEqual:otherSignature]) return NO;
-        
+
     return YES; // if get this far, all equality tests passed (no arguments)
 }
 

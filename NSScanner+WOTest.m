@@ -37,12 +37,12 @@
     {
         *value = [string characterAtIndex:scanLocation];
         return YES;
-    }   
+    }
     return NO;
 }
 
 - (BOOL)WOTest_scanCharacter:(unichar *)value;
-{    
+{
     unichar  character;
     if ([self WOTest_peekCharacter:&character])
     {
@@ -57,7 +57,7 @@
 - (BOOL)WOTest_scanCharacterFromSet:(NSCharacterSet *)scanSet intoChar:(unichar *)value;
 {
     if (!scanSet) return NO; // nothing to do
-    
+
     unsigned    scanLocation = [self scanLocation];
     unichar     character;
     if ([self WOTest_scanCharacter:&character] && [scanSet characterIsMember:character])
@@ -66,7 +66,7 @@
             *value = character;
         return YES;
     }
-    
+
     [self setScanLocation:scanLocation]; // revert
     return NO;
 }
@@ -75,7 +75,7 @@
 {
     if ([self scanLocation] != 0)
         return NO; // the return type must be at the start of the string
-    
+
     // scan a single type (the first one will be the return type)
     return [self WOTest_scanTypeIntoString:stringValue];
 }
@@ -85,10 +85,10 @@
     unsigned    scanLocation        = [self scanLocation];
     NSString    *qualifiers         = nil;
     NSString    *type               = nil;
-    
+
     // scan any qualifers that are present
     if (![self WOTest_scanQualifiersIntoString:&qualifiers]) qualifiers = @"";
-    
+
     // scan type
     if ([self WOTest_scanBitfieldIntoString:&type]          ||
         [self scanPointerIntoString:&type]                  ||
@@ -99,54 +99,54 @@
     {
         // success
         if (stringValue)
-            *stringValue = 
+            *stringValue =
                 [NSString stringWithFormat:@"%@%@", qualifiers, type];
-        return YES;        
+        return YES;
     }
-    
+
     [self setScanLocation:scanLocation]; // revert
     return NO;
 }
 
 - (BOOL)WOTest_scanQualifiersIntoString:(NSString **)stringValue
-{    
-    NSCharacterSet *qualifiersSet = 
+{
+    NSCharacterSet *qualifiersSet =
     [NSCharacterSet characterSetWithCharactersInString:
         [NSString stringWithFormat:@"%C%C%C%C%C%C%C",
             WO_ENCODING_QUALIFIER_CONST,    WO_ENCODING_QUALIFIER_IN,
             WO_ENCODING_QUALIFIER_INOUT,    WO_ENCODING_QUALIFIER_OUT,
             WO_ENCODING_QUALIFIER_BYCOPY,   WO_ENCODING_QUALIFIER_BYREF,
             WO_ENCODING_QUALIFIER_ONEWAY]];
-    
+
     return [self scanCharactersFromSet:qualifiersSet
                             intoString:stringValue];
 }
 
 - (BOOL)WOTest_scanNonCompoundTypeIntoString:(NSString **)stringValue
 {
-    NSCharacterSet *nonCompoundSet = 
+    NSCharacterSet *nonCompoundSet =
     [NSCharacterSet characterSetWithCharactersInString:
         [NSString stringWithFormat:@"%C%C%C%C%C%C%C%C%C%C%C%C%C%C%C%C%C%C%C",
-            _C_ID,      _C_CLASS,   _C_SEL,     _C_CHR,     _C_UCHR,    
+            _C_ID,      _C_CLASS,   _C_SEL,     _C_CHR,     _C_UCHR,
             _C_SHT,     _C_USHT,    _C_INT,     _C_UINT,    _C_LNG,
-            _C_ULNG,    _C_LNGLNG,  _C_ULNGLNG, _C_FLT,     _C_DBL,     
+            _C_ULNG,    _C_LNGLNG,  _C_ULNGLNG, _C_FLT,     _C_DBL,
             _C_99BOOL,  _C_VOID,    _C_UNDEF,   _C_CHARPTR]];
-    
+
     unichar character;
     if ([self WOTest_scanCharacterFromSet:nonCompoundSet intoChar:&character])
     {
         if (stringValue)
-            *stringValue = [NSString WOTest_stringWithCharacter:character]; 
+            *stringValue = [NSString WOTest_stringWithCharacter:character];
         return YES;
     }
-     
+
     return NO;
 }
 
 - (BOOL)WOTest_scanBitfieldIntoString:(NSString **)stringValue
 {
     unsigned scanLocation = [self scanLocation];
-    
+
     unichar marker; // look for bitfield marker
     int num;        // scan number of bits
     if ([self WOTest_scanCharacter:&marker] && (marker == _C_BFLD) && [self scanInt:&num])
@@ -155,7 +155,7 @@
             *stringValue = [NSString stringWithFormat:@"%C%d", marker, num];
         return YES;
     }
-    
+
     [self setScanLocation:scanLocation]; // revert
     return NO;
 }
@@ -163,11 +163,11 @@
 - (BOOL)WOTest_scanArrayIntoString:(NSString **)stringValue
 {
     unsigned scanLocation = [self scanLocation];
-    
+
     unichar startMarker, endMarker; // look for array start marker
     int num;                        // scan number of elements
     NSString *type;                 // scan type of elements
-    
+
     if ([self WOTest_scanCharacter:&startMarker] && (startMarker == _C_ARY_B) &&
         [self scanInt:&num] && [self WOTest_scanTypeIntoString:&type] &&
         [self WOTest_scanCharacter:&endMarker] && (endMarker == _C_ARY_E))
@@ -176,8 +176,8 @@
             *stringValue = [NSString stringWithFormat:@"%C%d%@%C", startMarker, num, type, endMarker];
         return YES;
     }
-    
-    
+
+
     [self setScanLocation:scanLocation]; // revert
     return NO;
 }
@@ -185,12 +185,12 @@
 - (BOOL)WOTest_scanIdentifierIntoString:(NSString **)stringValue
 {
     unsigned scanLocation = [self scanLocation];
-    
+
     unichar firstChar, equalsChar;
     if ([self WOTest_peekCharacter:&firstChar])
     {
         // identifiers must begin with a letter or underscore (no numbers!)
-        if (((firstChar >= 'a') && (firstChar <= 'z')) || 
+        if (((firstChar >= 'a') && (firstChar <= 'z')) ||
             ((firstChar >= 'A') && (firstChar <= 'Z')) ||
             (firstChar == '_'))
         {
@@ -219,7 +219,7 @@
             }
         }
     }
-    
+
     [self setScanLocation:scanLocation]; // revert
     return NO;
 }
@@ -227,7 +227,7 @@
 - (BOOL)WOTest_scanStructIntoString:(NSString **)stringValue
 {
     unsigned scanLocation = [self scanLocation];
-    
+
     unichar startMarker, endMarker;
     NSString *identifier;
     if ([self WOTest_scanCharacter:&startMarker] && (startMarker == _C_STRUCT_B))
@@ -236,13 +236,13 @@
         if ([self WOTest_scanIdentifierIntoString:&identifier])
         {
             [self WOTest_scanCharacter:NULL]; // scan past "="
-            
+
             // prepare identifier for later insertion (append equals sign)
             identifier = [NSString stringWithFormat:@"%@=", identifier];
         }
         else // optional identifier not found
             identifier = @"";
-        
+
         // scan types until you hit end marker
         NSMutableString *types = [NSMutableString string];
         NSString *type;
@@ -251,7 +251,7 @@
             [types appendString:type];
             [self scanInt:nil]; // skip over any superfluous numbers in string
         }
-        
+
         // scan end marker
         if ([self WOTest_scanCharacter:&endMarker] && (endMarker == _C_STRUCT_E))
         {
@@ -267,7 +267,7 @@
 - (BOOL)WOTest_scanUnionIntoString:(NSString **)stringValue
 {
     unsigned scanLocation = [self scanLocation];
-    
+
     unichar startMarker, equalsMarker, endMarker;
     NSString *identifier;
     if ([self WOTest_scanCharacter:&startMarker] && (startMarker == _C_UNION_B))
@@ -292,7 +292,7 @@
             [types appendString:type];
             [self scanInt:nil]; // skip over any superfluous numbers in string
         }
-        
+
         // scan end marker
         if ([self WOTest_scanCharacter:&endMarker] && (endMarker == _C_UNION_E))
         {
@@ -301,15 +301,15 @@
             return YES;
         }
     }
-        
+
     [self setScanLocation:scanLocation]; // revert
-    return NO;    
+    return NO;
 }
 
 - (BOOL)scanPointerIntoString:(NSString **)stringValue
 {
     unsigned scanLocation = [self scanLocation];
-    
+
     unichar marker; // look for pointer marker
     NSString *type; // scan type to which pointer points
     if ([self WOTest_scanCharacter:&marker] && (marker == _C_PTR) && [self WOTest_scanTypeIntoString:&type])
@@ -318,7 +318,7 @@
             *stringValue = [NSString stringWithFormat:@"%C%@", marker, type];
         return YES;
     }
-    
+
     [self setScanLocation:scanLocation]; // revert
     return NO;
 }

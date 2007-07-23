@@ -21,42 +21,42 @@
 
 #import <Foundation/Foundation.h>
 
-/*! 
+/*!
  Example method signatures and types:
- 
+
  The documentation notes the following: "The compiler generates the method type encodings in a format that includes information on the size of the stack and the size occupied by the arguments. These numbers appear after each encoding in the method_types string. However, because the compiler historically generates them incorrectly, and because they differ depending on the CPU type, the runtime ignores them if they are present. These numbers are not required by the Objective-C runtime in Mac OS X v10.0 or later."
- 
+
  The first entry indicates the type of the return value.
  This is followed by the first argument which is always \@0 or \@8 (self).
  The second argument is always :4 or :12 (_cmd).
  Any subsequent arguments follow.
- 
+
  + new  : \@8\@0:4
- 
+
  + (const char *) name  : r*8\@0:4
  - (const char *) name : r*8\@0:4
  - (void *)zone :  ^v8\@0:4
  - (BOOL) conformsTo: (Protocol *)aProtocolObject : c12\@0:4\@8
- 
+
  + (id)allocWithZone:(NSZone *)zone : \@12\@0:4^{_NSZone=}8
- 
+
  + (Class)class : #8\@0:4
- 
- + (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget 
+
+ + (void)cancelPreviousPerformRequestsWithTarget:(id)aTarget
  selector:(SEL)aSelector object:(id)anArgument
  v20\@0:4\@8:12\@16
- 
+
  + (NSRect)contentRectForFrameRect:(NSRect)frameRect styleMask:(unsigned int)aStyle
- {_NSRect={_NSPoint=ff}{_NSSize=ff}}28\@0:4{_NSRect={_NSPoint=ff}{_NSSize=ff}}8I24    
- 
+ {_NSRect={_NSPoint=ff}{_NSSize=ff}}28\@0:4{_NSRect={_NSPoint=ff}{_NSSize=ff}}8I24
+
  + (id)stringWithString:(NSString *)aString : \@12\@0:4\@8
- 
+
  + (NSString *)localizedNameOfStringEncoding:(NSStringEncoding)encoding
  \@12\@0:4\@8
- 
- See objc/objc-class.h for macros 
- 
- 
+
+ See objc/objc-class.h for macros
+
+
 Additional codes used by runtime as described here: file:///Developer/ADC%20Reference%20Library/documentation/Cocoa/Conceptual/ObjectiveC/RuntimeOverview/chapter_4_section_6.html */
 
 #define WO_ENCODING_QUALIFIER_CONST     'r'
@@ -67,7 +67,7 @@ Additional codes used by runtime as described here: file:///Developer/ADC%20Refe
 #define WO_ENCODING_QUALIFIER_BYREF     'R'
 #define WO_ENCODING_QUALIFIER_ONEWAY    'V'
 
-@interface NSScanner (WOTest) 
+@interface NSScanner (WOTest)
 
 /*! Raises an NSInternalInconsistencyException if value is NULL. */
 - (BOOL)WOTest_peekCharacter:(unichar *)value;

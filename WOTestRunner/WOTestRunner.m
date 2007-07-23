@@ -40,7 +40,7 @@ int main(int argc, const char *argv[])
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     int exitCode = EXIT_SUCCESS;
-    
+
     // an example of using the framework without linking to it
     WO_TEST_LOAD_FRAMEWORK;
     if (!WO_TEST_FRAMEWORK_IS_LOADED)
@@ -49,17 +49,17 @@ int main(int argc, const char *argv[])
         fprintf(stderr, "error: unable to load WOTest framework\n");
         goto cleanup;
     }
-    
+
     // parse commandline arguments
     int verbose = 0;
     NSMutableArray *testClasses     = [NSMutableArray array];
     NSMutableArray *excludeClasses  = [NSMutableArray array];
     NSMutableArray *testBundles     = [NSMutableArray array];
     NSMutableArray *excludeBundles  = [NSMutableArray array];
-    
+
     extern char *optarg;
     extern int  optind;
-    int         ch;    
+    int         ch;
     static struct option longopts[] = {
         { "help",           no_argument,        NULL,   'h' },
         { "verbose",        no_argument,        NULL,   'v' },
@@ -85,8 +85,8 @@ int main(int argc, const char *argv[])
                 goto cleanup;
                 break;
             case 't': // test this class
-                [testClasses addObject:[NSString stringWithUTF8String:optarg]];   
-                break;    
+                [testClasses addObject:[NSString stringWithUTF8String:optarg]];
+                break;
             case 'e': // exclude this class
                 [excludeClasses addObject:[NSString stringWithUTF8String:optarg]];
                 break;
@@ -94,7 +94,7 @@ int main(int argc, const char *argv[])
                 [testBundles addObject:[NSString stringWithUTF8String:optarg]];
                 break;
             case 'x': // exclude this bundle
-                [excludeBundles addObject:[NSString stringWithUTF8String:optarg]];   
+                [excludeBundles addObject:[NSString stringWithUTF8String:optarg]];
                 break;
             default:
                 showUsage(argv[0]);
@@ -102,26 +102,26 @@ int main(int argc, const char *argv[])
                 goto cleanup;
         }
     }
-     
+
     // TODO: automatically modify DYLD_FRAMEWORK_PATH based on passed-in bundles, restore to previous setting on exit
-    // basic algorithm: 
+    // basic algorithm:
     // - save DYLD_FRAMEWORK_PATH
     // - for each absolute bundle path, is bundle path already in DYLD_FRAMEWORK_PATH? if not add it
     // - at end, restore DYLD_FRAMEWORK_PATH
     // more sophisticated algorithm:
     // - inspect mach-o headers to see which libraries it wants to load; if they're non-standard locations, add them
-    
+
     /*
-     
+
      Example error when trying to run WOCommon tests without first setting DYLD_FRAMEWORK_PATH
-     
+
      2006-10-23 01:19:51.727 WOTestRunner[892] *** -[NSBundle load]: Error loading code /Users/wincent/trabajo/build/Debug/WOCommon.bundle/Contents/MacOS/WOCommon for bundle /Users/wincent/trabajo/build/Debug/WOCommon.bundle, error code 4 (link edit error code 4, error number 0 (Library not loaded: @executable_path/../Frameworks/WOTest.framework/Versions/A/WOTest
      warning: could not load bundle /Users/wincent/trabajo/build/Debug/WOCommon.bundle
-     
+
     of course, may be more complicated than all that. would be nice to handle case where WOTestRunner, WOTest.framework and the bundle being tested were all in completely unrelated locations
-                                                                                                                                                                                                                                                                                        
+
     */
-    
+
     if ([testBundles count] > 0) // test only these bundles
     {
         WO_ENUMERATE(testBundles, bundlePath)
@@ -157,7 +157,7 @@ int main(int argc, const char *argv[])
                 [WO_TEST_SHARED_INSTANCE runTestsForClassName:class];
         }
         else // test all classes
-        {   
+        {
             NSArray *classes = [WO_TEST_SHARED_INSTANCE testableClasses];
             WO_ENUMERATE(classes, class)
             {
@@ -166,13 +166,13 @@ int main(int argc, const char *argv[])
             }
         }
     }
-    
+
     [WO_TEST_SHARED_INSTANCE printTestResultsSummary];
     if (![WO_TEST_SHARED_INSTANCE testsWereSuccessful])
         exitCode = EXIT_FAILURE;
-            
+
 cleanup:
-    [pool release];    
+    [pool release];
     return exitCode;
 }
 
@@ -204,14 +204,14 @@ void showUsage(const char *name)
      "-x, --exclude-bundle=BUNDLE    test all but BUNDLE\n"
      "-v, --verbose                  verbose output (repeat for more verbosity)\n"
      "-V, --version                  show version information\n"
-     "-h, --help                     show this usage information\n", 
+     "-h, --help                     show this usage information\n",
      WO_RCSID_STRING(copyright), name);
 }
 
 void showVersion(void)
 {
     fprintf
-    (stdout, 
+    (stdout,
      //------------------------------- 80 columns ----------------------------------->|
      "WOTestRunner, part of the WOTest framework <http://test.wincent.com/>.\n"
      "\n"

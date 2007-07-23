@@ -34,9 +34,9 @@
 - (id)initWithClass:(Class)aClass
 {
     NSParameterAssert(aClass != NULL);
-    NSParameterAssert([NSObject WOTest_isRegisteredClass:aClass]);	// only registered classes pass (do not pass meta classes)
+    NSParameterAssert([NSObject WOTest_isRegisteredClass:aClass]);  // only registered classes pass (do not pass meta classes)
     if ((self = [super initWithClass:aClass]))
-        [self setMockedClass:object_getClass(aClass)];				// look up the meta class and use that
+        [self setMockedClass:object_getClass(aClass)];              // look up the meta class and use that
     return self;
 }
 

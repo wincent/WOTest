@@ -44,7 +44,7 @@ void _WOLogv(NSString *format, va_list args)
     {
         fprintf(stdout, "%s\n", [string UTF8String]);
         fflush(NULL); // flush all open streams (not just stdout)
-        [string release]; 
+        [string release];
     }
 }
 
@@ -52,7 +52,7 @@ void _WOLogv(NSString *format, va_list args)
 
 + (NSString *)WOTest_stringWithFormat:(NSString *)format arguments:(va_list)argList
 {
-    return [[[NSString alloc] initWithFormat:format 
+    return [[[NSString alloc] initWithFormat:format
                                    arguments:argList] autorelease];
 }
 
@@ -66,7 +66,7 @@ void _WOLogv(NSString *format, va_list args)
     if ([self isAbsolutePath])
         return self;
     NSString *path = [[NSFileManager defaultManager] currentDirectoryPath];
- 
+
     // TODO: strictly speaking, should write a method stringByAppendPathComponents (see draft above)
     return [path stringByAppendingPathComponent:self];
 }
@@ -82,7 +82,7 @@ void _WOLogv(NSString *format, va_list args)
         {
             // convert newslines, tabs etc to spaces
             [temp replaceCharactersInRange:NSMakeRange(i, 1) withString:@" "];
-            
+
             // was the last character also a space?
             if ((i > 0) && ([temp characterAtIndex:i - 1] == ' '))
             {

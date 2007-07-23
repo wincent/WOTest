@@ -63,19 +63,19 @@
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
 {
     // avoid an infinite loop (docs warn "Be sure to avoid an infinite loop when necessary by checking that aSelector isn't the
-	// selector for this method itself and by not sending any message that might invoke this method.")
+    // selector for this method itself and by not sending any message that might invoke this method.")
     if (aSelector == _cmd) return nil;
 
-	Protocol *protocol = [self mockedProtocol];
-	BOOL isRequiredMethod = YES;	// no idea what to pass here
-	struct objc_method_description description = protocol_getMethodDescription(protocol, aSelector, isRequiredMethod, YES);
-    
-	// TODO: not sure how to test for missing method signatures... protocol_getMethodDescription() is not documented
-	if (description.name == NULL)
+    Protocol *protocol = [self mockedProtocol];
+    BOOL isRequiredMethod = YES;    // no idea what to pass here
+    struct objc_method_description description = protocol_getMethodDescription(protocol, aSelector, isRequiredMethod, YES);
+
+    // TODO: not sure how to test for missing method signatures... protocol_getMethodDescription() is not documented
+    if (description.name == NULL)
         [NSException raise:NSInternalInconsistencyException format:@"No method signature for selector %@ in %@ protocol",
-		 NSStringFromSelector(aSelector), WOStringFromProtocol(protocol)];	
+            NSStringFromSelector(aSelector), WOStringFromProtocol(protocol)];
     return [NSMethodSignature WOTest_signatureBasedOnObjCTypes:description.types];
-}    
+}
 
 #pragma mark -
 #pragma mark NSObject protocol
@@ -96,13 +96,13 @@
             NSValue         *otherValue             = [anObject returnValue];
             id              thisException           = [self exception];
             id              otherException          = [anObject exception];
-            
+
             if ([self mockedProtocol] != [anObject mockedProtocol])
                 return NO;
-            
+
             if ([self acceptsAnyArguments] != [anObject acceptsAnyArguments])
                 return NO;
-            
+
             if (!thisInvocation && !otherInvocation) // both nil
                 invocationsAreEqual = YES;
             else if (thisInvocation && otherInvocation) // both non-nil
@@ -112,18 +112,18 @@
                 else
                     invocationsAreEqual = [thisInvocation WOTest_isEqualToInvocation:otherInvocation];
             }
-            
+
             if (!thisValue && !otherValue) // both nil
                 returnValuesAreEqual = YES;
             else if (thisValue && otherValue) // both non-nil
                 returnValuesAreEqual = [thisValue isEqual:otherValue];
-            
+
             if (!thisException && !otherException) // both nil
                 exceptionsAreEqual = YES;
             else if (thisException && otherException) // both non-nil
                 exceptionsAreEqual = [thisException isEqual:otherException];
-            
-            if (invocationsAreEqual && returnValuesAreEqual && 
+
+            if (invocationsAreEqual && returnValuesAreEqual &&
                 exceptionsAreEqual)
                 return YES;
         }
@@ -144,7 +144,7 @@
 
 - (Protocol *)mockedProtocol
 {
-    return mockedProtocol; 
+    return mockedProtocol;
 }
 
 @end
