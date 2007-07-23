@@ -635,6 +635,12 @@
             // can only compare objects with objects
             id selfObject   = [self nonretainedObjectValue];
             id otherObject  = [otherValue nonretainedObjectValue];
+
+            // avoid the message send if pointers are equal
+            // this also allows two nil object pointers to be considered equal, as they should
+            if (selfObject == otherObject)
+                return YES;
+
             @try {
                 if (selfObject && otherObject && [NSObject WOTest_object:selfObject respondsToSelector:@selector(isEqual:)]) 
                     return [selfObject isEqual:otherObject];
@@ -657,6 +663,11 @@
             // will raise exception (comparing numeric scalar with object)
             return ([self WOTest_compare:otherValue] == NSOrderedSame);
         }
+        else if ([otherValue WOTest_isPointerToVoid])
+            // encodings changed on Leopard such that comparisons such as WO_TEST_EQ(foo, nil) no longer worked;
+            // in this case foo is encoded as type "@" (object) and nil as "^v" (pointer to void)
+            // so we end up here and just compare pointers numerically
+            return ((void *)[self nonretainedObjectValue] == [otherValue pointerValue]);
     }
     else if ([self WOTest_isNumericScalar])
     {
@@ -677,15 +688,14 @@
     }
     else if ([self WOTest_isPointerToVoid])
     {
-        // check for special case: comparing with nil
-        typeof(nil) nilId = nil;
-        NSValue *nilValue = [NSValue valueWithBytes:&nilId objCType:@encode(typeof(nil))];
+        if ([otherValue WOTest_isObject])
+            // special case for pointer-to-void vs object comparisons (necessary on Leopard)
+            return ([self pointerValue] == (void *)[otherValue nonretainedObjectValue]);
+        else if ([otherValue WOTest_isPointerToVoid])
+            // this special case already necessary on Leopard, otherwise nil-to-nil comparison fails
+            return ([self pointerValue] == [otherValue pointerValue]);
         
-        if ((strcmp([otherValue objCType], @encode(typeof(nil))) == 0) && ([otherValue WOTest_compare:nilValue] == NSOrderedSame))
-            // other value is nil (or at least looks like nil)
-            return ((id)[self pointerValue] == nil);    
-        
-        // will raise exception (comparing pointer to void with other)
+        // fall through to standard case
         return ([self WOTest_compare:otherValue] == NSOrderedSame);
     }
     else if (([self WOTest_isCharArray] || [self WOTest_isCharacterString] || [self WOTest_isConstantCharacterString]) && 

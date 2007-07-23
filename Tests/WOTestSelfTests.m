@@ -1033,11 +1033,8 @@ NSMutableArray *WOEmptyInstanceMethodInvocations;
         ([[NSValue valueWithBytes:&dastardlyScalar 
                          objCType:@encode(int)] WOTest_testIsEqualToValue:[NSValue valueWithNonretainedObject:@"foo"]]);
     
-    // can only compare an object to a numeric scalar is if the scalar is nil
     typeof(nil) nilVar = nil;
     NSValue *nilValue = [NSValue valueWithBytes:&nilVar objCType:@encode(typeof(nil))];
-    WO_TEST_TRUE([nilValue WOTest_isNumericScalar]);
-    
     NSString *objectString = @"foo";
     NSValue *nonVoidValue = [NSValue valueWithBytes:&objectString objCType:@encode(typeof(objectString))];
     WO_TEST_TRUE([nonVoidValue WOTest_isObject]);
