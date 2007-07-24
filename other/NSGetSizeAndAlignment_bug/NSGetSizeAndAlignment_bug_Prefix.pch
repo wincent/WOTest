@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'NSGetSizeAndAlignment_bug' target in the 'NSGetSizeAndAlignment_bug' project.
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif

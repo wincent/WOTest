@@ -581,10 +581,17 @@ typedef struct {
     WO_TEST_GTE([NSValue WOTest_sizeForType:[value WOTest_objCTypeString]], sizeof(WOSubstruct));
     WO_TEST_GTE([value WOTest_bufferSize], sizeof(WOSubstruct));
 
+#ifdef RADAR_5357040_FIXED
+    // BUG: +[NSValue valueWithBytes:objCType:] fails in Leopard when passed structs which contain bitfields
+    // Specifically, an NSInvalidArgumentException is raised, ": NSGetSizeAndAlignment(): unsupported type encoding spec 'b'"
+    // So for now just return
+    // See testcase in other/NSGetSizeAndAlignment_bug/, and: <rdar://problem/5357040>
+
     WOComplicatedStruct complicated;
     value = [NSValue valueWithBytes:&complicated objCType:@encode(WOComplicatedStruct)];
     WO_TEST_GTE([NSValue WOTest_sizeForType:[value WOTest_objCTypeString]], sizeof(WOComplicatedStruct));
     WO_TEST_GTE([value WOTest_bufferSize], sizeof(WOComplicatedStruct));
+#endif /** RADAR_5357040_FIXED */
 
     // test with anonymous struct
     WOAnonymousStruct anonymous;
@@ -611,10 +618,17 @@ typedef struct {
     WO_TEST_GTE([value WOTest_bufferSize], sizeof(WOSubunion));
 
     // test with WOComplicatedUnion
+#ifdef RADAR_5357040_FIXED
+    // BUG: +[NSValue valueWithBytes:objCType:] fails in Leopard when passed structs which contain bitfields
+    // Specifically, an NSInvalidArgumentException is raised, ": NSGetSizeAndAlignment(): unsupported type encoding spec 'b'"
+    // So for now just return
+    // See testcase in other/NSGetSizeAndAlignment_bug/, and: <rdar://problem/5357040>
+
     WOComplicatedUnion complicated;
     value = [NSValue valueWithBytes:&complicated objCType:@encode(WOComplicatedUnion)];
     WO_TEST_GTE([NSValue WOTest_sizeForType:[value WOTest_objCTypeString]], sizeof(WOComplicatedUnion));
     WO_TEST_GTE([value WOTest_bufferSize], sizeof(WOComplicatedUnion));
+#endif /* RADAR_5357040_FIXED */
 
     // test with anonymous union
     WOAnonymousUnion anonymous;
