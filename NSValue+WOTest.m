@@ -755,6 +755,15 @@
         [NSException raise:NSInvalidArgumentException format:@"compared objects must be of same class and implement compare:"];
     }
 
+    // pointer-to-void case
+    if ([self WOTest_isPointerToVoid] && [aValue WOTest_isPointerToVoid])
+    {
+        // test conservatively here: equal pointers are considered equal;
+        // all others fall through and an exception is raised
+        if ([self pointerValue] == [aValue pointerValue])
+            return NSOrderedSame;
+    }
+
     // numeric scalar case
     if ([self WOTest_isNumericScalar] && [aValue WOTest_isNumericScalar])
     {
