@@ -64,13 +64,6 @@
     WO_TEST_DOES_NOT_THROW([stub raising:@"foo"]);
     WO_TEST_THROWS([stub raising:@"bar"]);
 
-    // should raise if raising: passed an object that does not respond to
-    // retain, release or autorelease
-    WOLightweightRoot *root = [WOLightweightRoot newLightweightRoot];
-    stub = [WOObjectStub stubForClass:[NSString class] withDelegate:nil];
-    WO_TEST_THROWS([stub raising:root]);
-    [root dealloc];
-
     // should raise expected exception
     mock = [WOObjectMock mockForClass:[NSString class]];
     [[[mock accept] raising:exception] lowercaseString];
