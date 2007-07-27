@@ -755,14 +755,31 @@ jump_point:
         title,          nil];
     if (sticky) [arguments insertObject:@"--sticky" atIndex:0];
     [task setArguments:arguments];
+
+    // if env can't find growl it will write a message like "env: growlnotify: No such file or directory" to the standard error
+    // suppress it by redirecting the standard error to /dev/null
+    [task setStandardError:[NSFileHandle fileHandleForWritingAtPath:@"/dev/null"]];
+
     @try
     {
         [task launch];
         [task waitUntilExit];
+
+        // handle error conditions
+        if (![task isRunning])
+        {
+            int status = [task terminationStatus];
+            if (status == 127)  // env returns this when "[t]he utility specified by utility could not be found"
+                _WOLog(@"note: growlnotify not launched (not found in the current PATH)");
+            else if (status != EXIT_SUCCESS)
+                // a failure to run growlnotify is relatively harmless, so use warning rather than error
+                _WOLog(@"warning: env terminated with exit status %d while trying to run growlnotify", status);
+        }
     }
-    @catch (id e)
+    @catch (NSException *e)
     {
-        // ignore: growlnotify may not be installed or the PATH environment variable may not be correctly set
+        // highly unlikely that we'd ever get here, but report it anyway
+        _WOLog(@"warning: exception caught while trying to execute growlnotify using env (%@: %@)", [e name], [e reason]);
     }
 }
 
