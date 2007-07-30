@@ -25,7 +25,6 @@
 // framework headers
 #import "NSInvocation+WOTest.h"
 #import "NSObject+WOTest.h"
-#import "WOEnumerate.h"
 #import "WOObjectStub.h"
 
 @implementation WOObjectMock
@@ -103,7 +102,7 @@
     NSParameterAssert(anInvocation != nil);
 
     // check if in reject list
-    WO_ENUMERATE(rejected, stub)
+    for (WOStub *stub in rejected)
         if ([stub matchesInvocation:anInvocation])
         {
             [NSException raise:NSInternalInconsistencyException format:@"Rejected selector %@ for class %@",
@@ -112,7 +111,7 @@
         }
 
     // check if expectedInOrder
-    WO_ENUMERATE(expectedInOrder, stub)
+    for (WOStub *stub in expectedInOrder)
         if ([stub matchesInvocation:anInvocation])
         {
             NSAssert2(([expectedInOrder objectAtIndex:0] == stub), @"Invocation selector %@ class %@ received out of order",
@@ -128,7 +127,7 @@
         }
 
     // check if expected once
-    WO_ENUMERATE(expectedOnce, stub)
+    for (WOStub *stub in expectedOnce)
         if ([stub matchesInvocation:anInvocation])
         {
             // move object from "expectedOnce" to "rejected"
@@ -140,7 +139,7 @@
         }
 
     // check if expected
-    WO_ENUMERATE(expected, stub)
+    for (WOStub *stub in expected)
         if ([stub matchesInvocation:anInvocation])
         {
             // move from "expected" to "accepted"
@@ -152,7 +151,7 @@
         }
 
     // check if accepted once
-    WO_ENUMERATE(acceptedOnce, stub)
+    for (WOStub *stub in acceptedOnce)
         if ([stub matchesInvocation:anInvocation])
         {
             // move from "acceptedOnce" to "rejected"
@@ -164,7 +163,7 @@
         }
 
     // check if accepted
-    WO_ENUMERATE(accepted, stub)
+    for (WOStub *stub in accepted)
         if ([stub matchesInvocation:anInvocation])
         {
             [self storeReturnValue:[stub returnValue] forInvocation:anInvocation];

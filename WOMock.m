@@ -32,7 +32,6 @@
 #import "NSProxy+WOTest.h"
 #import "NSValue+WOTest.h"
 #import "WOClassMock.h"
-#import "WOEnumerate.h"
 #import "WOObjectMock.h"
 #import "WOProtocolMock.h"
 

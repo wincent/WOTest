@@ -124,7 +124,7 @@ int main(int argc, const char *argv[])
 
     if ([testBundles count] > 0) // test only these bundles
     {
-        WO_ENUMERATE(testBundles, bundlePath)
+        for (NSString *bundlePath in testBundles)
         {
             bundlePath = [bundlePath WOTest_stringByConvertingToAbsolutePath];
             NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
@@ -132,13 +132,13 @@ int main(int argc, const char *argv[])
             {
                 if ([testClasses count] > 0) // test only these classes
                 {
-                    WO_ENUMERATE(testClasses, class)
+                    for (NSString *class in testClasses)
                         [WO_TEST_SHARED_INSTANCE runTestsForClassName:class];
                 }
                 else // test all classes
                 {
                     NSArray *classes = [WO_TEST_SHARED_INSTANCE testableClassesFrom:bundle];
-                    WO_ENUMERATE(classes, class)
+                    for (NSString *class in classes)
                     {
                         if ([excludeClasses containsObject:class]) continue;
                         [WO_TEST_SHARED_INSTANCE runTestsForClassName:class];
@@ -153,13 +153,12 @@ int main(int argc, const char *argv[])
     {
         if ([testClasses count] > 0) // test only these classes
         {
-            WO_ENUMERATE(testClasses, class)
+            for (NSString *class in testClasses)
                 [WO_TEST_SHARED_INSTANCE runTestsForClassName:class];
         }
         else // test all classes
         {
-            NSArray *classes = [WO_TEST_SHARED_INSTANCE testableClasses];
-            WO_ENUMERATE(classes, class)
+            for (NSString *class in [WO_TEST_SHARED_INSTANCE testableClasses])
             {
                 if ([excludeClasses containsObject:class]) continue;
                 [WO_TEST_SHARED_INSTANCE runTestsForClassName:class];

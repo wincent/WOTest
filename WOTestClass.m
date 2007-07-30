@@ -335,7 +335,7 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
 {
     int failures = 0;
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    WO_ENUMERATE([self testableClasses], class)
+    for (NSString *class in [self testableClasses])
         [self runTestsForClassName:class] ? : failures++;
     [self printTestResultsSummary];
     [pool release];
@@ -360,8 +360,7 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
         _WOLog(@"Running tests for class %@", NSStringFromClass(aClass));
         if ([NSObject WOTest_instancesOfClass:aClass conformToProtocol:@protocol(WOTest)])
         {
-            NSArray         *methods    = [self testableMethodsFrom:aClass];
-            WO_ENUMERATE(methods, method)
+            for (NSString *method in [self testableMethodsFrom:aClass])
             {
                 NSAutoreleasePool   *pool           = [[NSAutoreleasePool alloc] init];
                 NSDate              *startMethod    = [NSDate date];
@@ -596,13 +595,12 @@ jump_point:
 
 - (NSArray *)testableClassesFrom:(NSBundle *)aBundle
 {
-    NSArray         *allClasses = [self testableClasses];
     NSMutableArray  *classNames = [NSMutableArray array];
 
     if (aBundle)    // only search if actually passed a non-nil bundle
     {
         // add only classes that match the passed bundle and conform to WOTest
-        WO_ENUMERATE(allClasses, className)
+        for (NSString *className in [self testableClasses])
         {
             Class       aClass          = NSClassFromString(className);
             NSBundle    *classBundle    = [NSBundle bundleForClass:aClass];

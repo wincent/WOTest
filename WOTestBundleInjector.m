@@ -24,9 +24,6 @@
 // system headers
 #import <libkern/OSAtomic.h>        /* OSAtomicIncrement32Barrier() */
 
-// other headers
-#import "WOEnumerate.h"
-
 @implementation WOTestBundleInjector
 
 + (void)load
@@ -41,7 +38,7 @@
     if (inject)
     {
         NSArray *bundles = [[NSString stringWithUTF8String:inject] componentsSeparatedByString:@":"];
-        WO_ENUMERATE(bundles, bundlePath)
+        for (NSString *bundlePath in bundles)
         {
             NSString *path = [bundlePath stringByStandardizingPath];
             if (![path isAbsolutePath])

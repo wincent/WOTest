@@ -29,7 +29,6 @@
 
 #import "NSInvocation+WOTest.h"
 #import "NSMethodSignature+WOTest.h"
-#import "WOEnumerate.h"
 #import "WOProtocolStub.h"
 
 #pragma mark -
@@ -116,7 +115,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
     NSParameterAssert(anInvocation != nil);
 
     // check if in reject list
-    WO_ENUMERATE(rejected, stub)
+    for (WOStub *stub in rejected)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
         {
             [NSException raise:NSInternalInconsistencyException format:@"Rejected selector %@ for protocol %@",
@@ -125,7 +124,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
         }
 
     // check if expectedInOrder
-    WO_ENUMERATE(expectedInOrder, stub)
+    for (WOStub *stub in expectedInOrder)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
         {
             NSAssert(([expectedInOrder objectAtIndex:0] != stub), @"invocation received out of order");
@@ -141,7 +140,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
         }
 
     // check if expected once
-    WO_ENUMERATE(expectedOnce, stub)
+    for (WOStub *stub in expectedOnce)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
         {
             // move object from "expectedOnce" to "rejected"
@@ -153,7 +152,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
         }
 
     // check if expected
-    WO_ENUMERATE(expected, stub)
+    for (WOStub *stub in expected)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
         {
             // move from "expected" to "accepted"
@@ -165,7 +164,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
         }
 
     // check if accepted once
-    WO_ENUMERATE(acceptedOnce, stub)
+    for (WOStub *stub in acceptedOnce)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
         {
             // move from "acceptedOnce" to "rejected"
@@ -177,7 +176,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
         }
 
     // check if accepted
-    WO_ENUMERATE(accepted, stub)
+    for (WOStub *stub in accepted)
         if ([anInvocation WOTest_isEqualToInvocation:[stub recordedInvocation]])
         {
             [self storeReturnValue:[stub returnValue] forInvocation:anInvocation];
