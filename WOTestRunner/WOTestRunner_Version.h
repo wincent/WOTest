@@ -36,7 +36,7 @@ The publicly visible "marketing" version, updated manually.
 \bug Must perform a "Clean" or "Clean All" in order for changes to this macro to be picked up by the UpdateBuildVersionNumbers.sh script.
 
 */
-#define WO_INFO_PLIST_VERSION       1.0
+#define WO_INFO_PLIST_VERSION       1.99-pre    /* Leopard version will eventually become 2.0 */
 
 /*! Stringification macro. Turns macro EXAMPLE into string "EXAMPLE". */
 #define WO_STRINGIFY(var)           #var
