@@ -161,10 +161,43 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
 /*! Check to see that the start date has been recorded. If it has not, record it. */
 - (void)checkStartDate;
 
-- (void)setStartDate:(NSDate *)aStartDate;
-
 /*! Helper method for optionally trimming path names before printing them to the console. */
 - (NSString *)trimmedPath:(char *)path;
+
+#pragma mark -
+#pragma mark Properties
+
+//! \name Properties
+//! Public properties previously declared readonly have a private readwrite implementation internally to the class.
+//! \startgroup
+
+// BUG: Objective-C 2.0 bug; the documentation would suggest that redeclaring all the attributes is not necessary
+//      "You can re-declare properties in a subclass, and you can repeat properties' attributes in whole or in part"
+//      "The same holds true for properties declared in a category"
+//      "the property's attributes must only be repeated in whole or part"
+// but warns:
+//      no 'assign', 'retain', or 'copy' attribute is specified - 'assign' is assumed
+// furthermore, it appears that the readwrite override does not actually cause a setter to be synthesized further down
+// despite what the docs say:
+//      "In the case of a category redeclaration, that the property was redeclared prior any @synthesize statement will cause the setter to be synthesized"
+// we get unrecognized selector exceptions:
+//      *** -[WOTest setTestsFailedExpected:]: unrecognized selector sent to instance 0x102eee0)
+// so for now must abandon the pattern
+//@property(readwrite, assign) NSDate     *startDate;
+//@property(readwrite) unsigned           testsRun;
+//@property(readwrite) unsigned           testsPassed;
+//@property(readwrite) unsigned           testsFailed;
+//@property(readwrite) unsigned           uncaughtExceptions;
+//@property(readwrite) unsigned           testsFailedExpected;
+//@property(readwrite) unsigned           testsPassedUnexpected;
+//@property(readwrite) unsigned           lowLevelExceptionsExpected;
+//@property(readwrite) unsigned           lowLevelExceptionsUnexpected;
+
+// BUG: as above (shouldn't have to explicitly re-declare "assign" here)
+//@property(readwrite, assign) NSString   *lastReportedFile;
+//@property(readwrite) int                lastReportedLine;
+
+//! \endgroup
 
 @end
 
@@ -194,11 +227,8 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
         if (!WOTestSharedInstance)          // first time here
         {
             if ((self = [super init]))
-            {
                 // once-off initialization and setting of defaults:
-                self->handlesLowLevelExceptions = YES;
                 self->warnsAboutSignComparisons = YES;
-            }
             WOTestSharedInstance = self;
         }
         else
@@ -326,8 +356,8 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
 {
     @synchronized (self)
     {
-        if ([self startDate] == nil)
-            [self setStartDate:[NSDate date]];
+        if (self.startDate == nil)
+            self.startDate = [NSDate date];
     }
 }
 
@@ -444,17 +474,17 @@ jump_point:
                 }
                 @catch (WOTestLowLevelException *lowLevelException)
                 {
-                    if ([self expectLowLevelExceptions])
+                    if (self.expectLowLevelExceptions)
                     {
                         [self writeStatus:[lowLevelException reason]];    // expected low-level exceptions are not an error
-                        lowLevelExceptionsExpected++;
+                        self.lowLevelExceptionsExpected++;
                     }
                     else
                     {
                         [self writeError:[lowLevelException reason]];     // unexpected low-level exceptions are an error
                         [self writeLastKnownLocation];
                         noTestFailed = NO;
-                        lowLevelExceptionsUnexpected++;
+                        self.lowLevelExceptionsUnexpected++;
                     }
                 }
                 @catch (id e)
@@ -463,7 +493,7 @@ jump_point:
                         method];
                     [self writeLastKnownLocation];
                     noTestFailed = NO;
-                    uncaughtExceptions++;
+                    self.uncaughtExceptions++;
                 }
                 @finally
                 {
@@ -481,7 +511,7 @@ jump_point:
             NSStringFromClass(aClass)];
         [self writeLastKnownLocation];
         noTestFailed = NO;
-        uncaughtExceptions++;
+        self.uncaughtExceptions++;
     }
     @finally
     {
@@ -528,7 +558,7 @@ jump_point:
                 [NSArray arrayWithObjects: @"Protocol", @"List", @"Object", @"_NSZombie", nil] :                        // 10.3
                 [NSArray arrayWithObjects: @"Protocol", @"List", @"Object", @"_NSZombie", @"NSATSGlyphGenerator", nil]; // 10.4
 
-            if ([self verbosity] > 1)
+            if (self.verbosity > 1)
                 _WOLog(@"Examining classes for WOTest protocol compliance");
 
             for (int i = 0; i < newNumClasses; i++)
@@ -543,20 +573,20 @@ jump_point:
                     if ([excludedClasses containsObject:className])
                     {
                         excludedClassCount++;
-                        if ([self verbosity] > 1)
+                        if (self.verbosity > 1)
                             _WOLog(@"Skipping class %@ (appears in exclusion list)", className);
                     }
                     else if ([NSObject WOTest_instancesOfClass:aClass conformToProtocol:@protocol(WOTest)])
                     {
                         conformingClassCount++;
                         [testableClasses addObject:className];
-                        if ([self verbosity] > 0)
+                        if (self.verbosity > 0)
                             _WOLog(@"Class %@ complies with the WOTest protocol", className);
                     }
                     else
                     {
                         nonconformingClassCount++;
-                        if ([self verbosity] > 1)
+                        if (self.verbosity > 1)
                             _WOLog(@"Class %@ does not comply with the WOTest protocol", className);
                     }
                 }
@@ -564,7 +594,7 @@ jump_point:
                 {
                     exceptionCount++;
                     // a number of classes are known to provoke exceptions:
-                    if ([self verbosity] > 1)
+                    if (self.verbosity > 1)
                         _WOLog(@"Cannot test protocol compliance for class %@ (caught exception)", className);
                     continue;
                 }
@@ -661,10 +691,10 @@ jump_point:
     [self checkStartDate];  // just in case no tests were run, make sure that startDate is non-nil
     double      successRate = 0.0;
     double      failureRate = 0.0;
-    if (testsRun > 0)   // watch out for divide-by-zero if no tests run
+    if (self.testsRun > 0)  // watch out for divide-by-zero if no tests run
     {
-        successRate = ((double)(testsPassed + testsFailedExpected)      / (double)testsRun) * 100.0;
-        failureRate = ((double)(testsFailed + testsPassedUnexpected)    / (double)testsRun) * 100.0;
+        successRate = ((double)(self.testsPassed + self.testsFailedExpected)    / (double)self.testsRun) * 100.0;
+        failureRate = ((double)(self.testsFailed + self.testsPassedUnexpected)  / (double)self.testsRun) * 100.0;
     }
     _WOLog(@"Run summary:\n"
            @"Tests run:                         %d\n"
@@ -673,14 +703,14 @@ jump_point:
            @"Uncaught exceptions:               %d\n"
            @"Low-level exceptions (crashers):   %d + %d expected\n"
            @"Total run time:                    %.2f seconds\n",
-           testsRun,
-           testsPassed,    testsFailedExpected,    successRate,
-           testsFailed,    testsPassedUnexpected,  failureRate,
-           uncaughtExceptions,
-           lowLevelExceptionsUnexpected, lowLevelExceptionsExpected,
-           -[[self startDate] timeIntervalSinceNow]);
+           self.testsRun,
+           self.testsPassed,    self.testsFailedExpected,   successRate,
+           self.testsFailed,    self.testsPassedUnexpected, failureRate,
+           self.uncaughtExceptions,
+           self.lowLevelExceptionsUnexpected,   self.lowLevelExceptionsExpected,
+           -[self.startDate timeIntervalSinceNow]);
 
-    if (testsRun == 0)
+    if (self.testsRun == 0)
         _WOLog(@"warning: no tests were run\n");
 
     // TODO: make Growl notifications optional
@@ -688,7 +718,7 @@ jump_point:
     // TODO: add options for showing coalesced growl notifications showing individual test failures (with path and line info)
     // TODO: make clicking on notification bring Xcode to the front, or open the file with the last failure in it etc
     NSString *status = [NSString stringWithFormat:@"%d tests passed, %d tests failed",
-        testsPassed + testsFailedExpected, testsFailed + testsPassedUnexpected];
+        self.testsPassed + self.testsFailedExpected, self.testsFailed + self.testsPassedUnexpected];
 
     if ([self testsWereSuccessful])
         [self growlNotifyTitle:@"WOTest run successful" message:status isWarning:NO sticky:NO];
@@ -700,12 +730,12 @@ jump_point:
     }
 
     // reset start date
-    [self setStartDate:nil];
+    self.startDate = nil;
 }
 
 - (BOOL)testsWereSuccessful
 {
-    return ((testsFailed + testsPassedUnexpected + uncaughtExceptions + lowLevelExceptionsUnexpected) == 0);
+    return ((self.testsFailed + self.testsPassedUnexpected + self.uncaughtExceptions + self.lowLevelExceptionsUnexpected) == 0);
 }
 
 #pragma mark -
@@ -789,7 +819,7 @@ jump_point:
     NSParameterAssert(path != NULL);
     NSString *pathString = [NSString stringWithUTF8String:path];
 
-    unsigned trim = [self trimInitialPathComponents];
+    unsigned trim = self.trimInitialPathComponents;
     if (trim == 0) return pathString;
     if (![pathString isAbsolutePath]) return pathString;    // only trim absolute paths
     NSArray *components = [pathString pathComponents];      // note: Cocoa returns "/" here as an additional first component
@@ -799,55 +829,52 @@ jump_point:
     return [NSString pathWithComponents:[components subarrayWithRange:NSMakeRange(trim + 1, count - trim - 1)]];
 }
 
-- (void)writePassed:(BOOL)passed
-             inFile:(char *)path
-             atLine:(int)line
-            message:(NSString *)message, ...
+- (void)writePassed:(BOOL)passed inFile:(char *)path atLine:(int)line message:(NSString *)message, ...
 {
-    testsRun++;
+    self.testsRun++;
     va_list args;
     va_start(args, message);
     NSString *string = [NSString WOTest_stringWithFormat:message arguments:args];
     va_end(args);
-    if ([self expectFailures])  // invert sense of tests (ie. failure is good)
+    if (self.expectFailures)    // invert sense of tests (ie. failure is good)
     {
-        if (passed) // passed: bad
+        if (passed)             // passed: bad
         {
             [self writeErrorInFile:path atLine:line message:[NSString stringWithFormat:@"Passed (unexpected pass): %@", string]];
-            testsPassedUnexpected++;
+            self.testsPassedUnexpected++;
         }
-        else        // failed: good
+        else                    // failed: good
         {
             [self writeStatusInFile:path atLine:line message:[NSString stringWithFormat:@"Failed (expected failure): %@", string]];
-            testsFailedExpected++;
+            self.testsFailedExpected++;
         }
     }
-    else    // normal handling (ie. passing is good, failing is bad)
+    else                        // normal handling (ie. passing is good, failing is bad)
     {
-        if (passed) // passed: good
+        if (passed)             // passed: good
         {
             [self writeStatusInFile:path atLine:line message:[NSString stringWithFormat:@"Passed: %@", string]];
-            testsPassed++;
+            self.testsPassed++;
         }
-        else        // failed: bad
+        else                    // failed: bad
         {
             [self writeErrorInFile:path atLine:line message:[NSString stringWithFormat:@"Failed: %@", string]];
-            testsFailed++;
+            self.testsFailed++;
         }
     }
 }
 
 - (void)cacheFile:(char *)path line:(int)line
 {
-    [self setLastReportedFile:[self trimmedPath:path]];
-    lastReportedLine = line;
+    self.lastReportedFile   = [self trimmedPath:path];
+    self.lastReportedLine   = line;
 }
 
 - (void)writeLastKnownLocation
 {
-    NSString *path = [self lastReportedFile];
+    NSString *path = self.lastReportedFile;
     if (path)
-        _WOLog(@"%@:%d: last known location was %@:%d", path, lastReportedLine, path, lastReportedLine);
+        _WOLog(@"%@:%d: last known location was %@:%d", path, self.lastReportedLine, path, self.lastReportedLine);
 }
 
 - (void)writeErrorInFile:(char *)path atLine:(int)line message:(NSString *)message, ...
@@ -873,7 +900,7 @@ jump_point:
 - (void)writeUncaughtException:(NSString *)info inFile:(char *)path atLine:(int)line
 {
     _WOLog(@"%@:%d: error: uncaught exception during test execution: %@", [self trimmedPath:path], line, info);
-    uncaughtExceptions++;
+    self.uncaughtExceptions++;
 }
 
 - (void)writeStatusInFile:(char *)path atLine:(int)line message:(NSString *)message, ...
@@ -954,7 +981,7 @@ jump_point:
     }
     @catch (id e) {
         [self writeErrorInFile:path atLine:line message:@"uncaught exception (%@)", [NSException WOTest_descriptionForException:e]];
-        uncaughtExceptions++;
+        self.uncaughtExceptions++;
     }
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:equal inFile:path atLine:line message:@"expected %@, got %@", WO_DESC(expected), WO_DESC(actual)];
@@ -974,7 +1001,7 @@ jump_point:
     }
     @catch (id e) {
         [self writeErrorInFile:path atLine:line message:@"uncaught exception (%@)", [NSException WOTest_descriptionForException:e]];
-        uncaughtExceptions++;
+        self.uncaughtExceptions++;
     }
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:(!equal) inFile:path atLine:line message:@"expected (not) %@, got %@", WO_DESC(expected), WO_DESC(actual)];
@@ -994,7 +1021,7 @@ jump_point:
     }
     @catch (id e) {
         [self writeErrorInFile:path atLine:line message:@"uncaught exception (%@)", [NSException WOTest_descriptionForException:e]];
-        uncaughtExceptions++;
+        self.uncaughtExceptions++;
     }
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:greaterThan inFile:path atLine:line message:@"expected > %@, got %@", WO_DESC(expected), WO_DESC(actual)];
@@ -1014,7 +1041,7 @@ jump_point:
     }
     @catch (id e) {
         [self writeErrorInFile:path atLine:line message:@"uncaught exception (%@)", [NSException WOTest_descriptionForException:e]];
-        uncaughtExceptions++;
+        self.uncaughtExceptions++;
     }
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:notGreaterThan inFile:path atLine:line message:@"expected <= %@, got %@", WO_DESC(expected), WO_DESC(actual)];
@@ -1034,7 +1061,7 @@ jump_point:
     }
     @catch (id e) {
         [self writeErrorInFile:path atLine:line message:@"uncaught exception (%@)", [NSException WOTest_descriptionForException:e]];
-        uncaughtExceptions++;
+        self.uncaughtExceptions++;
     }
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:lessThan inFile:path atLine:line message:@"expected < %@, got %@", WO_DESC(expected), WO_DESC(actual)];
@@ -1054,7 +1081,7 @@ jump_point:
     }
     @catch (id e) {
         [self writeErrorInFile:path atLine:line message:@"uncaught exception (%@)", [NSException WOTest_descriptionForException:e]];
-        uncaughtExceptions++;
+        self.uncaughtExceptions++;
     }
     BOOL expectedTruncated, actualTruncated;
     [self writePassed:notLessThan inFile:path atLine:line message:@"expected >= %@, got %@", WO_DESC(expected), WO_DESC(actual)];
@@ -2129,148 +2156,23 @@ jump_point:
 }
 
 #pragma mark -
-#pragma mark Accessors
+#pragma mark Properties
 
-- (NSDate *)startDate
-{
-    return [[startDate retain] autorelease];
-}
-
-- (void)setStartDate:(NSDate *)aStartDate
-{
-    [aStartDate retain];
-    [startDate release];
-    startDate = aStartDate;
-}
-
-- (unsigned)classesWithTests
-{
-    return classesWithTests;
-}
-
-- (unsigned)classesWithoutTests
-{
-    return classesWithoutTests;
-}
-
-- (unsigned)methodsWithTests
-{
-    return methodsWithTests;
-}
-
-- (unsigned)testsRun
-{
-    return testsRun;
-}
-
-- (unsigned)testsPassed
-{
-    return testsPassed;
-}
-
-- (unsigned)testsFailed
-{
-    return testsFailed;
-}
-
-- (unsigned)uncaughtExceptions
-{
-    return uncaughtExceptions;
-}
-
-- (unsigned)testsFailedExpected
-{
-    return testsFailedExpected;
-}
-
-- (unsigned)testsPassedUnexpected
-{
-    return testsPassedUnexpected;
-}
-
-- (BOOL)expectFailures
-{
-    return expectFailures;
-}
-
-- (void)setExpectFailures:(BOOL)aValue
-{
-    expectFailures = aValue;
-}
-
-- (unsigned)lowLevelExceptionsExpected
-{
-    return lowLevelExceptionsExpected;
-}
-
-- (unsigned)lowLevelExceptionsUnexpected
-{
-    return lowLevelExceptionsUnexpected;
-}
-
-- (BOOL)expectLowLevelExceptions
-{
-    return expectLowLevelExceptions;
-}
-
-- (void)setExpectLowLevelExceptions:(BOOL)aValue
-{
-    expectLowLevelExceptions = aValue;
-}
-
-- (BOOL)handlesLowLevelExceptions
-{
-    return handlesLowLevelExceptions;
-}
-
-- (void)setHandlesLowLevelExceptions:(BOOL)aValue
-{
-    handlesLowLevelExceptions = aValue;
-}
-
-- (unsigned)verbosity
-{
-    return verbosity;
-}
-
-- (void)setVerbosity:(unsigned)aVerbosity
-{
-    verbosity = aVerbosity;
-}
-
-- (unsigned)trimInitialPathComponents
-{
-    return trimInitialPathComponents;
-}
-
-- (void)setTrimInitialPathComponents:(unsigned)aTrimInitialPathComponents
-{
-    trimInitialPathComponents = aTrimInitialPathComponents;
-}
-
-- (NSString *)lastReportedFile
-{
-    return [[lastReportedFile retain] autorelease];
-}
-
-- (void)setLastReportedFile:(NSString *)aLastReportedFile
-{
-    if (lastReportedFile != aLastReportedFile)
-    {
-        [aLastReportedFile retain];
-        [lastReportedFile release];
-        lastReportedFile = aLastReportedFile;
-    }
-}
-
-- (BOOL)warnsAboutSignComparisons
-{
-    return warnsAboutSignComparisons;
-}
-
-- (void)setWarnsAboutSignComparisons:(BOOL)aWarnsAboutSignComparisons
-{
-    warnsAboutSignComparisons = aWarnsAboutSignComparisons;
-}
+@synthesize startDate;
+@synthesize testsRun;
+@synthesize testsPassed;
+@synthesize testsFailed;
+@synthesize uncaughtExceptions;
+@synthesize testsFailedExpected;
+@synthesize testsPassedUnexpected;
+@synthesize expectFailures;
+@synthesize lowLevelExceptionsExpected;
+@synthesize lowLevelExceptionsUnexpected;
+@synthesize expectLowLevelExceptions;
+@synthesize verbosity;
+@synthesize trimInitialPathComponents;
+@synthesize lastReportedFile;
+@synthesize lastReportedLine;
+@synthesize warnsAboutSignComparisons;
 
 @end

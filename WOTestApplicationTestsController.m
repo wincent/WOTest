@@ -78,8 +78,8 @@ extern NSString *NSApplicationDidFinishLaunchingNotification;
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(applicationFailedToFinishLaunching:) object:nil];
 
-    WOTest *tester = [WOTest sharedInstance];
-    [tester setTrimInitialPathComponents:_trimPathComponents];
+    WOTest *tester                      = [WOTest sharedInstance];
+    tester.trimInitialPathComponents    = _trimPathComponents;
     [tester runAllTests];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];

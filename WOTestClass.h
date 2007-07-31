@@ -25,9 +25,6 @@
 
     NSDate      *startDate;
 
-    unsigned    classesWithTests;
-    unsigned    classesWithoutTests;
-    unsigned    methodsWithTests;
     unsigned    testsRun;
     unsigned    testsPassed;
     unsigned    testsFailed;
@@ -39,12 +36,10 @@
     BOOL        expectFailures;
 
     //! low-level exception handling inversion: should only be used during WOTest self-testing
+    //! due to problems with the low-level exception handling this API may eventually be deprecated and removed
     unsigned    lowLevelExceptionsExpected;
     unsigned    lowLevelExceptionsUnexpected;
     BOOL        expectLowLevelExceptions;
-
-    //! Optionally refrain from handling low level exceptions
-    BOOL        handlesLowLevelExceptions;
 
     //! Internal use only: used for keeping track of whether low-level exception handlers have been installed or not
     //! Necessary because tested methods may change the low-level-exception-catching status mid-test
@@ -530,46 +525,34 @@
 /*! \endgroup */
 
 #pragma mark -
-#pragma mark Accessors
+#pragma mark Properties
 
-//! \name Accessors
+//! \name Properties
 //! \startgroup
 
-- (NSDate *)startDate;
-- (unsigned)classesWithTests;
-- (unsigned)classesWithoutTests;
-- (unsigned)methodsWithTests;
-- (unsigned)testsRun;
-- (unsigned)testsPassed;
-- (unsigned)testsFailed;
+// BUG: Objective-C 2.0 bug, can't use "readonly" pattern, see implementation file for more details
+@property(/*readonly,*/ copy) NSDate    *startDate;
+@property/*(readonly)*/ unsigned        testsRun;
+@property/*(readonly)*/ unsigned        testsPassed;
+@property/*(readonly)*/ unsigned        testsFailed;
 
 // TODO: need sense inversion here as well (for uncaught exceptions) for self-testing purposes
-- (unsigned)uncaughtExceptions;
+@property/*(readonly)*/ unsigned        uncaughtExceptions;
+@property/*(readonly)*/ unsigned        testsFailedExpected;
+@property/*(readonly)*/ unsigned        testsPassedUnexpected;
 
-- (unsigned)testsFailedExpected;
-- (unsigned)testsPassedUnexpected;
-- (BOOL)expectFailures;
-- (void)setExpectFailures:(BOOL)aValue;
+@property BOOL                      expectFailures;
 
-- (unsigned)lowLevelExceptionsExpected;
-- (unsigned)lowLevelExceptionsUnexpected;
-- (BOOL)expectLowLevelExceptions;
-- (void)setExpectLowLevelExceptions:(BOOL)aValue;
+@property/*(readonly)*/ unsigned        lowLevelExceptionsExpected;
+@property/*(readonly)*/ unsigned        lowLevelExceptionsUnexpected;
 
-- (BOOL)handlesLowLevelExceptions;
-- (void)setHandlesLowLevelExceptions:(BOOL)aValue;
+@property BOOL                      expectLowLevelExceptions;
 
-- (unsigned)verbosity;
-- (void)setVerbosity:(unsigned)aVerbosity;
-
-- (unsigned)trimInitialPathComponents;
-- (void)setTrimInitialPathComponents:(unsigned)aTrimInitialPathComponents;
-
-- (NSString *)lastReportedFile;
-- (void)setLastReportedFile:(NSString *)aLastReportedFile;
-
-- (BOOL)warnsAboutSignComparisons;
-- (void)setWarnsAboutSignComparisons:(BOOL)aWarnsAboutSignComparisons;
+@property unsigned                  verbosity;
+@property unsigned                  trimInitialPathComponents;
+@property(/*readonly,*/ copy) NSString  *lastReportedFile;
+@property/*(readonly)*/ int             lastReportedLine;
+@property BOOL                      warnsAboutSignComparisons;
 
 //! \endgroup
 
