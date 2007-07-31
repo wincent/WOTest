@@ -37,17 +37,17 @@
 // make what(1) produce meaningful output
 #import "WOTest_Version.h"
 
-#define WO_UNICODE_PLUS_MINUS_SIGN 0x00b1
-#define WO_UNICODE_ELLIPSIS        0x2026
+#define WO_UNICODE_PLUS_MINUS_SIGN  0x00b1
+#define WO_UNICODE_ELLIPSIS         0x2026
 
 // convenience macros, call method to truncate description to 64 characters
-#define WO_TRUNCATE_INDEX   64
+#define WO_TRUNCATE_INDEX           64
 
 // return truncated description of \p object, expects a BOOL variable of the format objectTruncated to be defined within the same scope
-#define WO_DESC(object)         [self description:object truncatedAt:WO_TRUNCATE_INDEX didTruncate:&object ## Truncated]
+#define WO_DESC(object)             [self description:object truncatedAt:WO_TRUNCATE_INDEX didTruncate:&object ## Truncated]
 
 // return untruncated description of object
-#define WO_LONG_DESC(object)    [self description:object truncatedAt:0 didTruncate:NULL]
+#define WO_LONG_DESC(object)        [self description:object truncatedAt:0 didTruncate:NULL]
 
 #define WO_UNCAUGHT_EXCEPTION_ERROR @"uncaught exception"
 
@@ -66,19 +66,19 @@
 #define WO_NIL_PARAMETER_EXCEPTION_REASON @"A test which does not accept nil parameters was passed a nil parameter"
 
 // Return a random offset between 0 and WO_RANDOMIZATION_RANGE inclusive.
-#define WO_RANDOM_OFFSET        (random() % (WO_RANDOMIZATION_RANGE - 1))
+#define WO_RANDOM_OFFSET            (random() % (WO_RANDOMIZATION_RANGE - 1))
 
 // Return +1 or -1 randomly.
-#define WO_RANDOM_SIGN          ((BOOL)(random() % 2) ? 1 : -1)
+#define WO_RANDOM_SIGN              ((BOOL)(random() % 2) ? 1 : -1)
 
 #pragma mark -
 #pragma mark Class variables
 
-static WOTest                   *WOTestSharedInstance       = nil;
-static volatile BOOL            WOTestCanJump               = NO;
-static volatile ExceptionKind   WOLastLowLevelException;
-static volatile sig_atomic_t    WOTestExceptionTriggered    = 0;
-static ExceptionHandlerUPP      WOOldLowLevelExceptionHandler;
+static WOTest                       *WOTestSharedInstance           = nil;
+static volatile BOOL                WOTestCanJump                   = NO;
+static volatile ExceptionKind       WOLastLowLevelException;
+static volatile sig_atomic_t        WOTestExceptionTriggered        = 0;
+static ExceptionHandlerUPP          WOOldLowLevelExceptionHandler;
 
 // for the timebeing, only store/restore a limited number of registers; may remove the unused ones from the struct at a later time
 typedef struct WOJumpBuffer {
@@ -125,10 +125,10 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
     }
 
     WOLastLowLevelException     = theException->theKind;
-    WOTestCanJump               = NO;
+    WOTestCanJump                       = NO;
 
     // set flag to indicate that an exception was triggerd
-    WOTestExceptionTriggered    = 1;
+    WOTestExceptionTriggered            = 1;
 
     // will resume execution at previously marked "safe place": longjmp would be fine here
 #ifdef __i386__
@@ -142,10 +142,10 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
     theException->registerImage->ESP    = WOLowLevelExceptionJumpBuffer.esp;
 
     // clear out exception state (probably not necessary)
-    theException->info.memoryInfo = NULL;
+    theException->info.memoryInfo       = NULL;
 
 #elif defined (__ppc__)
-    theException->machineState->PC  = WOProgramCounter;
+    theException->machineState->PC      = WOProgramCounter;
     // TODO: must restore more state here
 #else
 #error Unsupported architecture
