@@ -93,7 +93,7 @@ See also http://www.stuffonfire.com/2005/12/signaturewithobjctypes_is_stil.html
 
 @end
 
-@interface NSMethodSignature (WOPrivate)
+@interface NSMethodSignature ()
 
 - (id)initWithObjCTypes:(const char *)types;
 

@@ -153,7 +153,7 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
     return noErr;
 }
 
-@interface WOTest (WOPrivate)
+@interface WOTest ()
 
 - (void)installLowLevelExceptionHandler;
 - (void)removeLowLevelExceptionHandler;
