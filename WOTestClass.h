@@ -530,28 +530,27 @@
 //! \name Properties
 //! \startgroup
 
-// BUG: Objective-C 2.0 bug, can't use "readonly" pattern, see implementation file for more details
-@property(/*readonly,*/ copy) NSDate    *startDate;
-@property/*(readonly)*/ unsigned        testsRun;
-@property/*(readonly)*/ unsigned        testsPassed;
-@property/*(readonly)*/ unsigned        testsFailed;
+@property(readonly, copy) NSDate    *startDate;
+@property(readonly) unsigned        testsRun;
+@property(readonly) unsigned        testsPassed;
+@property(readonly) unsigned        testsFailed;
 
 // TODO: need sense inversion here as well (for uncaught exceptions) for self-testing purposes
-@property/*(readonly)*/ unsigned        uncaughtExceptions;
-@property/*(readonly)*/ unsigned        testsFailedExpected;
-@property/*(readonly)*/ unsigned        testsPassedUnexpected;
+@property(readonly) unsigned        uncaughtExceptions;
+@property(readonly) unsigned        testsFailedExpected;
+@property(readonly) unsigned        testsPassedUnexpected;
 
 @property BOOL                      expectFailures;
 
-@property/*(readonly)*/ unsigned        lowLevelExceptionsExpected;
-@property/*(readonly)*/ unsigned        lowLevelExceptionsUnexpected;
+@property(readonly) unsigned        lowLevelExceptionsExpected;
+@property(readonly) unsigned        lowLevelExceptionsUnexpected;
 
 @property BOOL                      expectLowLevelExceptions;
 
 @property unsigned                  verbosity;
 @property unsigned                  trimInitialPathComponents;
-@property(/*readonly,*/ copy) NSString  *lastReportedFile;
-@property/*(readonly)*/ int             lastReportedLine;
+@property(readonly, copy) NSString  *lastReportedFile;
+@property(readonly) int             lastReportedLine;
 @property BOOL                      warnsAboutSignComparisons;
 
 //! \endgroup

@@ -171,31 +171,22 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
 //! Public properties previously declared readonly have a private readwrite implementation internally to the class.
 //! \startgroup
 
-// BUG: Objective-C 2.0 bug; the documentation would suggest that redeclaring all the attributes is not necessary
-//      "You can re-declare properties in a subclass, and you can repeat properties' attributes in whole or in part"
-//      "The same holds true for properties declared in a category"
-//      "the property's attributes must only be repeated in whole or part"
-// but warns:
-//      no 'assign', 'retain', or 'copy' attribute is specified - 'assign' is assumed
-// furthermore, it appears that the readwrite override does not actually cause a setter to be synthesized further down
-// despite what the docs say:
-//      "In the case of a category redeclaration, that the property was redeclared prior any @synthesize statement will cause the setter to be synthesized"
-// we get unrecognized selector exceptions:
-//      *** -[WOTest setTestsFailedExpected:]: unrecognized selector sent to instance 0x102eee0)
-// so for now must abandon the pattern
-//@property(readwrite, assign) NSDate     *startDate;
-//@property(readwrite) unsigned           testsRun;
-//@property(readwrite) unsigned           testsPassed;
-//@property(readwrite) unsigned           testsFailed;
-//@property(readwrite) unsigned           uncaughtExceptions;
-//@property(readwrite) unsigned           testsFailedExpected;
-//@property(readwrite) unsigned           testsPassedUnexpected;
-//@property(readwrite) unsigned           lowLevelExceptionsExpected;
-//@property(readwrite) unsigned           lowLevelExceptionsUnexpected;
+// NOTE: The documentation would suggest that the repetition of the "copy" attribute here is not required, but without it the
+// compiler issues various warnings. A Radar has been filed against this (<rdar://problem/5403996>) as it appears to be either a
+// compiler bug or a documentation bug. The corresponding test case can be found in the other/readonly_readwrite_properties_bug
+// subdirectory.
 
-// BUG: as above (shouldn't have to explicitly re-declare "assign" here)
-//@property(readwrite, assign) NSString   *lastReportedFile;
-//@property(readwrite) int                lastReportedLine;
+@property(readwrite, copy) NSDate   *startDate;
+@property(readwrite) unsigned       testsRun;
+@property(readwrite) unsigned       testsPassed;
+@property(readwrite) unsigned       testsFailed;
+@property(readwrite) unsigned       uncaughtExceptions;
+@property(readwrite) unsigned       testsFailedExpected;
+@property(readwrite) unsigned       testsPassedUnexpected;
+@property(readwrite) unsigned       lowLevelExceptionsExpected;
+@property(readwrite) unsigned       lowLevelExceptionsUnexpected;
+@property(readwrite, copy) NSString *lastReportedFile;
+@property(readwrite) int            lastReportedLine;
 
 //! \endgroup
 
