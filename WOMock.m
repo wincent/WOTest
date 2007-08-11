@@ -115,6 +115,7 @@
 - (void)finalize
 {
     [self verify];
+    [super finalize];
 }
 
 - (id)accept
