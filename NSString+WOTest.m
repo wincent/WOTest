@@ -31,7 +31,6 @@ void _WOLog(NSString *format, ...)
     {
         fprintf(stdout, "%s\n", [string UTF8String]);
         fflush(NULL); // flush all open streams (not just stdout)
-        [string release];
     }
     va_end(args);
 }
@@ -44,7 +43,6 @@ void _WOLogv(NSString *format, va_list args)
     {
         fprintf(stdout, "%s\n", [string UTF8String]);
         fflush(NULL); // flush all open streams (not just stdout)
-        [string release];
     }
 }
 
@@ -52,8 +50,7 @@ void _WOLogv(NSString *format, va_list args)
 
 + (NSString *)WOTest_stringWithFormat:(NSString *)format arguments:(va_list)argList
 {
-    return [[[NSString alloc] initWithFormat:format
-                                   arguments:argList] autorelease];
+    return [[NSString alloc] initWithFormat:format arguments:argList];
 }
 
 + (NSString *)WOTest_stringWithCharacter:(unichar)character
@@ -73,9 +70,9 @@ void _WOLogv(NSString *format, va_list args)
 
 - (NSString *)WOTest_stringByCollapsingWhitespace
 {
-    NSCharacterSet *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
-    NSMutableString *temp = [NSMutableString stringWithString:self];
-    unsigned int length = [temp length];
+    NSCharacterSet  *whitespace = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+    NSMutableString *temp       = [NSMutableString stringWithString:self];
+    unsigned int    length      = [temp length];
     for (unsigned int i = 0; i < length; i++)
     {
         if ([whitespace characterIsMember:[temp characterAtIndex:i]])
@@ -93,7 +90,7 @@ void _WOLogv(NSString *format, va_list args)
             }
         }
     }
-    return [NSString stringWithString:temp]; // return immutable, autoreleased
+    return [temp copy]; // return immutable
 }
 
 - (NSString *)WOTest_stringByAppendingCharacter:(unichar)character

@@ -62,7 +62,7 @@
                 NSLog(@"WOTestBundleInjector: failed to load bundle \"%@\"", bundlePath);
         }
     }
-    [pool release];
+    [pool drain];
 }
 
 @end

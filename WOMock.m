@@ -74,10 +74,7 @@
     if ([self class] != [WOMock class])
         [NSException raise:NSInternalInconsistencyException format:@"initWithObjectClass: called from WOMock subclass"];
 
-    id subclass = [[WOObjectMock allocWithZone:[self zone]] initWithClass:aClass];
-
-    [self dealloc];
-    return subclass;
+    return [[WOObjectMock allocWithZone:[self zone]] initWithClass:aClass];
 }
 
 // a true Apple-style cluster would do this by allocating a placeholder object
@@ -87,9 +84,7 @@
     if ([self class] != [WOMock class])
         [NSException raise:NSInternalInconsistencyException format:@"initWithClass: called from WOMock subclass"];
 
-    id subclass = [[WOClassMock allocWithZone:[self zone]] initWithClass:aClass];
-    [self dealloc];
-    return subclass;
+    return [[WOClassMock allocWithZone:[self zone]] initWithClass:aClass];
 }
 
 // a true Apple-style cluster would do this by allocating a placeholder object
@@ -99,35 +94,27 @@
     if ([self class] != [WOMock class])
         [NSException raise:NSInternalInconsistencyException format:@"initWithProtocol: called from WOMock subclass"];
 
-    id subclass = [[WOProtocolMock allocWithZone:[self zone]] initWithProtocol:aProtocol];
-    [self dealloc];
-    return subclass;
+    return [[WOProtocolMock allocWithZone:[self zone]] initWithProtocol:aProtocol];
 }
 
 - (id)init
 {
     // super (NSProxy) has no init method
-    expectedInOrder     = [[NSMutableArray alloc] init];    // there are no accessors (to avoid namespace pollution)
-    accepted            = [[NSMutableSet alloc] init];
-    acceptedOnce        = [[NSMutableSet alloc] init];
-    expected            = [[NSMutableSet alloc] init];
-    expectedOnce        = [[NSMutableSet alloc] init];
-    rejected            = [[NSMutableSet alloc] init];
-    methodSignatures    = [[NSMutableDictionary alloc] init];
+    expectedInOrder     = [NSMutableArray array];               // there are no accessors (to avoid namespace pollution)
+    accepted            = [NSMutableSet set];
+    acceptedOnce        = [NSMutableSet set];
+    expected            = [NSMutableSet set];
+    expectedOnce        = [NSMutableSet set];
+    rejected            = [NSMutableSet set];
+    methodSignatures    = [NSMutableDictionary dictionary];
     return self;
 }
 
-- (void)dealloc
+// TODO: given that the time at which finalize is called is indeterminate consider coming up with some other mechanism for
+// triggering verification
+- (void)finalize
 {
-    [self               verify];
-    [accepted           release];
-    [acceptedOnce       release];
-    [expected           release];
-    [expectedOnce       release];
-    [expectedInOrder    release];
-    [rejected           release];
-    [methodSignatures   release];
-    [super dealloc];
+    [self verify];
 }
 
 - (id)accept

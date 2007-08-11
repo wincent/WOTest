@@ -31,23 +31,19 @@
     // should throw if passed NULL
     mock = [WOClassMock alloc];
     WO_TEST_THROWS([mock initWithClass:NULL]);
-    [mock release];
 
     // should throw if passed non-class pointer
     mock = [WOClassMock alloc];
     WO_TEST_THROWS([mock initWithClass:(Class)self]);
-    [mock release];
 
     // otherwise should work
-    WO_TEST_DOES_NOT_THROW
-        ([[[WOClassMock alloc] initWithClass:[self class]] autorelease]);
+    WO_TEST_DOES_NOT_THROW([[WOClassMock alloc] initWithClass:[self class]]);
 
     // should throw if passed a meta class
     Class class     = [NSString class];
     Class metaclass = object_getClass(class);
     mock = [WOClassMock alloc];
     WO_TEST_THROWS([mock initWithClass:metaclass]);
-    [mock release];
 }
 
 - (void)testAccept

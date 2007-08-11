@@ -31,8 +31,6 @@
 
 + (id)newLightweightRoot;
 
-- (void)dealloc;
-
 /*! This method required by the runtime (called by _objc_forward for unrecognized selectors). The default implementation simply raises an NSInternalInconsistencyException. */
 - forward:(SEL)sel :(marg_list)args;
 

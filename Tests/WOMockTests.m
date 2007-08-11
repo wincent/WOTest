@@ -111,8 +111,7 @@
 
 - (void)testInitWithObjectClass
 {
-    WOObjectMock *mock =
-        [[[WOMock alloc] initWithObjectClass:[self class]] autorelease];
+    WOObjectMock *mock = [[WOMock alloc] initWithObjectClass:[self class]];
 
     // make sure WOObjectMock class is returned
     WO_TEST_EQ([mock class], [WOObjectMock class]);
@@ -123,13 +122,11 @@
     // should throw exception instead of entering infinite loop
     mock = [WOObjectMock alloc];
     WO_TEST_THROWS([mock initWithObjectClass:[self class]]);
-    [mock release];
 }
 
 - (void)testInitWithClass
 {
-    WOClassMock *mock =
-        [[[WOMock alloc] initWithClass:[self class]] autorelease];
+    WOClassMock *mock = [[WOMock alloc] initWithClass:[self class]];
 
     // make sure WOClassMock class is returned
     WO_TEST_EQ([mock class], [WOClassMock class]);
@@ -143,13 +140,11 @@
     // cannot test this because subclass implements that method directly
     //mock = [WOClassMock alloc];
     //WO_TEST_THROWS([mock initWithClass:[self class]]);
-    //[mock release];
 }
 
 - (void)testInitWithProtocol
 {
-    WOProtocolMock *mock =
-        [[[WOMock alloc] initWithProtocol:@protocol(WOTest)] autorelease];
+    WOProtocolMock *mock = [[WOMock alloc] initWithProtocol:@protocol(WOTest)];
 
     // make sure WOProtocolMock class is returned
     WO_TEST_EQ([mock class], [WOProtocolMock class]);
@@ -161,13 +156,12 @@
     // cannot test this because subclass implements that method directly
     //mock = [WOProtocolMock alloc];
     //WO_TEST_THROWS([mock initWithProtocol:@protocol(WOTest)]);
-    //[mock release];
 }
 
 - (void)testRecordingMethods
 {
     // all recording methods should throw an exception (use subclasses instead)
-    WOMock *mock = [[[WOMock alloc] init] autorelease];
+    WOMock *mock = [[WOMock alloc] init];
     WO_TEST_THROWS([mock reject]);
     WO_TEST_THROWS([mock expectInOrder]);
     WO_TEST_THROWS([mock expectOnce]);

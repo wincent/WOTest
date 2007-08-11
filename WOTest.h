@@ -25,7 +25,7 @@
 #pragma mark Marker protocol
 
 
-/*! You can indicate that a class contains unit tests by marking it with the WOTest marker protocol. Although there are no selectors explicitly defined in the protocol you should at the very least ensure that your class responds to the alloc, init and release selectors (this is because before running each test method the framework instantiates a new copy of your test class by sending the alloc and init messages and afterwards sends a release message. In practice this means that any subclass of NSObject is suitable for writing test classes. You can also use classes which do not derive from the NSObject root class but you should be aware that if they do not implement alloc, init and release then WOTest will issue warnings at runtime. */
+/*! You can indicate that a class contains unit tests by marking it with the WOTest marker protocol. Although there are no selectors explicitly defined in the protocol you should at the very least ensure that your class responds to the alloc and init selectors (this is because before running each test method the framework instantiates a new copy of your test class by sending the alloc and init messages. In practice this means that any subclass of NSObject is suitable for writing test classes. You can also use classes which do not derive from the NSObject root class but you should be aware that if they do not implement alloc and init then WOTest will issue warnings at runtime. */
 @protocol WOTest
 
 @end

@@ -48,7 +48,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
 + (id)mockForProtocol:(Protocol *)aProtocol
 {
     NSParameterAssert(aProtocol != NULL);
-    return [[[self alloc] initWithProtocol:aProtocol] autorelease];
+    return [[self alloc] initWithProtocol:aProtocol];
 }
 
 - (id)initWithProtocol:(Protocol *)aProtocol

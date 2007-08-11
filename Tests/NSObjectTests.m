@@ -47,7 +47,6 @@
     // custom classes that do not respond to "description" return class name
     WOLightweightRoot *root = [WOLightweightRoot newLightweightRoot];
     WO_TEST_EQ([NSObject WOTest_descriptionForObject:root], @"WOLightweightRoot");
-    [root dealloc];
 
     // special case: NSValues that contain NSStrings should return the string
     NSValue *value = [NSValue WOTest_valueWithObject:@"foo"];
@@ -101,8 +100,7 @@
     WO_TEST([NSObject WOTest_object:subobject isKindOfClass:[NSString class]]);
 
     // superclass should not be considered as same kind as subclass
-    WO_TEST_FALSE([NSObject WOTest_object:[[[NSObject alloc] init] autorelease]
-                     isKindOfClass:[self class]]);
+    WO_TEST_FALSE([NSObject WOTest_object:[[NSObject alloc] init] isKindOfClass:[self class]]);
 
     // initial attempt at this test failed because the NSString object had a
     // superclass of "%NSCFString", which happened to match NSMutableString!
@@ -112,14 +110,9 @@
     //WO_TEST_FALSE([@"constant string" isKindOfClass:[NSMutableString class]]);
 
     // should handle custom root classes without problems
-    WO_TEST([NSObject WOTest_object:otherObject
-               isKindOfClass:NSClassFromString(@"WOLightweightRoot")]);
+    WO_TEST([NSObject WOTest_object:otherObject isKindOfClass:NSClassFromString(@"WOLightweightRoot")]);
     WO_TEST_FALSE([NSObject WOTest_object:otherObject isKindOfClass:[NSString class]]);
-    WO_TEST_FALSE([NSObject WOTest_object:self
-                     isKindOfClass:NSClassFromString(@"WOLightweightRoot")]);
-
-    // cleanup
-    [otherObject dealloc];
+    WO_TEST_FALSE([NSObject WOTest_object:self isKindOfClass:NSClassFromString(@"WOLightweightRoot")]);
 }
 
 - (void)testInstancesOfClassAreKindOfClass
@@ -180,11 +173,8 @@
                 respondsToSelector:@selector(bar)]);
 
     // should handle custom root classes without problems
-    WO_TEST([NSObject WOTest_object:root respondsToSelector:@selector(dealloc)]);
+    WO_TEST([NSObject WOTest_object:root respondsToSelector:@selector(exampleMethod)]);
     WO_TEST_FALSE([NSObject WOTest_object:root respondsToSelector:@selector(foobar)]);
-
-    // cleanup
-    [root dealloc];
 }
 
 - (void)testClassRespondsToSelector
@@ -224,7 +214,7 @@
 
     // should work with custom root classes
     WO_TEST([NSObject WOTest_instancesOfClass:NSClassFromString(@"WOLightweightRoot") respondToSelector:@selector(forward::)]);
-    WO_TEST([NSObject WOTest_instancesOfClass:NSClassFromString(@"WOLightweightRoot") respondToSelector:@selector(dealloc)]);
+    WO_TEST([NSObject WOTest_instancesOfClass:NSClassFromString(@"WOLightweightRoot") respondToSelector:@selector(exampleMethod)]);
     WO_TEST_FALSE([NSObject WOTest_instancesOfClass:NSClassFromString(@"WOLightweightRoot")
                                   respondToSelector:@selector(conformsToProtocol:)]);
 }

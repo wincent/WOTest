@@ -48,7 +48,7 @@
 /*! Used to specify the return value that should be sent in response to messages. */
 - (id)returning:(NSValue *)aValue;
 
-/*! Used to specify the exception that should be raised in response to messages. \p anException should respond to the retain, release, autorelease, isEqual and hash selectors. */
+/*! Used to specify the exception that should be raised in response to messages. \p anException should respond to the isEqual and hash selectors. */
 - (id)raising:(id)anException;
 
 #pragma mark -
@@ -60,20 +60,15 @@
 #pragma mark -
 #pragma mark Accessors
 
-- (BOOL)acceptsAnyArguments;
-- (void)setAcceptsAnyArguments:(BOOL)flag;
-
 /*! Returns the recorded invocation object stored by this instance. Raises an exception if no invocation has yet been recorded. */
 - (NSInvocation *)recordedInvocation;
 
-/*! Direct access to the invocation instance variable. Should not be used. Use recordedInvocation instead. */
-- (NSInvocation *)invocation;
-- (void)setInvocation:(NSInvocation *)anInvocation;
+#pragma mark -
+#pragma mark Properties
 
-- (NSValue *)returnValue;
-- (void)setReturnValue:(NSValue *)aReturnValue;
-
-- (id)exception;
-- (void)setException:(id)anException;
+@property(assign) NSInvocation *invocation;
+@property(assign) NSValue *returnValue;
+@property BOOL acceptsAnyArguments;
+@property(assign) id exception;
 
 @end

@@ -35,7 +35,6 @@
     // should throw for NULL protocol
     WOProtocolMock *mock = [WOProtocolMock alloc];
     WO_TEST_THROWS([mock initWithProtocol:NULL]);
-    [mock release];
 }
 
 - (void)testMethodSignatureForSelector

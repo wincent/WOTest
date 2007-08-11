@@ -40,14 +40,6 @@
     return self; // super (NSProxy) has no init method
 }
 
-- (void)dealloc
-{
-    [self setInvocation:nil];
-    [self setReturnValue:nil];
-    [self setException:nil];
-    [super dealloc];
-}
-
 - (id)anyArguments
 {
     [self setAcceptsAnyArguments:YES];
@@ -207,59 +199,9 @@
     return recordedInvocation;
 }
 
-- (NSInvocation *)invocation
-{
-    return [[invocation retain] autorelease];
-}
-
-- (void)setInvocation:(NSInvocation *)anInvocation
-{
-    if (invocation != anInvocation)
-    {
-        [anInvocation retain];
-        [invocation release];
-        invocation = anInvocation;
-    }
-}
-
-- (NSValue *)returnValue
-{
-    return [[returnValue retain] autorelease];
-}
-
-- (void)setReturnValue:(NSValue *)aReturnValue
-{
-    if (returnValue != aReturnValue)
-    {
-        [aReturnValue retain];
-        [returnValue release];
-        returnValue = aReturnValue;
-    }
-}
-
-- (BOOL)acceptsAnyArguments
-{
-    return acceptsAnyArguments;
-}
-
-- (void)setAcceptsAnyArguments:(BOOL)flag
-{
-    acceptsAnyArguments = flag;
-}
-
-- (id)exception
-{
-    return [[exception retain] autorelease];
-}
-
-- (void)setException:(id)anException
-{
-    if (exception != anException)
-    {
-        [anException retain];
-        [exception release];
-        exception = anException;
-    }
-}
+@synthesize invocation;
+@synthesize returnValue;
+@synthesize acceptsAnyArguments;
+@synthesize exception;
 
 @end

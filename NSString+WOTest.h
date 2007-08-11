@@ -36,11 +36,11 @@ void _WOLogv(NSString *format, va_list args);
 
 - (NSString *)WOTest_stringByConvertingToAbsolutePath;
 
-/*! Returns an immutable, autoreleased string created by "collapsing" all of the whitespace in the receiver into single spaces. All newlines are converted into spaces and consecutive spaces are "collapsed" into a single space. */
+/*! Returns an immutable string created by "collapsing" all of the whitespace in the receiver into single spaces. All newlines are converted into spaces and consecutive spaces are "collapsed" into a single space. */
 - (NSString *)WOTest_stringByCollapsingWhitespace;
 
 
-/*! Returns an immutable, autoreleased string created by appending a single character of type unichar to the receiver. */
+/*! Returns an immutable string created by appending a single character of type unichar to the receiver. */
 - (NSString *)WOTest_stringByAppendingCharacter:(unichar)character;
 
 @end

@@ -242,32 +242,6 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
     return instance;
 }
 
-- (oneway void)release
-{
-    return;
-}
-
-- (void)dealloc
-{
-    [self doesNotRecognizeSelector:_cmd];   // being a singleton, officially does not support dealloc
-    [super dealloc];                        // this line necessary to suppress compiler warning
-}
-
-- (unsigned)retainCount
-{
-    return UINT_MAX;
-}
-
-- (id)autorelease
-{
-    return self;
-}
-
-- (id)retain
-{
-    return self;
-}
-
 // overriding this also overrides copy
 - (id)copyWithZone:(NSZone *)zone
 {
@@ -359,7 +333,7 @@ OSStatus WOLowLevelExceptionHandler(ExceptionInformation *theException)
     for (NSString *class in [self testableClasses])
         [self runTestsForClassName:class] ? : failures++;
     [self printTestResultsSummary];
-    [pool release];
+    [pool drain];
     return (failures > 0) ? NO : YES;
 }
 
@@ -440,10 +414,9 @@ jump_point:
                     }
                     else if ([self isInstanceMethod:method])
                     {
-                        // class must implement alloc, init and release
+                        // class must implement alloc and init
                         if ([NSObject WOTest_object:aClass respondsToSelector:@selector(alloc)] &&
-                            [NSObject WOTest_instancesOfClass:aClass respondToSelector:@selector(init)] &&
-                            [NSObject WOTest_instancesOfClass:aClass respondToSelector:@selector(release)])
+                            [NSObject WOTest_instancesOfClass:aClass respondToSelector:@selector(init)])
                         {
                             id instance = [[aClass alloc] init];
                             if ([NSObject WOTest_instancesOfClass:aClass respondToSelector:preflight])
@@ -451,11 +424,10 @@ jump_point:
                             objc_msgSend(instance, [self selectorFromMethod:method]);
                             if ([NSObject WOTest_instancesOfClass:aClass respondToSelector:postflight])
                                 objc_msgSend(instance, postflight);
-                            [instance release];
                         }
                         else
                         {
-                            [self writeError:@"Class %@ must respond to the alloc, init and release selectors",
+                            [self writeError:@"Class %@ must respond to the alloc and init selectors",
                                 NSStringFromClass(aClass)];
                             [self writeLastKnownLocation];
                         }
@@ -491,7 +463,7 @@ jump_point:
                     if (lowLevelExceptionHandlerInstalled)
                         [self removeLowLevelExceptionHandler];
                     _WOLog(@"Finished test method %@ (%.4f seconds)", method, -[startMethod timeIntervalSinceNow]);
-                    [pool release];
+                    [pool drain];
                 }
             }
         }
@@ -630,8 +602,7 @@ jump_point:
         }
     }
 
-    // return autoreleased, immutable NSArray
-    return [NSArray arrayWithArray:classNames];
+    return [classNames copy];   // return immutable
 }
 
 - (NSArray *)testableMethodsFrom:(Class)aClass
@@ -763,7 +734,7 @@ jump_point:
     [environment removeObjectForKey:@"DYLD_INSERT_LIBRARIES"];
     [environment removeObjectForKey:@"WOTestBundleInjector"];
 
-    NSTask *task = [[[NSTask alloc] init] autorelease];
+    NSTask *task = [[NSTask alloc] init];
     [task setLaunchPath:@"/usr/bin/env"];   // use env so as to pick up PATH, if set
     [task setEnvironment:environment];
     NSMutableArray *arguments = [NSMutableArray arrayWithObjects:@"growlnotify",

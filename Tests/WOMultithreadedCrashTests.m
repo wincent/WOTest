@@ -52,7 +52,7 @@
     id *object = NULL;                                          // cause a crash, but WOTest should keep running
     *object = @"foo";                                           // SIGBUS here
     WO_TEST_FAIL;                                               // this line never reached
-    [pool release];                                             // nor this one, but pools are in a stack no problem
+    [pool drain];                                               // nor this one, but pools are in a stack no problem
 }
 
 #pragma mark -

@@ -102,7 +102,7 @@ The mocked class must at least implement the NSObject method, instanceMethodSign
 
  Rejected selectors cause an exception to be raised.
 
- By default, if a selector does not appear in any of the internal lists an exception is raised. This latter behaviour requires you to be explicit about <em>all</em> selectors which a mock object may receive. For example, you may have a mock object that stands in for an NSString instance and expect that it be sent a "lowercaseString" selector. If during your test you also send an "uppercaseString" selector then an exception will be raised (because the selector does not appear in the internal lists, even though it is a valid NSString selector). A small number of methods will be accepted even without being explicitly added the the lists; these include methods like retain and release and other NSObject protocol methods. These are accepted because they are inherited from the parent class of WOMock (NSProxy).
+ By default, if a selector does not appear in any of the internal lists an exception is raised. This latter behaviour requires you to be explicit about <em>all</em> selectors which a mock object may receive. For example, you may have a mock object that stands in for an NSString instance and expect that it be sent a "lowercaseString" selector. If during your test you also send an "uppercaseString" selector then an exception will be raised (because the selector does not appear in the internal lists, even though it is a valid NSString selector). A small number of methods will be accepted even without being explicitly added the the lists; these include methods such as NSObject protocol methods. These are accepted because they are inherited from the parent class of WOMock (NSProxy).
 
  If you wish to override this behaviour you may send the setAcceptsByDefault message passing a flag of YES, but be aware that selectors which fall through to the "accepts by default" cannot return any defined value. For control over return values the selector in question must be explicitly set up with the expectInOrder, expectOnce, expect, acceptOnce or accept methods.
 
@@ -144,7 +144,7 @@ See the WOMockTests class in WOTestSelfTests for usage examples.
  */
 - (id)reject;
 
-/*! Instructs the receiver to expect a selector; the receiver not only accepts the selector but it actually requires that it be sent. If the expected selector has not been received when the verify method is called (or at dealloc time) then an exception will be raised. The following example shows how to instruct the WOMock instance mock to expect the disconnect selector:
+/*! Instructs the receiver to expect a selector; the receiver not only accepts the selector but it actually requires that it be sent. If the expected selector has not been received when the verify method is called (or at finalize time) then an exception will be raised. The following example shows how to instruct the WOMock instance mock to expect the disconnect selector:
 
 \code
 [[mock expect] disconnect];
@@ -176,7 +176,7 @@ If the selector takes arguments then the arguments passed to the mock must match
 
 /*! \endgroup */
 
-/*! Verifies that all selectors registered with the expect method have been performed. If any have not then an exception is raised. The verify method is automatically called at dealloc time, although you may still wish to invoke it manually. */
+/*! Verifies that all selectors registered with the expect method have been performed. If any have not then an exception is raised. The verify method is automatically called at finalize time, although you may still wish to invoke it manually. */
 - (void)verify;
 
 #pragma mark -

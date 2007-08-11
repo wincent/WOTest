@@ -35,12 +35,10 @@
     // throws if passed NULL
     WOProtocolStub *stub = [WOProtocolStub alloc];
     WO_TEST_THROWS([stub initWithProtocol:NULL delegate:nil]);
-    [stub dealloc];
 
     // otherwise works
     stub = [WOProtocolStub alloc];
     WO_TEST_DOES_NOT_THROW([stub initWithProtocol:@protocol(WOTest) delegate:nil]);
-    [stub dealloc];
 }
 
 - (void)testMethodSignatureForSelector

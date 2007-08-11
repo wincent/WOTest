@@ -38,9 +38,9 @@
     return class_createInstance(class, 0);
 }
 
-- (void)dealloc
+- (void)exampleMethod
 {
-    free(self);
+    // do nothing
 }
 
 - forward:(SEL)sel :(marg_list)args

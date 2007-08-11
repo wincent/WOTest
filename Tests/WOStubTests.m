@@ -25,7 +25,7 @@
 
 - (void)testMatchesInvocation
 {
-    WOStub *stub = [[[WOStub alloc] init] autorelease];
+    WOStub *stub = [[WOStub alloc] init];
 
     // raises if sent nil
     WO_TEST_THROWS([stub matchesInvocation:nil]);

@@ -843,7 +843,7 @@
         {
             // for NSString objects: just return content
             if ([NSObject WOTest_object:valueContents isKindOfClass:[NSString class]])
-                return [[valueContents retain] autorelease];
+                return valueContents;
             else if ([NSObject WOTest_object:valueContents respondsToSelector:@selector(description)] &&
                      [NSObject WOTest_isIdReturnType:[NSObject WOTest_returnTypeForObject:valueContents
                                                                                  selector:@selector(description)]])

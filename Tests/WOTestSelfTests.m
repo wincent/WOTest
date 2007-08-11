@@ -39,31 +39,19 @@ NSMutableArray *WOEmptyInstanceMethodInvocations;
 
 + (void)initialize
 {
-    WOEmptyClassMethodInvocations =
-        [[NSMutableArray alloc] initWithCapacity:3];
-    WOEmptyInstanceMethodInvocations =
-        [[NSMutableArray alloc] initWithCapacity:3];
+    WOEmptyClassMethodInvocations = [NSMutableArray arrayWithCapacity:3];
+    WOEmptyInstanceMethodInvocations = [NSMutableArray arrayWithCapacity:3];
 }
 
 + (void)verify
 {
-    // cleanup
-    [WOEmptyClassMethodInvocations autorelease];
-    [WOEmptyInstanceMethodInvocations autorelease];
-
     // were class methods called in order?
-    NSArray *expectedClassMethods = [NSArray arrayWithObjects:
-            @"preflight", @"testClassMethod", @"postflight", nil];
-    NSAssert
-        ([expectedClassMethods isEqualToArray:WOEmptyClassMethodInvocations],
-         @"Class method verification failed");
+    NSArray *expectedClassMethods = [NSArray arrayWithObjects:@"preflight", @"testClassMethod", @"postflight", nil];
+    NSAssert([expectedClassMethods isEqualToArray:WOEmptyClassMethodInvocations], @"Class method verification failed");
 
     // were instance methods called in order?
-    NSArray *expectedInstanceMethods = [NSArray arrayWithObjects:
-        @"preflight", @"testInstanceMethod", @"postflight", nil];
-    NSAssert([expectedInstanceMethods isEqualToArray:
-        WOEmptyInstanceMethodInvocations],
-             @"Instance method verification failed");
+    NSArray *expectedInstanceMethods = [NSArray arrayWithObjects:@"preflight", @"testInstanceMethod", @"postflight", nil];
+    NSAssert([expectedInstanceMethods isEqualToArray:WOEmptyInstanceMethodInvocations], @"Instance method verification failed");
 }
 
 + (void)preflight
@@ -113,11 +101,6 @@ NSMutableArray *WOEmptyInstanceMethodInvocations;
 {
     Class class = object_getClass(self);
     return class_createInstance(class, 0);
-}
-
-- (void)dealloc
-{
-    free(self);
 }
 
 // http://www.geocities.com/chrootstrap/custom_objective_c_root_classes.html
@@ -1048,7 +1031,7 @@ NSMutableArray *WOEmptyInstanceMethodInvocations;
     WO_TEST_DOES_NOT_THROW([objectValue WOTest_testIsEqualToValue:nilValue]);
     WO_TEST_DOES_NOT_THROW([nilValue WOTest_testIsEqualToValue:objectValue]);
 
-    NSValue *realObjectValue = [NSValue valueWithNonretainedObject:[[[NSObject alloc] init] autorelease]];
+    NSValue *realObjectValue = [NSValue valueWithNonretainedObject:[[NSObject alloc] init]];
     WO_TEST_FALSE([realObjectValue WOTest_isObject]);
     WO_TEST_TRUE([realObjectValue WOTest_isPointerToVoid]);
     WO_TEST_DOES_NOT_THROW([realObjectValue WOTest_testIsEqualToValue:nilValue]);
@@ -1134,13 +1117,13 @@ NSMutableArray *WOEmptyInstanceMethodInvocations;
     WO_TEST_EQUAL([NSException WOTest_descriptionForException:exception1], @"foo: bar");
 
     // NSImage responds to name but not reason
-    NSImage *exception2 = [[[NSImage alloc] initWithSize:NSZeroSize] autorelease];
+    NSImage *exception2 = [[NSImage alloc] initWithSize:NSZeroSize];
     [exception2 setName:@"Roger Smith"];
     WO_TEST_EQUAL([NSException WOTest_descriptionForException:exception2],
                   ([NSString stringWithFormat:@"%@ (%x)", [exception2 name], exception2]));
 
     // NSObject responds to description but not to name or reason
-    NSObject *exception3 = [[[NSObject alloc] init] autorelease];
+    NSObject *exception3 = [[NSObject alloc] init];
     WO_TEST_EQUAL([NSException WOTest_descriptionForException:exception3], [exception3 description]);
 
     WO_TEST_EQUAL([NSException WOTest_nameForException:nil], @"no exception");
@@ -1891,16 +1874,12 @@ NSMutableArray *WOEmptyInstanceMethodInvocations;
 
 - (void)throwWORootClassObject
 {
-    WORootClass *object = [WORootClass new]; // this is officially a leak
-    @throw object;
-    [object dealloc]; // leaks because this line is never reached
+    @throw [WORootClass new];
 }
 
 - (void)throwObject
 {
-    Object *object = [[Object alloc] init]; // another leak
-    @throw object;
-    [object free]; // leaks because this line is never reached
+    @throw [[Object alloc] init];
 }
 
 - (void)doNotThrowException
@@ -1911,7 +1890,7 @@ NSMutableArray *WOEmptyInstanceMethodInvocations;
 - (void)makeCocoaThrowException
 {
     // should throw NSInvalidArgumentException
-    (void)[[[NSString alloc] initWithFormat:nil] autorelease];
+    (void)[[NSString alloc] initWithFormat:nil];
 }
 
 - (void)makeCocoaThrowNSRangeException

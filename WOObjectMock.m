@@ -36,7 +36,7 @@
 {
     NSParameterAssert(aClass != NULL);
     NSParameterAssert([NSObject WOTest_isRegisteredClass:aClass]);     // only registered classes pass (do not pass meta classes)
-    return [[[self alloc] initWithClass:aClass] autorelease];
+    return [[self alloc] initWithClass:aClass];
 }
 
 - (id)initWithClass:(Class)aClass

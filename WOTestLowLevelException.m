@@ -33,7 +33,7 @@
     NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInt:kind], WOTestLowLevelExceptionKind, nil];
 
-    return [[[self alloc] initWithName:WOTestLowLevelExceptionName reason:reason userInfo:userInfo] autorelease];
+    return [[self alloc] initWithName:WOTestLowLevelExceptionName reason:reason userInfo:userInfo];
 }
 
 + (NSString *)nameForType:(ExceptionKind)kind

@@ -35,7 +35,7 @@
 + (id)stubForClass:(Class)aClass withDelegate:(id)aDelegate
 {
     NSParameterAssert(aClass != NULL);
-    return [[[self alloc] initWithClass:aClass delegate:aDelegate] autorelease];
+    return [[self alloc] initWithClass:aClass delegate:aDelegate];
 }
 
 - (id)initWithClass:(Class)aClass delegate:(id)aDelegate

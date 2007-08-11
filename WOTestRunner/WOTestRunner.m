@@ -171,7 +171,7 @@ int main(int argc, const char *argv[])
         exitCode = EXIT_FAILURE;
 
 cleanup:
-    [pool release];
+    [pool drain];
     return exitCode;
 }
 

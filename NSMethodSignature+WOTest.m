@@ -107,12 +107,11 @@ See also http://www.stuffonfire.com/2005/12/signaturewithobjctypes_is_stil.html
 
 #ifdef WO_USE_OWN_METHOD_SIGNATURE_IMPLEMENTATION
 
-    return [[[self alloc] initWithObjCTypes:types] autorelease];
+    return [[self alloc] initWithObjCTypes:types];
 
 #else /* use private Apple API */
 
-    NSAssert([self respondsToSelector:@selector(signatureWithObjCTypes:)],
-             @"signatureWithObjCTypes: selector not recognized");
+    NSAssert([self respondsToSelector:@selector(signatureWithObjCTypes:)], @"signatureWithObjCTypes: selector not recognized");
     return [self signatureWithObjCTypes:types];
 
 #endif

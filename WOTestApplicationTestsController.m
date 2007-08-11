@@ -37,8 +37,8 @@
     if (OSAtomicIncrement32Barrier(&initialized) != 1) return;  // do this once only
 
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    (void)[[self alloc] initWithPath:__FILE__ keepComponents:3]; // will release self after running tests
-    [pool release];
+    (void)[[self alloc] initWithPath:__FILE__ keepComponents:3];
+    [pool drain];
 }
 
 @end
@@ -83,7 +83,6 @@ extern NSString *NSApplicationDidFinishLaunchingNotification;
     [tester runAllTests];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self release];                                 // balance alloc/init in load method
 }
 
 - (void)applicationFailedToFinishLaunching:(id)ignored

@@ -42,7 +42,7 @@
 + (id)stubForProtocol:(Protocol *)aProtocol withDelegate:(id)aDelegate
 {
     NSParameterAssert(aProtocol != NULL);
-    return [[[self alloc] initWithProtocol:aProtocol delegate:aDelegate] autorelease];
+    return [[self alloc] initWithProtocol:aProtocol delegate:aDelegate];
 }
 
 /*! Designated initializer. */

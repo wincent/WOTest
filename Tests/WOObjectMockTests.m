@@ -45,29 +45,17 @@
 
 - (void)testInitWithClass
 {
-    // preliminaries
-    WOObjectMock *mock = nil;
-
     // should throw if passed NULL
-    mock = [WOObjectMock alloc];
-    WO_TEST_THROWS([mock initWithClass:NULL]);
-    [mock release];
+    WO_TEST_THROWS([[WOObjectMock alloc] initWithClass:NULL]);
 
     // should throw if passed non-class pointer
-    mock = [WOObjectMock alloc];
-    WO_TEST_THROWS([mock initWithClass:(Class)self]);
-    [mock release];
+    WO_TEST_THROWS([[WOObjectMock alloc] initWithClass:(Class)self]);
 
     // otherwise should work
-    WO_TEST_DOES_NOT_THROW
-        ([[[WOObjectMock alloc] initWithClass:[self class]] autorelease]);
+    WO_TEST_DOES_NOT_THROW([[WOObjectMock alloc] initWithClass:[self class]]);
 
     // should throw if passed a meta class
-    Class class     = [NSString class];
-    Class metaclass = object_getClass(class);
-    mock = [WOObjectMock alloc];
-    WO_TEST_THROWS([mock initWithClass:metaclass]);
-    [mock release];
+    WO_TEST_THROWS([[WOObjectMock alloc] initWithClass:object_getClass([NSString class])]);
 }
 
 - (void)testMockExpectInOrder
@@ -301,8 +289,6 @@
     [[mock expect] lowercaseString];        // a valid NSString selector
     WO_TEST_DOES_NOT_THROW([mock lowercaseString]);
     WO_TEST_DOES_NOT_THROW([mock verify]);
-    WO_TEST_DOES_NOT_THROW([mock retain]);  // ok (inherited from NSProxy)
-    WO_TEST_DOES_NOT_THROW([mock release]); // ok (inherited from NSProxy)
     WO_TEST_THROWS([mock uppercaseString]); // fail (not explicitly expected)
 
     // should throw for class methods
@@ -402,9 +388,9 @@
 
     // should raise if passed nil class
     WO_TEST_THROWS([WOObjectMock mockForClass:nil]);
-    WO_TEST_THROWS([[[WOObjectMock alloc] initWithClass:nil] release]);
+    WO_TEST_THROWS([[WOObjectMock alloc] initWithClass:nil]);
     WO_TEST_DOES_NOT_THROW([WOObjectMock mockForClass:aClass]);
-    WO_TEST_DOES_NOT_THROW([[[WOObjectMock alloc] initWithClass:aClass] release]);
+    WO_TEST_DOES_NOT_THROW([[WOObjectMock alloc] initWithClass:aClass]);
 
     // test if passed a non-class object (ie. an instance)
 
@@ -420,8 +406,8 @@
     // raise if initialized with nil class pointer
     WO_TEST_DOES_NOT_THROW([WOObjectStub stubForClass:aClass withDelegate:nil]);
     WO_TEST_THROWS([WOObjectStub stubForClass:nil withDelegate:nil]);
-    WO_TEST_DOES_NOT_THROW([[[WOObjectStub alloc] initWithClass:aClass delegate:nil] release]);
-    WO_TEST_THROWS([[[WOObjectStub alloc] initWithClass:nil delegate:nil] release]);
+    WO_TEST_DOES_NOT_THROW([[WOObjectStub alloc] initWithClass:aClass delegate:nil]);
+    WO_TEST_THROWS([[WOObjectStub alloc] initWithClass:nil delegate:nil]);
 
     // test if passed a non-class object (ie. an instance)
 
@@ -455,7 +441,7 @@
     WO_TEST_DOES_NOT_THROW(stub = [WOObjectStub stubForClass:aClass withDelegate:nil]);
     WO_TEST_THROWS([stub recordedInvocation]);
 
-    // test automatic verify on dealloc
+    // test automatic verify on finalize
 }
 
 - (void)testStubEquality

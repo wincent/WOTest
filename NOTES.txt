@@ -178,7 +178,6 @@ To illustrate how this works, consider the following example. Imagine a tool tha
 - (void)callAppKitMethod
 {
     NSView *aView = [[NSView alloc] initWithFrame:NSZeroRect];
-    [aView release];
 }
 
 By including the AppKit header file you ensure that the compiler doesn't give you any warnings, but if you try to build such code the linker will give you an error that "NSView" is an undefined symbol. Of course, even if you could produce an executable and run it, it wouldn't work because the executable isn't linked to the AppKit.framework. One way to force the framework to load is to set environment variables and then run the product from the command-line. For example, in the bash shell:
@@ -199,7 +198,6 @@ A far more elegant way to solve this problem is to take advantage of the dynamic
     [NSBundle bundleWithPath:@"/System/Library/Frameworks/AppKit.framework"];
     Class   viewClass   = [theBundle classNamed:@"NSView"];
     NSView  *aView      = [[viewClass alloc] initWithFrame:NSZeroRect];
-    [aView release];
 }
 
 No compiler warnings, no linker errors, everything just works. WOTest uses this technique to allow you to load code "on the fly" without having to link to it. All it has to do is look for bundles, load them, and then run the test methods on them.
