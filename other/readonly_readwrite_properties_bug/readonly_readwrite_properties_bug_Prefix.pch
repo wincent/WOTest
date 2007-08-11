@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'readonly_readwrite_properties_bug' target in the 'readonly_readwrite_properties_bug' project.
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
