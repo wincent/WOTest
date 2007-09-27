@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 43;
+	objectVersion = 44;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -126,7 +126,6 @@
 		BCD155AF0A961949005B1950 /* WOProtocolMock.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA3172098BFD9300EEEE22 /* WOProtocolMock.h */; };
 		BCD155B00A961949005B1950 /* WOEnumerate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA31DB098C030300EEEE22 /* WOEnumerate.h */; };
 		BCD155B10A961949005B1950 /* NSInvocation+WOTest.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA342A098DB87300EEEE22 /* NSInvocation+WOTest.h */; };
-		BCD155B20A961949005B1950 /* NSMethodSignature+WOTest.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA35CA098E6A0D00EEEE22 /* NSMethodSignature+WOTest.h */; };
 		BCD155B30A961949005B1950 /* WOLightweightRoot.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA3CE0098F9B4800EEEE22 /* WOLightweightRoot.h */; };
 		BCD155B40A961949005B1950 /* WOObjectMock.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCBB58EC099D311B0065D0C5 /* WOObjectMock.h */; };
 		BCD155B50A961949005B1950 /* WOProtocolStub.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCBB59A0099D38BE0065D0C5 /* WOProtocolStub.h */; };
@@ -145,7 +144,6 @@
 		BCFA326D098C71D300EEEE22 /* WOObjectMockTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFA326C098C71D300EEEE22 /* WOObjectMockTests.m */; };
 		BCFA342D098DB87300EEEE22 /* NSInvocation+WOTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFA342B098DB87300EEEE22 /* NSInvocation+WOTest.m */; };
 		BCFA3446098E25FA00EEEE22 /* NSInvocationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFA3445098E25FA00EEEE22 /* NSInvocationTests.m */; };
-		BCFA35CF098E6A0D00EEEE22 /* NSMethodSignature+WOTest.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFA35CB098E6A0D00EEEE22 /* NSMethodSignature+WOTest.m */; };
 		BCFA3CE3098F9B4800EEEE22 /* WOLightweightRoot.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFA3CE1098F9B4800EEEE22 /* WOLightweightRoot.m */; };
 		BCFA3EA8098FCF9800EEEE22 /* NSValueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BCFA3EA7098FCF9700EEEE22 /* NSValueTests.m */; };
 /* End PBXBuildFile section */
@@ -245,7 +243,6 @@
 				BCD155AF0A961949005B1950 /* WOProtocolMock.h in CopyFiles */,
 				BCD155B00A961949005B1950 /* WOEnumerate.h in CopyFiles */,
 				BCD155B10A961949005B1950 /* NSInvocation+WOTest.h in CopyFiles */,
-				BCD155B20A961949005B1950 /* NSMethodSignature+WOTest.h in CopyFiles */,
 				BCD155B30A961949005B1950 /* WOLightweightRoot.h in CopyFiles */,
 				BCD155B40A961949005B1950 /* WOObjectMock.h in CopyFiles */,
 				BCD155B50A961949005B1950 /* WOProtocolStub.h in CopyFiles */,
@@ -363,8 +360,6 @@
 		BCFA342B098DB87300EEEE22 /* NSInvocation+WOTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInvocation+WOTest.m"; sourceTree = "<group>"; };
 		BCFA3444098E25FA00EEEE22 /* NSInvocationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSInvocationTests.h; path = Tests/NSInvocationTests.h; sourceTree = "<group>"; };
 		BCFA3445098E25FA00EEEE22 /* NSInvocationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = NSInvocationTests.m; path = Tests/NSInvocationTests.m; sourceTree = "<group>"; };
-		BCFA35CA098E6A0D00EEEE22 /* NSMethodSignature+WOTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMethodSignature+WOTest.h"; sourceTree = "<group>"; };
-		BCFA35CB098E6A0D00EEEE22 /* NSMethodSignature+WOTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMethodSignature+WOTest.m"; sourceTree = "<group>"; };
 		BCFA3CE0098F9B4800EEEE22 /* WOLightweightRoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WOLightweightRoot.h; sourceTree = "<group>"; };
 		BCFA3CE1098F9B4800EEEE22 /* WOLightweightRoot.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WOLightweightRoot.m; sourceTree = "<group>"; };
 		BCFA3EA6098FCF9700EEEE22 /* NSValueTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSValueTests.h; path = Tests/NSValueTests.h; sourceTree = "<group>"; };
@@ -580,8 +575,6 @@
 				BC5B1161072483FC000A7198 /* NSException+WOTest.m */,
 				BCFA342A098DB87300EEEE22 /* NSInvocation+WOTest.h */,
 				BCFA342B098DB87300EEEE22 /* NSInvocation+WOTest.m */,
-				BCFA35CA098E6A0D00EEEE22 /* NSMethodSignature+WOTest.h */,
-				BCFA35CB098E6A0D00EEEE22 /* NSMethodSignature+WOTest.m */,
 				BC1A6961085C5002004E0E61 /* NSObject+WOTest.h */,
 				BC1A6962085C5002004E0E61 /* NSObject+WOTest.m */,
 				BC7CC40D0A8E0A5D00B83673 /* NSProxy+WOTest.h */,
@@ -965,7 +958,6 @@
 				BCFA316D098BFD8900EEEE22 /* WOClassMock.m in Sources */,
 				BCFA3175098BFD9300EEEE22 /* WOProtocolMock.m in Sources */,
 				BCFA342D098DB87300EEEE22 /* NSInvocation+WOTest.m in Sources */,
-				BCFA35CF098E6A0D00EEEE22 /* NSMethodSignature+WOTest.m in Sources */,
 				BCFA3CE3098F9B4800EEEE22 /* WOLightweightRoot.m in Sources */,
 				BCBB58EF099D31280065D0C5 /* WOObjectMock.m in Sources */,
 				BCBB59A5099D38BE0065D0C5 /* WOProtocolStub.m in Sources */,

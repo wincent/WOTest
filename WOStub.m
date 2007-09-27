@@ -27,7 +27,6 @@
 
 // framework headers
 #import "NSInvocation+WOTest.h"
-#import "NSMethodSignature+WOTest.h"
 #import "NSObject+WOTest.h"
 #import "NSProxy+WOTest.h"
 #import "NSValue+WOTest.h"

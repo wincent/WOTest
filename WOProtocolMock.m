@@ -28,7 +28,6 @@
 // framework headers
 
 #import "NSInvocation+WOTest.h"
-#import "NSMethodSignature+WOTest.h"
 #import "WOProtocolStub.h"
 
 #pragma mark -
@@ -200,7 +199,7 @@ NSString *WOStringFromProtocol(Protocol *aProtocol)
 
     BOOL isRequiredMethod = YES;    // no idea what to pass here
     struct objc_method_description description = protocol_getMethodDescription([self mockedProtocol], aSelector, isRequiredMethod, YES);
-    return [NSMethodSignature WOTest_signatureBasedOnObjCTypes:description.types];
+    return [NSMethodSignature signatureWithObjCTypes:description.types];
 }
 
 #pragma mark -

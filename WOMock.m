@@ -27,7 +27,6 @@
 
 // framework headers
 #import "NSInvocation+WOTest.h"
-#import "NSMethodSignature+WOTest.h"
 #import "NSObject+WOTest.h"
 #import "NSProxy+WOTest.h"
 #import "NSValue+WOTest.h"
@@ -192,7 +191,7 @@
 
 - (void)setObjCTypes:(NSString *)types forSelector:(SEL)aSelector
 {
-    [methodSignatures setObject:[NSMethodSignature WOTest_signatureBasedOnObjCTypes:[types UTF8String]]
+    [methodSignatures setObject:[NSMethodSignature signatureWithObjCTypes:[types UTF8String]]
                          forKey:NSStringFromSelector(aSelector)];
 }
 

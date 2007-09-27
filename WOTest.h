@@ -53,7 +53,6 @@
 
 #import "NSException+WOTest.h"
 #import "NSInvocation+WOTest.h"
-#import "NSMethodSignature+WOTest.h"
 #import "NSObject+WOTest.h"
 #import "NSProxy+WOTest.h"
 #import "NSScanner+WOTest.h"
