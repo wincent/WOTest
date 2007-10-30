@@ -29,7 +29,6 @@
 // framework headers
 
 #import "NSInvocation+WOTest.h"
-#import "NSMethodSignature+WOTest.h"
 #import "NSObject+WOTest.h"
 #import "WOProtocolMock.h"  /* for WOStringFromProtocol() */
 
@@ -74,7 +73,7 @@
     if (description.name == NULL)
         [NSException raise:NSInternalInconsistencyException format:@"No method signature for selector %@ in %@ protocol",
             NSStringFromSelector(aSelector), WOStringFromProtocol(protocol)];
-    return [NSMethodSignature WOTest_signatureBasedOnObjCTypes:description.types];
+    return [NSMethodSignature signatureWithObjCTypes:description.types];
 }
 
 #pragma mark -
