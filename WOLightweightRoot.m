@@ -49,4 +49,15 @@
     return nil; // never executed, but include this to quell compiler warning
 }
 
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+    return nil;
+}
+
+- (void)doesNotRecognizeSelector:(SEL)aSelector
+{
+    [NSException raise:NSInternalInconsistencyException
+                format:@"Unrecognized selector %@", NSStringFromSelector(aSelector)];
+}
+
 @end
