@@ -124,7 +124,6 @@
 		BCD155AD0A961949005B1950 /* WOStub.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BC9215A8085E535B00940ABF /* WOStub.h */; };
 		BCD155AE0A961949005B1950 /* WOClassMock.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA316A098BFD8900EEEE22 /* WOClassMock.h */; };
 		BCD155AF0A961949005B1950 /* WOProtocolMock.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA3172098BFD9300EEEE22 /* WOProtocolMock.h */; };
-		BCD155B00A961949005B1950 /* WOEnumerate.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA31DB098C030300EEEE22 /* WOEnumerate.h */; };
 		BCD155B10A961949005B1950 /* NSInvocation+WOTest.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA342A098DB87300EEEE22 /* NSInvocation+WOTest.h */; };
 		BCD155B30A961949005B1950 /* WOLightweightRoot.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCFA3CE0098F9B4800EEEE22 /* WOLightweightRoot.h */; };
 		BCD155B40A961949005B1950 /* WOObjectMock.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCBB58EC099D311B0065D0C5 /* WOObjectMock.h */; };
@@ -241,7 +240,6 @@
 				BCD155AD0A961949005B1950 /* WOStub.h in CopyFiles */,
 				BCD155AE0A961949005B1950 /* WOClassMock.h in CopyFiles */,
 				BCD155AF0A961949005B1950 /* WOProtocolMock.h in CopyFiles */,
-				BCD155B00A961949005B1950 /* WOEnumerate.h in CopyFiles */,
 				BCD155B10A961949005B1950 /* NSInvocation+WOTest.h in CopyFiles */,
 				BCD155B30A961949005B1950 /* WOLightweightRoot.h in CopyFiles */,
 				BCD155B40A961949005B1950 /* WOObjectMock.h in CopyFiles */,
@@ -353,7 +351,6 @@
 		BCFA316B098BFD8900EEEE22 /* WOClassMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WOClassMock.m; sourceTree = "<group>"; };
 		BCFA3172098BFD9300EEEE22 /* WOProtocolMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WOProtocolMock.h; sourceTree = "<group>"; };
 		BCFA3173098BFD9300EEEE22 /* WOProtocolMock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WOProtocolMock.m; sourceTree = "<group>"; };
-		BCFA31DB098C030300EEEE22 /* WOEnumerate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WOEnumerate.h; sourceTree = "<group>"; };
 		BCFA326B098C71D300EEEE22 /* WOObjectMockTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WOObjectMockTests.h; path = Tests/WOObjectMockTests.h; sourceTree = "<group>"; };
 		BCFA326C098C71D300EEEE22 /* WOObjectMockTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = WOObjectMockTests.m; path = Tests/WOObjectMockTests.m; sourceTree = "<group>"; };
 		BCFA342A098DB87300EEEE22 /* NSInvocation+WOTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInvocation+WOTest.h"; sourceTree = "<group>"; };
@@ -519,7 +516,6 @@
 			children = (
 				BC56DCB3071B604100287AF4 /* WOTest.h */,
 				BCD1513C0A95F0A5005B1950 /* WOTestMacros.h */,
-				BCFA31DB098C030300EEEE22 /* WOEnumerate.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
