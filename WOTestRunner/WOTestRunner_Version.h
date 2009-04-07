@@ -25,7 +25,7 @@
 
 /* START: Auto-updated macro definitions */
 
-#define WO_COPYRIGHT_YEAR   2004-2008
+#define WO_COPYRIGHT_YEAR   2004-2009
 
 /* END: Auto-updated macro definitons */
 
