@@ -311,7 +311,7 @@
 		BCA93F42085626D400FE8D18 /* NSString+WOTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+WOTest.h"; sourceTree = "<group>"; };
 		BCA93F43085626D400FE8D18 /* NSString+WOTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+WOTest.m"; sourceTree = "<group>"; };
 		BCA9401808566F4300FE8D18 /* WOTestSelfTests.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WOTestSelfTests.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
-		BCA9401908566F4300FE8D18 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = Info.plist; path = Tests/Info.plist; sourceTree = "<group>"; };
+		BCA9401908566F4300FE8D18 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Tests/Info.plist; sourceTree = "<group>"; };
 		BCA9419D0857D26000FE8D18 /* NSValue+WOTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+WOTest.h"; sourceTree = "<group>"; };
 		BCA9419E0857D26000FE8D18 /* NSValue+WOTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+WOTest.m"; sourceTree = "<group>"; };
 		BCAC709907E359AB00FDA956 /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
