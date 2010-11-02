@@ -725,6 +725,7 @@
 			isa = PBXProject;
 			buildConfigurationList = BCA93DE70855D6B300FE8D18 /* Build configuration list for PBXProject "WOTest" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
