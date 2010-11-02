@@ -31,3 +31,9 @@ WO_TEST_FAIL
 can be manifested  in the WOTest tests); again, for now will just be WO_TEST_FAIL
 
 - for Leopard: use RubyCocoa bridge for writing specs in Ruby
+
+- consider using RSpec-like matchers for better readability: JUnit 4.4 is an example of a testing framework that does this
+despite Java's strong typing:
+    http://junit.sourceforge.net/doc/ReleaseNotes4.4.html
+- see also Cedar, a strongly RSpec-influenced Objective-C BDD framework:
+    https://wincent.com/issues/1550
