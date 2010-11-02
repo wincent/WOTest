@@ -1,7 +1,7 @@
 // WOTestRunner.m
 // WOTest
 //
-// Copyright 2004-2009 Wincent Colaiuta.
+// Copyright 2004-2010 Wincent Colaiuta.
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
@@ -34,6 +34,7 @@
 
 int main(int argc, const char *argv[])
 {
+    objc_startCollectorThread();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     int exitCode = EXIT_SUCCESS;
 
